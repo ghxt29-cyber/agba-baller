@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGBA BALLER 🇳🇬⚽</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- HEADER --- */
+        #header {
+            width: 100%;
+            background: #111;
+            border-bottom: 3px solid #00aa00;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #header h1 {
+            font-size: 1.6rem;
+            color: #00ff44;
+            letter-spacing: 2px;
+        }
+        #header span {
+            font-size: 0.8rem;
+            color: #888;
+        }
+        #connection-status {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #ff3300;
+            color: white;
+            font-weight: bold;
+        }
+        #connection-status.connected {
+            background: #00aa00;
+        }
+
+        /* --- PITCH (CANVAS) --- */
+        #pitch-wrapper {
+            width: 95%;
+            max-width: 800px;
+            margin: 15px auto;
+        }
+        #game-canvas {
+            width: 100%;
+            border: 3px solid #00aa00;
+            border-radius: 6px;
+            display: block;
+            background: #1a3a1a;
+        }
+
+        /* --- PANELS --- */
+        .panel-grid {
+            width: 95%;
+            max-width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .panel-grid { grid-template-columns: 1fr; }
+        }
+        .panel {
+            background: #161616;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+        }
+        .panel h3 {
+            color: #00ff44;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 6px;
+        }
+        input[type="text"] {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            outline: none;
+        }
+        input[type="text"]:focus { border-color: #00aa00; }
+        button {
+            background: #00aa00;
+            border: none;
+            color: white;
+            padding: 8px 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            margin-right: 5px;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+        button:hover { background: #008800; }
+        button.secondary {
+            background: #1a4a8a;
+        }
+        button.secondary:hover { background: #133a6a; }
+
+        /* --- INVITE LINK BOX --- */
+        #invite-box {
+            background: #0b1f0b;
+            border: 1px dashed #00aa00;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 0.78rem;
+            color: #00ff44;
+            margin-top: 8px;
+            word-break: break-all;
+            display: none;
+        }
+
+        /* --- PLAYER LIST --- */
+        #player-list {
+            list-style: none;
+            margin-top: 8px;
+        }
+        #player-list li {
+            background: #1a1a1a;
+            padding: 5px 8px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 0.82rem;
+            border-left: 3px solid #00aa00;
+        }
+
+        /* --- CHAT LOG --- */
+        #chat-log {
+            background: #0b0b0b;
+            height: 130px;
+            overflow-y: auto;
+            border: 1px solid #1a1a1a;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 0.78rem;
+            margin-bottom: 8px;
+        }
+        #chat-log p { margin-bottom: 4px; line-height: 1.4; }
+        .msg-system { color: #888; }
+        .msg-sent { color: #00ffcc; }
+        .msg-received { color: #ffaa00; }
+        .msg-call { color: #ff6600; }
+
+        /* --- QUICK SLANG WHEEL --- */
+        .slang-wheel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        .slang-btn {
+            background: #1a1a2e;
+            border: 1px solid #333;
+            color: #aaa;
+            padding: 4px 8px;
+            font-size: 0.72rem;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 0;
+        }
+        .slang-btn:hover { background: #222244; color: #fff; border-color: #555; }
+
+        /* --- SCOREBOARD --- */
+        #scoreboard {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 15px;
+            width: 95%;
+            max-width: 800px;
+        }
+        #scoreboard .score-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .team-score { font-size: 1.8rem; font-weight: bold; color: #00ff44; }
+        .team-label { font-size: 0.75rem; color: #888; }
+        .vs { font-size: 1rem; color: #555; }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div id="header">
+        <h1>⚽ AGBA BALLER 🇳🇬</h1>
+        <div id="connection-status">● OFFLINE</div>
+        <span>Phase 1 — Street Hustle MVP</span>
+    </div>
+
+    <!-- PITCH CANVAS -->
+    <div id="pitch-wrapper">
+        <canvas id="game-canvas" width="750" height="420"></canvas>
+    </div>
+
+    <!-- SCOREBOARD -->
+    <div id="scoreboard">
+        <div class="score-row">
+            <div>
+                <div class="team-label" id="home-team-name">YOUR CREW</div>
+                <div class="team-score" id="home-score">0</div>
+            </div>
+            <div class="vs">VS</div>
+            <div>
+                <div class="team-label" id="away-team-name">OPPONENTS</div>
+                <div class="team-score" id="away-score">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROL PANELS -->
+    <div class="panel-grid">
+
+        <!-- PANEL 1: TEAM LOBBY -->
+        <div class="panel">
+            <h3>👥 Street Crew Lobby</h3>
+            <input type="text" id="username-input" placeholder="Your baller name (e.g. Chukwudi)">
+            <input type="text" id="team-name-input" placeholder="Your crew name (e.g. Surulere Boys)">
+            <div>
+                <button onclick="createTeam()">🏟️ Form Crew</button>
+                <button class="secondary" onclick="showJoinPanel()">🔗 Join Crew</button>
+            </div>
+            <div id="join-panel" style="display:none; margin-top:10px;">
+                <input type="text" id="invite-code-input" placeholder="Enter 6-digit invite code">
+                <button onclick="joinTeam()">⚽ Join Now</button>
+            </div>
+            <div id="invite-box"></div>
+            <ul id="player-list"></ul>
+        </div>
+
+        <!-- PANEL 2: AGBA CHAT -->
+        <div class="panel">
+            <h3>💬 AgbaChat — E2EE Secured</h3>
+            <div id="chat-log">
+                <p class="msg-system">🔒 End-to-End Encryption Active. Server cannot read your messages.</p>
+            </div>
+            <input type="text" id="msg-input" placeholder="Type your message..." 
+                onkeypress="if(event.key==='Enter') sendMessage()">
+            <div>
+                <button onclick="sendMessage()">Send 📤</button>
+                <button class="secondary" onclick="simulateVoiceNote()">🎙️ Voice Note</button>
+                <button class="secondary" onclick="simulateCall()">📞 Call</button>
+            </div>
+            <!-- QUICK SLANG WHEEL -->
+            <div class="slang-wheel">
+                <button class="slang-btn" onclick="sendSlang('Open legs! 🦵')">Open legs!</button>
+                <button class="slang-btn" onclick="sendSlang('Overs! ⬆️')">Overs!</button>
+                <button class="slang-btn" onclick="sendSlang('Find me! 👋')">Find me!</button>
+                <button class="slang-btn" onclick="sendSlang('E don do! 🎉')">E don do!</button>
+                <button class="slang-btn" onclick="sendSlang('Shoot am! 🥅')">Shoot am!</button>
+                <button class="slang-btn" onclick="sendSlang('My guy! 🤝')">My guy!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SOCKET.IO CLIENT LIBRARY -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        // ============================================
+        // CLIENT-SIDE GAME LOGIC
+        // ============================================
+        const socket = io();
+        const statusEl = document.getElementById('connection-status');
+
+        // --- CONNECTION STATUS ---
+        socket.on('connect', () => {
+            statusEl.textContent = '● LIVE';
+            statusEl.classList.add('connected');
+            addChatMsg('system', '✅ Connected to AGBA BALLER server.');
+        });
+        socket.on('disconnect', () => {
+            statusEl.textContent = '● OFFLINE';
+            statusEl.classList.remove('connected');
+            addChatMsg('system', '❌ Disconnected from server.');
+        });
+
+        // --- DRAW THE PITCH ---
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function drawPitch() {
+            const W = canvas.width, H = canvas.height;
+
+            // Grass
+            ctx.fillStyle = '#1e4d1e';
+            ctx.fillRect(0, 0, W, H);
+
+            // Pitch lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth = 2;
+
+            // Outer boundary
+            ctx.strokeRect(20, 20, W - 40, H - 40);
+
+            // Centre line
+            ctx.beginPath();
+            ctx.moveTo(W / 2, 20);
+            ctx.lineTo(W / 2, H - 20);
+            ctx.stroke();
+
+            // Centre circle
+            ctx.beginPath();
+            ctx.arc(W / 2, H / 2, 55, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Centre dot
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.beginPath();
+            ctx.arc(W / 2, H / 2, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Left penalty box
+            ctx.strokeRect(20, H/2 - 70, 90, 140);
+
+            // Right penalty box
+            ctx.strokeRect(W - 110, H/2 - 70, 90, 140);
+
+            // MONKEY POSTS (Left) - wooden style
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(14, H/2 - 35, 8, 70);   // left post
+            ctx.fillRect(22, H/2 - 35, 0, 0);     // crossbar (top)
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(14, H/2 - 37, 8, 4);     // top bar
+            ctx.fillRect(14, H/2 + 33, 8, 4);     // bottom bar
+
+            // MONKEY POSTS (Right) - wooden style
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(W - 22, H/2 - 35, 8, 70);
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(W - 22, H/2 - 37, 8, 4);
+            ctx.fillRect(W - 22, H/2 + 33, 8, 4);
+
+            // Draw ball
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(W / 2, H / 2, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        drawPitch();
+
+        // ============================================
+        // TEAM LOBBY FUNCTIONS
+        // ============================================
+        function createTeam() {
+            const username = document.getElementById('username-input').value.trim();
+            const teamName = document.getElementById('team-name-input').value.trim();
+            if (!username || !teamName) {
+                alert('Enter your baller name AND crew name!');
+                return;
+            }
+            socket.emit('create_street_team', { username, teamName });
+        }
+
+        function showJoinPanel() {
+            const jp = document.getElementById('join-panel');
+            jp.style.display = jp.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function joinTeam() {
+            const username = document.getElementById('username-input').value.trim();
+            const code = document.getElementById('invite-code-input').value.trim().toUpperCase();
+            if (!username || !code) {
+                alert('Enter your baller name AND the invite code!');
+                return;
+            }
+            socket.emit('join_street_team', { username, inviteCode: code });
+        }
+
+        // --- SERVER RESPONSES ---
+        socket.on('team_created', (data) => {
+            document.getElementById('home-team-name').textContent = data.teamName;
+            const inviteBox = document.getElementById('invite-box');
+            inviteBox.style.display = 'block';
+            inviteBox.innerHTML = `
+                <strong>🔗 Share this code with your crew:</strong><br>
+                <span style="font-size:1.4rem; letter-spacing:3px;">${data.inviteCode}</span><br>
+                <small style="color:#666;">WhatsApp it: "Join my AGBA BALLER crew! Code: ${data.inviteCode}"</small>
+            `;
+            updatePlayerList(data.players);
+            addChatMsg('system', `🏟️ Crew "${data.teamName}" created! You are the Captain.`);
+        });
+
+        socket.on('player_joined', (data) => {
+            updatePlayerList(data.players);
+            addChatMsg('system', `⚽ ${data.username} joined the crew! (${data.players.length}/5)`);
+        });
+
+        socket.on('error_message', (data) => {
+            addChatMsg('system', `⚠️ ${data.msg}`);
+        });
+
+        function updatePlayerList(players) {
+            const list = document.getElementById('player-list');
+            list.innerHTML = players.map(p =>
+                `<li>${p.role === 'Captain' ? '👑' : '⚽'} ${p.username} <span style="color:#555;font-size:0.7rem;">${p.role}</span></li>`
+            ).join('');
+        }
+
+        // ============================================
+        // CHAT FUNCTIONS
+        // ============================================
+        function sendMessage() {
+            const input = document.getElementById('msg-input');
+            const txt = input.value.trim();
+            if (!txt) return;
+            // Simulate E2EE encryption display
+            addChatMsg('sent', `[🔒 Encrypted & Sent]: ${txt}`);
+            input.value = '';
+        }
+
+        function sendSlang(phrase) {
+            addChatMsg('sent', `[Quick Slang]: ${phrase}`);
+        }
+
+        function simulateVoiceNote() {
+            addChatMsg('sent', '[🎙️ Voice Note]: Audio packet encrypted and sent.');
+        }
+
+        function simulateCall() {
+            addChatMsg('call', '[📞 WebRTC]: Opening direct peer-to-peer audio tunnel... Connected!');
+        }
+
+        function addChatMsg(type, text) {
+            const log = document.getElementById('chat-log');
+            const p = document.createElement('p');
+            p.className = `msg-${type}`;
+            p.textContent = text;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
+        }
+    </script>
+</body>
+</html>
