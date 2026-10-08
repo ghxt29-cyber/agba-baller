@@ -139,7 +139,32 @@ io.on('connection', (socket) => {
             fromSocketId: socket.id
         });
     });
-
+    // --- PLAYER MOVEMENT BROADCAST ---
+    socket.on('player_move', (data) => {
+        // Store position on the room
+        for (const code in activeRooms) {
+            const room = activeRooms[code];
+            const player = room.players.find(p => p.socketId === socket.id);
+            if (player) {
+                player.x = data.x;
+                player.y = data.y;
+                player.username = data.username;
+                player.isHome = data.isHome;
+                // Broadcast all positions to everyone in the room
+                const positions = {};
+                room.players.forEach(p => {
+                    positions[p.socketId] = {
+                        x: p.x || 375,
+                        y: p.y || 210,
+                        username: p.username,
+                        isHome: p.isHome
+                    };
+                });
+                io.to(code).emit('player_positions', positions);
+                break;
+            }
+        }
+    });
     // --- HANDLE PLAYER DISCONNECT ---
     socket.on('disconnect', () => {
         console.log(`❌ Player disconnected: ${socket.id}`);
