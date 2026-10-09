@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGBA BALLER — Sign In 🇳🇬</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-box {
+            background: #161616;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 420px;
+        }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h1 { font-size: 2rem; color: #00ff44; letter-spacing: 3px; }
+        .logo p { color: #555; font-size: 0.85rem; margin-top: 5px; }
+        .naija-flag { text-align: center; font-size: 2rem; margin-bottom: 8px; }
+        .tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #222;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #555;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .tab:hover { color: #aaa; }
+        .tab.active { color: #00ff44; border-bottom: 3px solid #00ff44; }
+        .form-group { margin-bottom: 15px; }
+        label {
+            display: block;
+            font-size: 0.78rem;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        input, select {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        input:focus, select:focus { border-color: #00aa00; }
+        select option { background: #0d0d0d; color: #fff; }
+        .btn-main {
+            width: 100%;
+            background: #00aa00;
+            border: none;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-top: 5px;
+            transition: background 0.2s;
+            letter-spacing: 1px;
+        }
+        .btn-main:hover { background: #008800; }
+        .btn-main:disabled { background: #333; cursor: not-allowed; }
+        #message-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+        .msg-success {
+            background: #0b1f0b;
+            border: 1px solid #00aa00;
+            color: #00ff44;
+        }
+        .msg-error {
+            background: #1f0b0b;
+            border: 1px solid #aa0000;
+            color: #ff4444;
+        }
+        #signup-fields { display: none; }
+        #status-bar {
+            text-align: center;
+            color: #555;
+            font-size: 0.78rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <div class="logo">
+            <div class="naija-flag">🇳🇬⚽</div>
+            <h1>AGBA BALLER</h1>
+            <p>Nigerian Street Football</p>
+        </div>
+
+        <div id="status-bar">🔒 Secure connection established</div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" id="tab-login"
+                onclick="switchTab('login')">Sign In</div>
+            <div class="tab" id="tab-signup"
+                onclick="switchTab('signup')">Create Account</div>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email-input"
+                placeholder="yourname@email.com">
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password-input"
+                placeholder="Min 6 characters">
+        </div>
+
+        <!-- SIGNUP ONLY FIELDS -->
+        <div id="signup-fields">
+            <div class="form-group">
+                <label>Baller Name (Username)</label>
+                <input type="text" id="username-input"
+                    placeholder="e.g. Chukwudi_10" maxlength="30">
+            </div>
+            <div class="form-group">
+                <label>Home State</label>
+                <select id="state-input">
+                    <option value="">-- Select your state --</option>
+                    <option>Abia</option><option>Adamawa</option>
+                    <option>Akwa Ibom</option><option>Anambra</option>
+                    <option>Bauchi</option><option>Bayelsa</option>
+                    <option>Benue</option><option>Borno</option>
+                    <option>Cross River</option><option>Delta</option>
+                    <option>Ebonyi</option><option>Edo</option>
+                    <option>Ekiti</option><option>Enugu</option>
+                    <option>FCT Abuja</option><option>Gombe</option>
+                    <option>Imo</option><option>Jigawa</option>
+                    <option>Kaduna</option><option>Kano</option>
+                    <option>Katsina</option><option>Kebbi</option>
+                    <option>Kogi</option><option>Kwara</option>
+                    <option>Lagos</option><option>Nasarawa</option>
+                    <option>Niger</option><option>Ogun</option>
+                    <option>Ondo</option><option>Osun</option>
+                    <option>Oyo</option><option>Plateau</option>
+                    <option>Rivers</option><option>Sokoto</option>
+                    <option>Taraba</option><option>Yobe</option>
+                    <option>Zamfara</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Home LGA</label>
+                <input type="text" id="lga-input"
+                    placeholder="e.g. Surulere, Ikeja, Aba North">
+            </div>
+            <div class="form-group">
+                <label>Home Street</label>
+                <input type="text" id="street-input"
+                    placeholder="e.g. Bode Thomas Street">
+            </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button class="btn-main" id="auth-btn" onclick="handleAuth()">
+            ENTER THE STREETS
+        </button>
+
+        <div id="message-box" style="display:none;"></div>
+    </div>
+
+    <!-- SUPABASE SDK — for login only -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script>
+    // =====================================================
+    // AGBA BALLER — Auth Page (Server-Side Signup)
+    // =====================================================
+    let sb = null;
+    let currentTab = 'login';
+
+    // Init Supabase for login
+    fetch('/api/config')
+        .then(r => r.json())
+        .then(cfg => {
+            sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+            checkExistingSession();
+        });
+
+    async function checkExistingSession() {
+        if (!sb) return;
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) window.location.href = '/';
+    }
+
+    // =====================================================
+    // TAB SWITCHING
+    // =====================================================
+    function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById('tab-login')
+            .classList.toggle('active', tab === 'login');
+        document.getElementById('tab-signup')
+            .classList.toggle('active', tab === 'signup');
+        document.getElementById('signup-fields').style.display =
+            tab === 'signup' ? 'block' : 'none';
+        document.getElementById('auth-btn').textContent =
+            tab === 'login' ? 'ENTER THE STREETS' : 'CREATE MY BALLER';
+        hideMsg();
+    }
+
+    // =====================================================
+    // MAIN HANDLER
+    // =====================================================
+    async function handleAuth() {
+        const email    = document.getElementById('email-input').value.trim();
+        const password = document.getElementById('password-input').value;
+
+        if (!email || !password) {
+            showMsg('Please enter your email and password.', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            showMsg('Password must be at least 6 characters.', 'error');
+            return;
+        }
+
+        setBtn(true, 'Please wait...');
+
+        if (currentTab === 'login') {
+            await doLogin(email, password);
+        } else {
+            await doSignup(email, password);
+        }
+    }
+
+    // =====================================================
+    // LOGIN — uses Supabase directly
+    // =====================================================
+    async function doLogin(email, password) {
+        if (!sb) {
+            showMsg('Still loading... try again in a moment.', 'error');
+            setBtn(false, 'ENTER THE STREETS');
+            return;
+        }
+        const { data, error } = await sb.auth.signInWithPassword({
+            email, password
+        });
+        if (error) {
+            showMsg('❌ ' + error.message, 'error');
+            setBtn(false, 'ENTER THE STREETS');
+            return;
+        }
+        showMsg('✅ Welcome back! Taking you to the pitch...', 'success');
+        setTimeout(() => { window.location.href = '/'; }, 1500);
+    }
+
+    // =====================================================
+    // SIGNUP — goes through our server (bypasses rate limit)
+    // =====================================================
+    async function doSignup(email, password) {
+        const username   = document.getElementById('username-input').value.trim();
+        const homeState  = document.getElementById('state-input').value;
+        const homeLga    = document.getElementById('lga-input').value.trim();
+        const homeStreet = document.getElementById('street-input').value.trim();
+
+        if (!username || !homeState || !homeLga || !homeStreet) {
+            showMsg('Fill in ALL fields to create your baller!', 'error');
+            setBtn(false, 'CREATE MY BALLER');
+            return;
+        }
+
+        showMsg('⏳ Creating your baller...', 'success');
+
+        try {
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email, password, username,
+                    homeState, homeLga, homeStreet
+                })
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                showMsg('❌ ' + result.message, 'error');
+                setBtn(false, 'CREATE MY BALLER');
+                return;
+            }
+
+            // Signup succeeded — now log them in
+            showMsg('🎉 ' + result.message + ' Signing you in...', 'success');
+
+            if (!sb) {
+                const cfg = await fetch('/api/config').then(r => r.json());
+                sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+            }
+
+            const { error: loginError } = await sb.auth.signInWithPassword({
+                email, password
+            });
+
+            if (loginError) {
+                showMsg('✅ Account created! Please sign in now.', 'success');
+                setTimeout(() => switchTab('login'), 2000);
+                return;
+            }
+
+            setTimeout(() => { window.location.href = '/'; }, 2000);
+
+        } catch (err) {
+            showMsg('❌ Network error. Is the server running?', 'error');
+            setBtn(false, 'CREATE MY BALLER');
+        }
+    }
+
+    // =====================================================
+    // HELPERS
+    // =====================================================
+    function setBtn(disabled, text) {
+        const btn = document.getElementById('auth-btn');
+        btn.disabled = disabled;
+        btn.textContent = text;
+    }
+
+    function showMsg(text, type) {
+        const box = document.getElementById('message-box');
+        box.textContent = text;
+        box.className = type === 'success' ? 'msg-success' : 'msg-error';
+        box.style.display = 'block';
+    }
+
+    function hideMsg() {
+        const box = document.getElementById('message-box');
+        box.style.display = 'none';
+        box.textContent = '';
+    }
+
+    document.addEventListener('keypress', e => {
+        if (e.key === 'Enter') handleAuth();
+    });
+    </script>
+</body>
+</html>
