@@ -1,5 +1,5 @@
 // ============================================
-// AGBA BALLER - Phase 2 Game Server
+// AGBA BALLER - Phase 2B Game Server
 // ============================================
 require('dotenv').config();
 const express = require('express');
@@ -17,13 +17,10 @@ const io = new Server(server, {
 app.use(express.json());
 
 // --- SUPABASE CLIENTS ---
-// Public client — for normal player actions
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_ANON_KEY
 );
-
-// Admin client — for server-side auth (bypasses rate limits)
 const supabaseAdmin = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_KEY
@@ -44,11 +41,10 @@ app.get('/api/config', (req, res) => {
 // AUTH ENDPOINTS
 // ============================================
 
-// SIGNUP — handled server-side to bypass rate limits
+// SIGNUP
 app.post('/api/signup', async (req, res) => {
     const { email, password, username, homeState, homeLga, homeStreet } = req.body;
 
-    // Validate inputs
     if (!email || !password || !username || !homeState || !homeLga || !homeStreet) {
         return res.json({ success: false, message: 'All fields are required.' });
     }
@@ -59,19 +55,17 @@ app.post('/api/signup', async (req, res) => {
         return res.json({ success: false, message: 'Baller name must be at least 3 characters.' });
     }
 
-    // Sanitise inputs
     const cleanUsername = String(username).replace(/[<>'"]/g, '').trim();
     const cleanState    = String(homeState).replace(/[<>'"]/g, '').trim();
     const cleanLga      = String(homeLga).replace(/[<>'"]/g, '').trim();
     const cleanStreet   = String(homeStreet).replace(/[<>'"]/g, '').trim();
 
     try {
-        // Step 1 — Create auth user using admin client
         const { data: authData, error: authError } =
             await supabaseAdmin.auth.admin.createUser({
                 email,
                 password,
-                email_confirm: true // auto-confirm, no email needed
+                email_confirm: true
             });
 
         if (authError) {
@@ -79,17 +73,16 @@ app.post('/api/signup', async (req, res) => {
             return res.json({ success: false, message: authError.message });
         }
 
-        // Step 2 — Create player profile
         const { error: profileError } = await supabaseAdmin
             .from('players')
             .insert({
-                user_id:      authData.user.id,
-                username:     cleanUsername,
-                home_state:   cleanState,
-                home_lga:     cleanLga,
-                home_street:  cleanStreet,
+                user_id:       authData.user.id,
+                username:      cleanUsername,
+                home_state:    cleanState,
+                home_lga:      cleanLga,
+                home_street:   cleanStreet,
                 naira_balance: 100000,
-                stamina:      100
+                stamina:       100
             });
 
         if (profileError) {
@@ -97,7 +90,7 @@ app.post('/api/signup', async (req, res) => {
             return res.json({ success: false, message: profileError.message });
         }
 
-                console.log(`✅ New baller created: ${cleanUsername} from ${cleanState}`);
+        console.log(`✅ New baller created: ${cleanUsername} from ${cleanState}`);
         return res.json({
             success: true,
             message: `Baller "${cleanUsername}" created! Starting balance: ₦100,000`
@@ -106,6 +99,45 @@ app.post('/api/signup', async (req, res) => {
     } catch (err) {
         console.error('Signup error:', err);
         return res.json({ success: false, message: 'Server error. Try again.' });
+    }
+});
+
+// PLAYER PROFILE ENDPOINT
+// Returns logged-in player's data to display in the HUD
+app.get('/api/player', async (req, res) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.json({ success: false, message: 'No auth token.' });
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+
+    try {
+        // Verify the token and get the user
+        const { data: { user }, error: authError } =
+            await supabaseAdmin.auth.getUser(token);
+
+        if (authError || !user) {
+            return res.json({ success: false, message: 'Invalid session.' });
+        }
+
+        // Fetch their player profile
+        const { data: player, error: playerError } =
+            await supabaseAdmin
+                .from('players')
+                .select('username, home_state, home_lga, naira_balance, stamina, respect_points, attr_speed, attr_dribbling, attr_shooting')
+                .eq('user_id', user.id)
+                .single();
+
+        if (playerError || !player) {
+            return res.json({ success: false, message: 'Player profile not found.' });
+        }
+
+        return res.json({ success: true, player });
+
+    } catch (err) {
+        console.error('Player fetch error:', err);
+        return res.json({ success: false, message: 'Server error.' });
     }
 });
 
@@ -120,7 +152,6 @@ const activeRooms = {};
 io.on('connection', (socket) => {
     console.log(`✅ Player connected: ${socket.id}`);
 
-    // --- CREATE A STREET TEAM LOBBY ---
     socket.on('create_street_team', async (data) => {
         const cleanTeamName = String(data.teamName).replace(/[<>'"]/g, '').trim();
         const cleanUsername = String(data.username).replace(/[<>'"]/g, '').trim();
@@ -150,9 +181,7 @@ io.on('connection', (socket) => {
             escrow_stake_balance: 0
         });
 
-        if (error) {
-            console.error('Supabase team save error:', error.message);
-        }
+        if (error) console.error('Team save error:', error.message);
 
         socket.emit('team_created', {
             inviteCode,
@@ -163,14 +192,13 @@ io.on('connection', (socket) => {
         console.log(`🏟️ Team created: ${cleanTeamName} | Code: ${inviteCode}`);
     });
 
-    // --- JOIN AN EXISTING TEAM LOBBY ---
     socket.on('join_street_team', (data) => {
         const cleanCode     = String(data.inviteCode).replace(/[^A-Z0-9]/g, '').toUpperCase();
         const cleanUsername = String(data.username).replace(/[<>'"]/g, '').trim();
         const room = activeRooms[cleanCode];
 
         if (!room) {
-            socket.emit('error_message', { msg: 'Invite code not found. Check the code and try again.' });
+            socket.emit('error_message', { msg: 'Invite code not found.' });
             return;
         }
         if (room.players.length >= room.maxPlayers) {
@@ -192,10 +220,9 @@ io.on('connection', (socket) => {
             teamName: room.teamName
         });
 
-        console.log(`⚽ ${cleanUsername} joined team: ${room.teamName}`);
+        console.log(`⚽ ${cleanUsername} joined: ${room.teamName}`);
     });
 
-    // --- PLAYER MOVEMENT BROADCAST ---
     socket.on('player_move', (data) => {
         for (const code in activeRooms) {
             const room = activeRooms[code];
@@ -220,18 +247,16 @@ io.on('connection', (socket) => {
         }
     });
 
-    // --- E2EE CHAT RELAY ---
     socket.on('relay_encrypted_packet', (payload) => {
         const { targetSocketId, senderUsername, cipherText, payloadType } = payload;
         io.to(targetSocketId).emit('receive_encrypted_packet', {
             sender: senderUsername,
-            cipherText: cipherText,
-            payloadType: payloadType,
+            cipherText,
+            payloadType,
             timestamp: new Date().toLocaleTimeString()
         });
     });
 
-    // --- WEBRTC SIGNALING ---
     socket.on('call_signal_exchange', (payload) => {
         const { targetSocketId, signalData, sender } = payload;
         io.to(targetSocketId).emit('incoming_call_signal', {
@@ -241,7 +266,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // --- DISCONNECT ---
     socket.on('disconnect', () => {
         console.log(`❌ Player disconnected: ${socket.id}`);
         for (const code in activeRooms) {
