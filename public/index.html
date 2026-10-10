@@ -15,8 +15,6 @@
             flex-direction: column;
             align-items: center;
         }
-
-        /* ── HEADER ── */
         #header {
             width: 100%;
             background: #111;
@@ -28,11 +26,7 @@
             flex-wrap: wrap;
             gap: 8px;
         }
-        #header h1 {
-            font-size: 1.4rem;
-            color: #00ff44;
-            letter-spacing: 2px;
-        }
+        #header h1 { font-size: 1.4rem; color: #00ff44; letter-spacing: 2px; }
         #connection-status {
             font-size: 0.75rem;
             padding: 4px 10px;
@@ -42,11 +36,7 @@
             font-weight: bold;
         }
         #connection-status.connected { background: #00aa00; }
-        #header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        #header-right { display: flex; align-items: center; gap: 10px; }
         #logout-btn {
             background: #1a1a1a;
             border: 1px solid #333;
@@ -58,7 +48,7 @@
         }
         #logout-btn:hover { color: #fff; border-color: #555; }
 
-        /* ── PLAYER HUD ── */
+        /* HUD */
         #player-hud {
             width: 100%;
             background: #0d1a0d;
@@ -77,12 +67,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .hud-name {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #00ff44;
-            letter-spacing: 1px;
-        }
+        .hud-name { font-size: 1rem; font-weight: bold; color: #00ff44; }
         .hud-name span {
             color: #555;
             font-size: 0.75rem;
@@ -95,43 +80,58 @@
             flex-wrap: wrap;
             align-items: center;
         }
-        .hud-stat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+        .hud-stat { display: flex; flex-direction: column; align-items: center; }
         .hud-stat-label {
             font-size: 0.62rem;
             color: #555;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        .hud-stat-value {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #fff;
-        }
+        .hud-stat-value { font-size: 0.9rem; font-weight: bold; color: #fff; }
         .hud-stat-value.naira { color: #ffd700; }
         .hud-stat-value.stamina-high { color: #00ff44; }
         .hud-stat-value.stamina-mid  { color: #ffaa00; }
         .hud-stat-value.stamina-low  { color: #ff4444; }
-
-        /* Stamina bar */
         .stamina-bar-wrap {
-            width: 80px;
-            height: 6px;
-            background: #222;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 3px;
+            width: 80px; height: 6px;
+            background: #222; border-radius: 3px;
+            overflow: hidden; margin-top: 3px;
         }
         .stamina-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s;
+            height: 100%; border-radius: 3px; transition: width 0.3s;
         }
 
-        /* ── PITCH ── */
+        /* REWARD POPUP */
+        #reward-popup {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0b1f0b;
+            border: 2px solid #00aa00;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff44;
+            text-align: center;
+            z-index: 999;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,255,68,0.3);
+        }
+        #reward-popup.penalty {
+            background: #1f0b0b;
+            border-color: #aa0000;
+            color: #ff4444;
+            box-shadow: 0 4px 20px rgba(255,0,0,0.3);
+        }
+        #reward-popup.loss {
+            background: #1a1000;
+            border-color: #554400;
+            color: #ffaa00;
+        }
+
+        /* PITCH */
         #pitch-wrapper {
             width: 95%;
             max-width: 800px;
@@ -151,7 +151,7 @@
             margin: 4px 0 8px;
         }
 
-        /* ── SCOREBOARD ── */
+        /* SCOREBOARD */
         #scoreboard {
             background: #111;
             border: 1px solid #222;
@@ -170,8 +170,21 @@
         .team-score { font-size: 1.8rem; font-weight: bold; color: #00ff44; }
         .team-label { font-size: 0.72rem; color: #888; }
         #match-timer { font-size: 0.8rem; color: #ffaa00; margin-top: 3px; }
+        #end-match-btn {
+            background: #aa0000;
+            border: none;
+            color: white;
+            padding: 6px 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            margin-top: 6px;
+            display: none;
+        }
+        #end-match-btn:hover { background: #880000; }
 
-        /* ── PANELS ── */
+        /* PANELS */
         .panel-grid {
             width: 95%;
             max-width: 800px;
@@ -182,7 +195,6 @@
         }
         @media (max-width: 600px) {
             .panel-grid { grid-template-columns: 1fr; }
-            .hud-stats { gap: 10px; }
         }
         .panel {
             background: #161616;
@@ -258,15 +270,12 @@
             margin-bottom: 8px;
         }
         #chat-log p { margin-bottom: 4px; line-height: 1.4; }
-        .msg-system   { color: #888; }
-        .msg-sent     { color: #00ffcc; }
-        .msg-call     { color: #ff6600; }
-        .slang-wheel  {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-top: 8px;
-        }
+        .msg-system  { color: #888; }
+        .msg-sent    { color: #00ffcc; }
+        .msg-call    { color: #ff6600; }
+        .msg-reward  { color: #ffd700; font-weight: bold; }
+        .msg-penalty { color: #ff4444; font-weight: bold; }
+        .slang-wheel { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
         .slang-btn {
             background: #1a1a2e;
             border: 1px solid #333;
@@ -277,13 +286,9 @@
             cursor: pointer;
             margin: 0;
         }
-        .slang-btn:hover {
-            background: #222244;
-            color: #fff;
-            border-color: #555;
-        }
+        .slang-btn:hover { background: #222244; color: #fff; border-color: #555; }
 
-        /* ── GUEST BANNER ── */
+        /* GUEST BANNER */
         #guest-banner {
             width: 95%;
             max-width: 800px;
@@ -302,10 +307,12 @@
             font-weight: bold;
             text-decoration: none;
         }
-        #guest-banner a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
+
+    <!-- REWARD POPUP -->
+    <div id="reward-popup"></div>
 
     <!-- HEADER -->
     <div id="header">
@@ -330,47 +337,34 @@
                 </div>
             </div>
             <div class="hud-stats">
-                <!-- NAIRA BALANCE -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">💰 Balance</div>
-                    <div class="hud-stat-value naira"
-                        id="hud-balance">₦0</div>
+                    <div class="hud-stat-value naira" id="hud-balance">₦0</div>
                 </div>
-                <!-- STAMINA -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">⚡ Stamina</div>
                     <div class="hud-stat-value stamina-high"
                         id="hud-stamina">100%</div>
                     <div class="stamina-bar-wrap">
-                        <div class="stamina-bar-fill"
-                            id="hud-stamina-bar"
-                            style="width:100%;background:#00ff44;">
-                        </div>
+                        <div class="stamina-bar-fill" id="hud-stamina-bar"
+                            style="width:100%;background:#00ff44;"></div>
                     </div>
                 </div>
-                <!-- RESPECT -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">🏆 Respect</div>
-                    <div class="hud-stat-value"
-                        id="hud-respect">0</div>
+                    <div class="hud-stat-value" id="hud-respect">0</div>
                 </div>
-                <!-- SPEED -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">💨 Speed</div>
-                    <div class="hud-stat-value"
-                        id="hud-speed">10</div>
+                    <div class="hud-stat-value" id="hud-speed">10</div>
                 </div>
-                <!-- DRIBBLING -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">🎯 Dribble</div>
-                    <div class="hud-stat-value"
-                        id="hud-dribbling">10</div>
+                    <div class="hud-stat-value" id="hud-dribbling">10</div>
                 </div>
-                <!-- SHOOTING -->
                 <div class="hud-stat">
                     <div class="hud-stat-label">🥅 Shoot</div>
-                    <div class="hud-stat-value"
-                        id="hud-shooting">10</div>
+                    <div class="hud-stat-value" id="hud-shooting">10</div>
                 </div>
             </div>
         </div>
@@ -378,9 +372,9 @@
 
     <!-- GUEST BANNER -->
     <div id="guest-banner">
-        ⚠️ You are playing as a guest. Your progress will NOT be saved.
-        <a href="/auth.html">Sign in or create a free account</a> to save
-        your ₦100,000 balance and stats!
+        ⚠️ You are playing as a guest. Progress will NOT be saved.
+        <a href="/auth.html">Sign in or create a free account</a>
+        to save your ₦100,000 balance!
     </div>
 
     <!-- PITCH -->
@@ -402,6 +396,9 @@
             <div>
                 VS
                 <div id="match-timer">⏱ 00:00</div>
+                <button id="end-match-btn" onclick="endMatch()">
+                    🏁 End Match
+                </button>
             </div>
             <div>
                 <div class="team-label" id="away-team-name">OPPONENTS</div>
@@ -412,8 +409,6 @@
 
     <!-- PANELS -->
     <div class="panel-grid">
-
-        <!-- LOBBY PANEL -->
         <div class="panel">
             <h3>👥 Street Crew Lobby</h3>
             <input type="text" id="username-input"
@@ -435,7 +430,6 @@
             <ul id="player-list"></ul>
         </div>
 
-        <!-- CHAT PANEL -->
         <div class="panel">
             <h3>💬 AgbaChat — E2EE Secured</h3>
             <div id="chat-log">
@@ -476,17 +470,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script>
     // =====================================================
-    // AGBA BALLER — Phase 2B Game Client with HUD
+    // AGBA BALLER — Phase 2C+ Own Goal Penalty System
     // =====================================================
     const socket = io();
     const statusEl = document.getElementById('connection-status');
 
-    let sb = null;
-    let currentPlayer = null; // logged in player profile
+    let sb              = null;
+    let currentPlayer   = null;
+    let currentSession  = null;
+    let currentRoomCode = null;
+    let localBalance    = 100000;
 
-    // =====================================================
-    // INIT — load supabase and check login
-    // =====================================================
     fetch('/api/config')
         .then(r => r.json())
         .then(cfg => {
@@ -497,13 +491,11 @@
     async function checkLoginStatus() {
         if (!sb) return;
         const { data: { session } } = await sb.auth.getSession();
-
         if (session) {
-            // Logged in — fetch player profile
+            currentSession = session;
             document.getElementById('logout-btn').style.display = 'block';
             await loadPlayerProfile(session.access_token);
         } else {
-            // Guest — show guest banner
             document.getElementById('guest-banner').style.display = 'block';
         }
     }
@@ -514,12 +506,10 @@
                 headers: { 'Authorization': 'Bearer ' + token }
             });
             const data = await res.json();
-
             if (data.success && data.player) {
                 currentPlayer = data.player;
+                localBalance  = data.player.naira_balance;
                 renderHUD(data.player);
-
-                // Auto-fill baller name in lobby
                 document.getElementById('username-input').value =
                     data.player.username;
             }
@@ -529,39 +519,29 @@
     }
 
     function renderHUD(player) {
-        // Show the HUD bar
-        const hud = document.getElementById('player-hud');
-        hud.classList.add('visible');
-
-        // Fill in values
+        document.getElementById('player-hud').classList.add('visible');
         document.getElementById('hud-username').textContent =
             player.username;
         document.getElementById('hud-location').textContent =
             player.home_state + ' • ' + player.home_lga;
+        updateBalanceDisplay(player.naira_balance);
 
-        // Naira balance — formatted with commas
-        document.getElementById('hud-balance').textContent =
-            '₦' + Number(player.naira_balance).toLocaleString('en-NG');
-
-        // Stamina
-        const stamina = player.stamina;
-        const staminaEl = document.getElementById('hud-stamina');
+        const stamina    = player.stamina;
+        const staminaEl  = document.getElementById('hud-stamina');
         const staminaBar = document.getElementById('hud-stamina-bar');
-        staminaEl.textContent = stamina + '%';
-        staminaBar.style.width = stamina + '%';
-
+        staminaEl.textContent    = stamina + '%';
+        staminaBar.style.width   = stamina + '%';
         if (stamina >= 70) {
-            staminaEl.className = 'hud-stat-value stamina-high';
+            staminaEl.className      = 'hud-stat-value stamina-high';
             staminaBar.style.background = '#00ff44';
         } else if (stamina >= 35) {
-            staminaEl.className = 'hud-stat-value stamina-mid';
+            staminaEl.className      = 'hud-stat-value stamina-mid';
             staminaBar.style.background = '#ffaa00';
         } else {
-            staminaEl.className = 'hud-stat-value stamina-low';
+            staminaEl.className      = 'hud-stat-value stamina-low';
             staminaBar.style.background = '#ff4444';
         }
 
-        // Other stats
         document.getElementById('hud-respect').textContent =
             player.respect_points || 0;
         document.getElementById('hud-speed').textContent =
@@ -572,13 +552,69 @@
             player.attr_shooting || 10;
     }
 
+    function updateBalanceDisplay(amount) {
+        localBalance = amount;
+        document.getElementById('hud-balance').textContent =
+            '₦' + Number(amount).toLocaleString('en-NG');
+    }
+
+    function showRewardPopup(message, type) {
+        // type: 'reward' | 'penalty' | 'loss'
+        const popup = document.getElementById('reward-popup');
+        popup.textContent = message;
+        popup.className   = type === 'reward' ? '' : type;
+        popup.style.display = 'block';
+        setTimeout(() => { popup.style.display = 'none'; }, 3500);
+    }
+
     async function logOut() {
         if (sb) await sb.auth.signOut();
         window.location.href = '/auth.html';
     }
 
     // =====================================================
-    // CONNECTION STATUS
+    // SOCKET EVENTS — NAIRA REWARDS & PENALTIES
+    // =====================================================
+    socket.on('balance_updated', (data) => {
+        updateBalanceDisplay(data.newBalance);
+
+        if (data.isOwnGoal) {
+            // Own goal — red penalty popup
+            showRewardPopup(data.reason, 'penalty');
+            addChatMsg('penalty', data.reason);
+        } else if (data.reward > 0) {
+            // Proper goal or match win/draw — gold popup
+            showRewardPopup(data.reason, 'reward');
+            addChatMsg('reward', data.reason);
+        } else {
+            // Loss — orange popup
+            showRewardPopup(data.reason, 'loss');
+            addChatMsg('system', data.reason);
+        }
+    });
+
+    socket.on('score_updated', (data) => {
+        document.getElementById('home-score').textContent = data.homeScore;
+        document.getElementById('away-score').textContent = data.awayScore;
+
+        const ownGoalTag = data.isOwnGoal ? ' (OWN GOAL 😬)' : '';
+        addChatMsg('system',
+            `🥅 ${data.isOwnGoal ? 'OWN GOAL' : 'GOAL'} by ${data.scorerName}${ownGoalTag}! Score: ${data.homeScore} - ${data.awayScore}`
+        );
+    });
+
+    socket.on('match_result', (data) => {
+        const msg = data.isDraw
+            ? `🤝 DRAW! Final score: ${data.homeScore} - ${data.awayScore}`
+            : data.homeWon
+            ? `🏆 HOME TEAM WINS! ${data.homeScore} - ${data.awayScore}`
+            : `🏆 AWAY TEAM WINS! ${data.homeScore} - ${data.awayScore}`;
+        addChatMsg('system', msg);
+        document.getElementById('end-match-btn').style.display = 'none';
+    });
+
+    // =====================================================
+    // CONNECTION
     // =====================================================
     socket.on('connect', () => {
         statusEl.textContent = '● LIVE';
@@ -588,32 +624,29 @@
     socket.on('disconnect', () => {
         statusEl.textContent = '● OFFLINE';
         statusEl.classList.remove('connected');
-        addChatMsg('system', '❌ Disconnected from server.');
     });
 
     // =====================================================
-    // CANVAS & PITCH
+    // CANVAS SETUP
     // =====================================================
     const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width;
-    const H = canvas.height;
+    const ctx    = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
 
-    let myPlayer = null;
-    let myUsername = '';
+    let myPlayer   = null;
     const pitchPlayers = {};
 
     const ball = {
         x: W/2, y: H/2,
-        radius: 9,
-        vx: 0, vy: 0,
-        friction: 0.97
+        radius: 9, vx: 0, vy: 0, friction: 0.97
     };
 
-    let homeScore = 0;
-    let awayScore = 0;
-    let matchSeconds = 0;
-    let timerInterval = null;
+    let homeScore = 0, awayScore = 0;
+    let matchSeconds = 0, timerInterval = null;
+
+    // Track who last touched the ball and which side they play
+    let lastToucherSocketId = null;
+    let lastToucherIsHome   = null;
 
     const keys = {};
     document.addEventListener('keydown', e => { keys[e.key] = true; });
@@ -625,35 +658,21 @@
     function drawPitch() {
         ctx.fillStyle = '#1e4d1e';
         ctx.fillRect(0, 0, W, H);
-
         ctx.strokeStyle = 'rgba(255,255,255,0.4)';
         ctx.lineWidth = 2;
         ctx.strokeRect(20, 20, W-40, H-40);
-
-        ctx.beginPath();
-        ctx.moveTo(W/2, 20);
-        ctx.lineTo(W/2, H-20);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(W/2, H/2, 55, 0, Math.PI*2);
-        ctx.stroke();
-
+        ctx.beginPath(); ctx.moveTo(W/2,20); ctx.lineTo(W/2,H-20); ctx.stroke();
+        ctx.beginPath(); ctx.arc(W/2,H/2,55,0,Math.PI*2); ctx.stroke();
         ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.beginPath();
-        ctx.arc(W/2, H/2, 4, 0, Math.PI*2);
-        ctx.fill();
-
+        ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fill();
         ctx.strokeRect(20, H/2-70, 90, 140);
         ctx.strokeRect(W-110, H/2-70, 90, 140);
-
         // Monkey Posts L
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(12, H/2-35, 8, 70);
         ctx.fillStyle = '#A0522D';
         ctx.fillRect(12, H/2-37, 8, 4);
         ctx.fillRect(12, H/2+33, 8, 4);
-
         // Monkey Posts R
         ctx.fillStyle = '#8B4513';
         ctx.fillRect(W-20, H/2-35, 8, 70);
@@ -668,17 +687,12 @@
         ctx.ellipse(ball.x+3, ball.y+4, ball.radius, ball.radius*0.5,
             0, 0, Math.PI*2);
         ctx.fill();
-
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
         ctx.fill();
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-
-        ctx.strokeStyle = '#aaa';
-        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.strokeStyle = '#aaa'; ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.radius*0.5, 0, Math.PI*2);
         ctx.stroke();
@@ -687,28 +701,21 @@
     function drawPlayer(p) {
         const color = p.isHome ? '#00cc44' : '#ffcc00';
         const r = 14;
-
         ctx.fillStyle = 'rgba(0,0,0,0.25)';
         ctx.beginPath();
         ctx.ellipse(p.x+2, p.y+r+2, r*0.7, r*0.3, 0, 0, Math.PI*2);
         ctx.fill();
-
         ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-        ctx.fill();
-
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
         ctx.strokeStyle = p.isMe ? '#ffffff' : 'rgba(0,0,0,0.4)';
         ctx.lineWidth = p.isMe ? 2.5 : 1.5;
         ctx.stroke();
-
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 9px Arial';
         ctx.textAlign = 'center';
         const label = p.username.length > 8
-            ? p.username.substring(0,7) + '.' : p.username;
-        ctx.fillText(label, p.x, p.y - r - 4);
-
+            ? p.username.substring(0,7)+'.' : p.username;
+        ctx.fillText(label, p.x, p.y-r-4);
         if (p.isMe) {
             ctx.fillStyle = '#00ff44';
             ctx.font = 'bold 8px Arial';
@@ -733,68 +740,101 @@
             myPlayer.x = Math.max(28, Math.min(W-28, myPlayer.x));
             myPlayer.y = Math.max(28, Math.min(H-28, myPlayer.y));
 
-            const dx = myPlayer.x - ball.x;
-            const dy = myPlayer.y - ball.y;
+            const dx   = myPlayer.x - ball.x;
+            const dy   = myPlayer.y - ball.y;
             const dist = Math.sqrt(dx*dx + dy*dy);
+
             if (dist < 14 + ball.radius) {
-                const angle = Math.atan2(ball.y-myPlayer.y,
-                    ball.x-myPlayer.x);
+                const angle = Math.atan2(ball.y-myPlayer.y, ball.x-myPlayer.x);
                 ball.vx = Math.cos(angle) * 6;
                 ball.vy = Math.sin(angle) * 6;
+                // Record who last touched it and which side they play
+                lastToucherSocketId = socket.id;
+                lastToucherIsHome   = myPlayer.isHome;
             }
 
             socket.emit('player_move', {
-                x: myPlayer.x,
-                y: myPlayer.y,
+                x: myPlayer.x, y: myPlayer.y,
                 username: myPlayer.username,
                 isHome: myPlayer.isHome
             });
             pitchPlayers[socket.id] = myPlayer;
         }
 
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-        ball.vx *= ball.friction;
-        ball.vy *= ball.friction;
+        // Move ball
+        ball.x += ball.vx; ball.y += ball.vy;
+        ball.vx *= ball.friction; ball.vy *= ball.friction;
 
-        if (ball.x - ball.radius < 20) {
-            ball.x = 20 + ball.radius; ball.vx *= -0.7;
+        // Wall bouncing
+        if (ball.x-ball.radius < 20) {
+            ball.x = 20+ball.radius; ball.vx *= -0.7;
         }
-        if (ball.x + ball.radius > W-20) {
+        if (ball.x+ball.radius > W-20) {
             ball.x = W-20-ball.radius; ball.vx *= -0.7;
         }
-        if (ball.y - ball.radius < 20) {
+        if (ball.y-ball.radius < 20) {
             ball.y = 20+ball.radius; ball.vy *= -0.7;
         }
-        if (ball.y + ball.radius > H-20) {
+        if (ball.y+ball.radius > H-20) {
             ball.y = H-20-ball.radius; ball.vy *= -0.7;
         }
 
-        // Goal detection
+        // ── LEFT GOAL (Away scores here normally) ──
         if (ball.x-ball.radius <= 20 &&
             ball.y > H/2-35 && ball.y < H/2+35) {
+
+            // Left goal scored — who gets it?
+            // Home team attacks RIGHT so left goal = own goal for home
+            // Away team attacks LEFT so left goal = proper goal for away
+            const isOwnGoal = lastToucherIsHome === true;
+
             awayScore++;
             document.getElementById('away-score').textContent = awayScore;
-            addChatMsg('system', '🥅 GOAL! Away team scores!');
+
+            if (currentRoomCode) {
+                socket.emit('goal_scored', {
+                    roomCode:        currentRoomCode,
+                    scorerSocketId:  lastToucherSocketId || socket.id,
+                    isHomeGoal:      false,
+                    isOwnGoal:       isOwnGoal
+                });
+            }
             resetBall();
         }
+
+        // ── RIGHT GOAL (Home scores here normally) ──
         if (ball.x+ball.radius >= W-20 &&
             ball.y > H/2-35 && ball.y < H/2+35) {
+
+            // Right goal scored
+            // Away team attacks LEFT so right goal = own goal for away
+            // Home team attacks RIGHT so right goal = proper goal for home
+            const isOwnGoal = lastToucherIsHome === false;
+
             homeScore++;
             document.getElementById('home-score').textContent = homeScore;
-            addChatMsg('system', '🥅 GOAL! Home team scores! E don do!');
+
+            if (currentRoomCode) {
+                socket.emit('goal_scored', {
+                    roomCode:        currentRoomCode,
+                    scorerSocketId:  lastToucherSocketId || socket.id,
+                    isHomeGoal:      true,
+                    isOwnGoal:       isOwnGoal
+                });
+            }
             resetBall();
         }
 
         for (const id in pitchPlayers) drawPlayer(pitchPlayers[id]);
         drawBall();
-
         requestAnimationFrame(gameLoop);
     }
 
     function resetBall() {
         ball.x = W/2; ball.y = H/2;
         ball.vx = 0;  ball.vy = 0;
+        lastToucherSocketId = null;
+        lastToucherIsHome   = null;
     }
 
     gameLoop();
@@ -804,17 +844,26 @@
     // =====================================================
     function startMatchTimer() {
         if (timerInterval) return;
+        document.getElementById('end-match-btn').style.display = 'inline-block';
         timerInterval = setInterval(() => {
             matchSeconds++;
             const m = String(Math.floor(matchSeconds/60)).padStart(2,'0');
-            const s = String(matchSeconds % 60).padStart(2,'0');
+            const s = String(matchSeconds%60).padStart(2,'0');
             document.getElementById('match-timer').textContent =
                 `⏱ ${m}:${s}`;
         }, 1000);
     }
 
+    function endMatch() {
+        if (!currentRoomCode) return;
+        clearInterval(timerInterval);
+        socket.emit('match_ended', { roomCode: currentRoomCode });
+        document.getElementById('end-match-btn').style.display = 'none';
+        addChatMsg('system', '🏁 Match ended! Calculating rewards...');
+    }
+
     // =====================================================
-    // SOCKET — RECEIVE PLAYER POSITIONS
+    // RECEIVE OTHER PLAYERS' POSITIONS
     // =====================================================
     socket.on('player_positions', (players) => {
         for (const id in players) {
@@ -822,36 +871,29 @@
             pitchPlayers[id] = { ...players[id], isMe: false };
         }
         for (const id in pitchPlayers) {
-            if (!players[id] && id !== socket.id) {
-                delete pitchPlayers[id];
-            }
+            if (!players[id] && id !== socket.id) delete pitchPlayers[id];
         }
     });
 
     // =====================================================
-    // TEAM LOBBY
+    // LOBBY FUNCTIONS
     // =====================================================
     function createTeam() {
-        // Use logged-in username if available
         const username = currentPlayer
             ? currentPlayer.username
             : document.getElementById('username-input').value.trim();
         const teamName =
             document.getElementById('team-name-input').value.trim();
-
         if (!username || !teamName) {
-            alert('Enter your baller name AND crew name!');
-            return;
+            alert('Enter baller name AND crew name!'); return;
         }
-        myUsername = username;
-        myPlayer = {
-            x: 200, y: H/2,
-            username,
-            isHome: true,
-            isMe: true
-        };
+        myPlayer = { x:200, y:H/2, username, isHome:true, isMe:true };
         pitchPlayers[socket.id] = myPlayer;
-        socket.emit('create_street_team', { username, teamName });
+        socket.emit('create_street_team', {
+            username, teamName,
+            userId:       currentSession ? currentSession.user.id : null,
+            nairaBalance: localBalance
+        });
         startMatchTimer();
     }
 
@@ -866,24 +908,21 @@
             : document.getElementById('username-input').value.trim();
         const code = document.getElementById('invite-code-input')
             .value.trim().toUpperCase();
-
         if (!username || !code) {
-            alert('Enter your baller name AND the invite code!');
-            return;
+            alert('Enter baller name AND invite code!'); return;
         }
-        myUsername = username;
-        myPlayer = {
-            x: W-200, y: H/2,
-            username,
-            isHome: false,
-            isMe: true
-        };
+        myPlayer = { x:W-200, y:H/2, username, isHome:false, isMe:true };
         pitchPlayers[socket.id] = myPlayer;
-        socket.emit('join_street_team', { username, inviteCode: code });
+        socket.emit('join_street_team', {
+            username, inviteCode: code,
+            userId:       currentSession ? currentSession.user.id : null,
+            nairaBalance: localBalance
+        });
         startMatchTimer();
     }
 
     socket.on('team_created', (data) => {
+        currentRoomCode = data.inviteCode;
         document.getElementById('home-team-name').textContent = data.teamName;
         const inviteBox = document.getElementById('invite-box');
         inviteBox.style.display = 'block';
@@ -893,7 +932,7 @@
                 ${data.inviteCode}
             </span><br>
             <small style="color:#666;">
-                WhatsApp it: "Join my AGBA BALLER crew! Code: ${data.inviteCode}"
+                WhatsApp: "Join my AGBA BALLER crew! Code: ${data.inviteCode}"
             </small>`;
         updatePlayerList(data.players);
         addChatMsg('system',
@@ -901,6 +940,7 @@
     });
 
     socket.on('player_joined', (data) => {
+        if (!currentRoomCode) currentRoomCode = data.inviteCode;
         updatePlayerList(data.players);
         addChatMsg('system',
             `⚽ ${data.username} joined! (${data.players.length}/5)`);
@@ -911,15 +951,17 @@
     });
 
     function updatePlayerList(players) {
-        const list = document.getElementById('player-list');
-        list.innerHTML = players.map(p =>
-            `<li>${p.role==='Captain'?'👑':'⚽'} ${p.username}
-            <span style="color:#555;font-size:0.7rem;">${p.role}</span></li>`
-        ).join('');
+        document.getElementById('player-list').innerHTML =
+            players.map(p =>
+                `<li>${p.role==='Captain'?'👑':'⚽'} ${p.username}
+                <span style="color:#555;font-size:0.7rem;">
+                    ${p.role}
+                </span></li>`
+            ).join('');
     }
 
     // =====================================================
-    // CHAT
+    // CHAT FUNCTIONS
     // =====================================================
     function sendMessage() {
         const input = document.getElementById('msg-input');
@@ -940,8 +982,8 @@
     }
     function addChatMsg(type, text) {
         const log = document.getElementById('chat-log');
-        const p = document.createElement('p');
-        p.className = `msg-${type}`;
+        const p   = document.createElement('p');
+        p.className   = `msg-${type}`;
         p.textContent = text;
         log.appendChild(p);
         log.scrollTop = log.scrollHeight;
