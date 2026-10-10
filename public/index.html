@@ -7,267 +7,217 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #0a0a0a;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            background: #0a0a0a; color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh; display: flex;
+            flex-direction: column; align-items: center;
         }
         #header {
-            width: 100%;
-            background: #111;
+            width: 100%; background: #111;
             border-bottom: 3px solid #00aa00;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
+            padding: 10px 20px; display: flex;
+            align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px;
         }
         #header h1 { font-size: 1.4rem; color: #00ff44; letter-spacing: 2px; }
         #connection-status {
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 20px;
-            background: #ff3300;
-            color: white;
-            font-weight: bold;
+            font-size: 0.75rem; padding: 4px 10px;
+            border-radius: 20px; background: #ff3300;
+            color: white; font-weight: bold;
         }
         #connection-status.connected { background: #00aa00; }
         #header-right { display: flex; align-items: center; gap: 10px; }
         #logout-btn {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #888;
-            padding: 4px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
+            background: #1a1a1a; border: 1px solid #333;
+            color: #888; padding: 4px 10px; border-radius: 4px;
+            cursor: pointer; font-size: 0.75rem;
         }
         #logout-btn:hover { color: #fff; border-color: #555; }
 
         /* HUD */
         #player-hud {
-            width: 100%;
-            background: #0d1a0d;
+            width: 100%; background: #0d1a0d;
             border-bottom: 1px solid #1a3a1a;
-            padding: 8px 20px;
-            display: none;
+            padding: 8px 20px; display: none;
         }
         #player-hud.visible { display: flex; }
         .hud-inner {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
+            width: 100%; max-width: 800px; margin: 0 auto;
+            display: flex; align-items: center;
+            justify-content: space-between; flex-wrap: wrap; gap: 10px;
         }
         .hud-name { font-size: 1rem; font-weight: bold; color: #00ff44; }
-        .hud-name span {
-            color: #555;
-            font-size: 0.75rem;
-            font-weight: normal;
-            margin-left: 6px;
-        }
-        .hud-stats {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        .hud-name span { color: #555; font-size: 0.75rem; font-weight: normal; margin-left: 6px; }
+        .hud-stats { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
         .hud-stat { display: flex; flex-direction: column; align-items: center; }
-        .hud-stat-label {
-            font-size: 0.62rem;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .hud-stat-label { font-size: 0.62rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
         .hud-stat-value { font-size: 0.9rem; font-weight: bold; color: #fff; }
         .hud-stat-value.naira { color: #ffd700; }
         .hud-stat-value.stamina-high { color: #00ff44; }
         .hud-stat-value.stamina-mid  { color: #ffaa00; }
         .hud-stat-value.stamina-low  { color: #ff4444; }
-        .stamina-bar-wrap {
-            width: 80px; height: 6px;
-            background: #222; border-radius: 3px;
-            overflow: hidden; margin-top: 3px;
-        }
-        .stamina-bar-fill {
-            height: 100%; border-radius: 3px; transition: width 0.3s;
-        }
+        .stamina-bar-wrap { width: 80px; height: 6px; background: #222; border-radius: 3px; overflow: hidden; margin-top: 3px; }
+        .stamina-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
 
-        /* REWARD POPUP */
+        /* POPUP */
         #reward-popup {
-            position: fixed;
-            top: 80px;
-            left: 50%;
+            position: fixed; top: 80px; left: 50%;
             transform: translateX(-50%);
-            background: #0b1f0b;
-            border: 2px solid #00aa00;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: #00ff44;
-            text-align: center;
-            z-index: 999;
-            display: none;
+            background: #0b1f0b; border: 2px solid #00aa00;
+            border-radius: 10px; padding: 12px 24px;
+            font-size: 1rem; font-weight: bold; color: #00ff44;
+            text-align: center; z-index: 999; display: none;
             box-shadow: 0 4px 20px rgba(0,255,68,0.3);
         }
-        #reward-popup.penalty {
-            background: #1f0b0b;
-            border-color: #aa0000;
-            color: #ff4444;
-            box-shadow: 0 4px 20px rgba(255,0,0,0.3);
-        }
-        #reward-popup.loss {
-            background: #1a1000;
-            border-color: #554400;
-            color: #ffaa00;
-        }
+        #reward-popup.penalty { background:#1f0b0b; border-color:#aa0000; color:#ff4444; }
+        #reward-popup.loss    { background:#1a1000; border-color:#554400; color:#ffaa00; }
+        #reward-popup.stamina { background:#0a0a1f; border-color:#4444aa; color:#aaaaff; }
 
         /* PITCH */
-        #pitch-wrapper {
-            width: 95%;
-            max-width: 800px;
-            margin: 12px auto 0;
+        #pitch-wrapper { width: 95%; max-width: 800px; margin: 12px auto 0; }
+        #game-canvas { width: 100%; border: 3px solid #00aa00; border-radius: 6px; display: block; background: #1a3a1a; }
+        #controls-hint { text-align: center; font-size: 0.7rem; color: #444; margin: 4px 0 4px; }
+
+        /* IN-GAME CONTROLS */
+        #ingame-controls {
+            width: 95%; max-width: 800px;
+            display: none;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 8px;
         }
-        #game-canvas {
-            width: 100%;
-            border: 3px solid #00aa00;
+        #ingame-controls.visible { display: flex; }
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: none;
             border-radius: 6px;
-            display: block;
-            background: #1a3a1a;
+            cursor: pointer;
+            transition: all 0.15s;
         }
-        #controls-hint {
+        #shoot-btn {
+            background: #aa2200;
+            color: white;
+        }
+        #shoot-btn:hover { background: #cc3300; }
+        #shoot-btn.active { background: #ff4400; transform: scale(1.05); }
+        #pass-btn {
+            background: #005588;
+            color: white;
+        }
+        #pass-btn:hover { background: #0077aa; }
+        #pass-btn.active { background: #0099cc; transform: scale(1.05); }
+        #tackle-btn {
+            background: #334400;
+            color: white;
+        }
+        #tackle-btn:hover { background: #446600; }
+
+        /* BALL INDICATOR */
+        #ball-indicator {
             text-align: center;
-            font-size: 0.7rem;
-            color: #444;
-            margin: 4px 0 8px;
+            font-size: 0.78rem;
+            color: #555;
+            margin-bottom: 6px;
         }
+        #ball-indicator.has-ball { color: #00ff44; font-weight: bold; }
 
         /* SCOREBOARD */
         #scoreboard {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 6px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 12px;
-            width: 95%;
-            max-width: 800px;
+            background: #111; border: 1px solid #222; border-radius: 6px;
+            padding: 10px; text-align: center; margin-bottom: 12px;
+            width: 95%; max-width: 800px;
         }
-        .score-row {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
+        .score-row { display: flex; justify-content: space-around; align-items: center; }
         .team-score { font-size: 1.8rem; font-weight: bold; color: #00ff44; }
         .team-label { font-size: 0.72rem; color: #888; }
         #match-timer { font-size: 0.8rem; color: #ffaa00; margin-top: 3px; }
+        #kick-off-btn {
+            background: #00aa00; border: none; color: white;
+            padding: 8px 20px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.9rem; margin-top: 6px; display: none;
+            letter-spacing: 1px;
+        }
+        #kick-off-btn:hover { background: #008800; }
         #end-match-btn {
-            background: #aa0000;
-            border: none;
-            color: white;
-            padding: 6px 14px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.78rem;
-            margin-top: 6px;
-            display: none;
+            background: #aa0000; border: none; color: white;
+            padding: 6px 14px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.78rem; margin-top: 6px; display: none;
         }
         #end-match-btn:hover { background: #880000; }
 
+        /* STAMINA RECOVERY */
+        #stamina-panel {
+            width: 95%; max-width: 800px; background: #0a0a1a;
+            border: 1px solid #222244; border-radius: 8px;
+            padding: 15px; margin-bottom: 12px; display: none;
+        }
+        #stamina-panel.visible { display: block; }
+        #stamina-panel h3 {
+            color: #aaaaff; font-size: 0.82rem; margin-bottom: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid #222244; padding-bottom: 6px;
+        }
+        .recovery-options { display: flex; gap: 10px; flex-wrap: wrap; }
+        .recovery-card {
+            flex: 1; min-width: 150px; background: #111122;
+            border: 1px solid #333355; border-radius: 6px; padding: 12px; text-align: center;
+        }
+        .rec-name { font-size: 0.85rem; font-weight: bold; color: #fff; margin-bottom: 4px; }
+        .rec-restore { font-size: 0.75rem; color: #00ff44; margin-bottom: 4px; }
+        .rec-cost { font-size: 0.75rem; color: #ffd700; margin-bottom: 8px; }
+        .rec-cost.free { color: #888; }
+        .rec-btn {
+            width: 100%; background: #1a1a4a; border: 1px solid #444488;
+            color: #aaaaff; padding: 6px; border-radius: 4px;
+            cursor: pointer; font-size: 0.78rem; font-weight: bold; margin: 0;
+        }
+        .rec-btn:hover { background: #222266; color: #fff; }
+
         /* PANELS */
         .panel-grid {
-            width: 95%;
-            max-width: 800px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            width: 95%; max-width: 800px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 15px; margin-bottom: 20px;
         }
-        @media (max-width: 600px) {
-            .panel-grid { grid-template-columns: 1fr; }
-        }
-        .panel {
-            background: #161616;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            padding: 15px;
-        }
+        @media (max-width: 600px) { .panel-grid { grid-template-columns: 1fr; } }
+        .panel { background: #161616; border: 1px solid #2a2a2a; border-radius: 8px; padding: 15px; }
         .panel h3 {
-            color: #00ff44;
-            font-size: 0.82rem;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 6px;
+            color: #00ff44; font-size: 0.82rem; margin-bottom: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid #222; padding-bottom: 6px;
         }
         input[type="text"] {
-            width: 100%;
-            background: #0d0d0d;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 8px 10px;
-            border-radius: 5px;
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            outline: none;
+            width: 100%; background: #0d0d0d; border: 1px solid #333;
+            color: #fff; padding: 8px 10px; border-radius: 5px;
+            font-size: 0.85rem; margin-bottom: 8px; outline: none;
         }
         input[type="text"]:focus { border-color: #00aa00; }
         button {
-            background: #00aa00;
-            border: none;
-            color: white;
-            padding: 8px 14px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.82rem;
-            margin-right: 5px;
-            margin-top: 4px;
-            transition: background 0.2s;
+            background: #00aa00; border: none; color: white;
+            padding: 8px 14px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.82rem; margin-right: 5px;
+            margin-top: 4px; transition: background 0.2s;
         }
         button:hover { background: #008800; }
         button.secondary { background: #1a4a8a; }
         button.secondary:hover { background: #133a6a; }
         #invite-box {
-            background: #0b1f0b;
-            border: 1px dashed #00aa00;
-            border-radius: 5px;
-            padding: 8px;
-            font-size: 0.78rem;
-            color: #00ff44;
-            margin-top: 8px;
-            word-break: break-all;
-            display: none;
+            background: #0b1f0b; border: 1px dashed #00aa00;
+            border-radius: 5px; padding: 8px; font-size: 0.78rem;
+            color: #00ff44; margin-top: 8px; word-break: break-all; display: none;
         }
         #player-list { list-style: none; margin-top: 8px; }
         #player-list li {
-            background: #1a1a1a;
-            padding: 5px 8px;
-            border-radius: 4px;
-            margin-bottom: 4px;
-            font-size: 0.82rem;
-            border-left: 3px solid #00aa00;
+            background: #1a1a1a; padding: 5px 8px; border-radius: 4px;
+            margin-bottom: 4px; font-size: 0.82rem; border-left: 3px solid #00aa00;
         }
         #chat-log {
-            background: #0b0b0b;
-            height: 120px;
-            overflow-y: auto;
-            border: 1px solid #1a1a1a;
-            border-radius: 5px;
-            padding: 8px;
-            font-size: 0.78rem;
-            margin-bottom: 8px;
+            background: #0b0b0b; height: 120px; overflow-y: auto;
+            border: 1px solid #1a1a1a; border-radius: 5px;
+            padding: 8px; font-size: 0.78rem; margin-bottom: 8px;
         }
         #chat-log p { margin-bottom: 4px; line-height: 1.4; }
         .msg-system  { color: #888; }
@@ -275,719 +225,781 @@
         .msg-call    { color: #ff6600; }
         .msg-reward  { color: #ffd700; font-weight: bold; }
         .msg-penalty { color: #ff4444; font-weight: bold; }
+        .msg-stamina { color: #aaaaff; }
         .slang-wheel { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
         .slang-btn {
-            background: #1a1a2e;
-            border: 1px solid #333;
-            color: #aaa;
-            padding: 4px 8px;
-            font-size: 0.72rem;
-            border-radius: 20px;
-            cursor: pointer;
-            margin: 0;
+            background: #1a1a2e; border: 1px solid #333; color: #aaa;
+            padding: 4px 8px; font-size: 0.72rem; border-radius: 20px;
+            cursor: pointer; margin: 0;
         }
         .slang-btn:hover { background: #222244; color: #fff; border-color: #555; }
-
-        /* GUEST BANNER */
         #guest-banner {
-            width: 95%;
-            max-width: 800px;
-            background: #1a1000;
-            border: 1px solid #554400;
-            border-radius: 6px;
-            padding: 10px 15px;
-            font-size: 0.82rem;
-            color: #ffaa00;
-            margin-bottom: 12px;
-            display: none;
-            text-align: center;
+            width: 95%; max-width: 800px; background: #1a1000;
+            border: 1px solid #554400; border-radius: 6px; padding: 10px 15px;
+            font-size: 0.82rem; color: #ffaa00; margin-bottom: 12px;
+            display: none; text-align: center;
         }
-        #guest-banner a {
-            color: #00ff44;
-            font-weight: bold;
-            text-decoration: none;
-        }
+        #guest-banner a { color: #00ff44; font-weight: bold; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <!-- REWARD POPUP -->
-    <div id="reward-popup"></div>
+<div id="reward-popup"></div>
 
-    <!-- HEADER -->
-    <div id="header">
-        <h1>⚽ AGBA BALLER 🇳🇬</h1>
-        <div id="connection-status">● OFFLINE</div>
-        <div id="header-right">
-            <span style="font-size:0.7rem;color:#555;">
-                Phase 1 — Street Hustle MVP
-            </span>
-            <button id="logout-btn" onclick="logOut()"
-                style="display:none;">Sign Out</button>
-        </div>
+<!-- HEADER -->
+<div id="header">
+    <h1>⚽ AGBA BALLER 🇳🇬</h1>
+    <div id="connection-status">● OFFLINE</div>
+    <div id="header-right">
+        <span style="font-size:0.7rem;color:#555;">Phase 1 — Street Hustle MVP</span>
+        <button id="logout-btn" onclick="logOut()" style="display:none;">Sign Out</button>
     </div>
+</div>
 
-    <!-- PLAYER HUD -->
-    <div id="player-hud">
-        <div class="hud-inner">
-            <div>
-                <div class="hud-name">
-                    👑 <span id="hud-username">---</span>
-                    <span id="hud-location"></span>
+<!-- HUD -->
+<div id="player-hud">
+    <div class="hud-inner">
+        <div>
+            <div class="hud-name">👑 <span id="hud-username">---</span>
+                <span id="hud-location"></span>
+            </div>
+        </div>
+        <div class="hud-stats">
+            <div class="hud-stat">
+                <div class="hud-stat-label">💰 Balance</div>
+                <div class="hud-stat-value naira" id="hud-balance">₦0</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">⚡ Stamina</div>
+                <div class="hud-stat-value stamina-high" id="hud-stamina">100%</div>
+                <div class="stamina-bar-wrap">
+                    <div class="stamina-bar-fill" id="hud-stamina-bar" style="width:100%;background:#00ff44;"></div>
                 </div>
             </div>
-            <div class="hud-stats">
-                <div class="hud-stat">
-                    <div class="hud-stat-label">💰 Balance</div>
-                    <div class="hud-stat-value naira" id="hud-balance">₦0</div>
-                </div>
-                <div class="hud-stat">
-                    <div class="hud-stat-label">⚡ Stamina</div>
-                    <div class="hud-stat-value stamina-high"
-                        id="hud-stamina">100%</div>
-                    <div class="stamina-bar-wrap">
-                        <div class="stamina-bar-fill" id="hud-stamina-bar"
-                            style="width:100%;background:#00ff44;"></div>
-                    </div>
-                </div>
-                <div class="hud-stat">
-                    <div class="hud-stat-label">🏆 Respect</div>
-                    <div class="hud-stat-value" id="hud-respect">0</div>
-                </div>
-                <div class="hud-stat">
-                    <div class="hud-stat-label">💨 Speed</div>
-                    <div class="hud-stat-value" id="hud-speed">10</div>
-                </div>
-                <div class="hud-stat">
-                    <div class="hud-stat-label">🎯 Dribble</div>
-                    <div class="hud-stat-value" id="hud-dribbling">10</div>
-                </div>
-                <div class="hud-stat">
-                    <div class="hud-stat-label">🥅 Shoot</div>
-                    <div class="hud-stat-value" id="hud-shooting">10</div>
-                </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">🏆 Respect</div>
+                <div class="hud-stat-value" id="hud-respect">0</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">💨 Speed</div>
+                <div class="hud-stat-value" id="hud-speed">10</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">🎯 Dribble</div>
+                <div class="hud-stat-value" id="hud-dribbling">10</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">🥅 Shoot</div>
+                <div class="hud-stat-value" id="hud-shooting">10</div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- GUEST BANNER -->
-    <div id="guest-banner">
-        ⚠️ You are playing as a guest. Progress will NOT be saved.
-        <a href="/auth.html">Sign in or create a free account</a>
-        to save your ₦100,000 balance!
-    </div>
+<!-- GUEST BANNER -->
+<div id="guest-banner">
+    ⚠️ Playing as guest. Progress will NOT be saved.
+    <a href="/auth.html">Sign in or create a free account</a> to save your ₦100,000!
+</div>
 
-    <!-- PITCH -->
-    <div id="pitch-wrapper">
-        <canvas id="game-canvas" width="750" height="420"></canvas>
-    </div>
-    <div id="controls-hint">
-        🎮 Move: <strong>W A S D</strong> or Arrow Keys &nbsp;|&nbsp;
-        📱 Mobile: tap pitch to move
-    </div>
+<!-- PITCH -->
+<div id="pitch-wrapper">
+    <canvas id="game-canvas" width="750" height="420"></canvas>
+</div>
+<div id="controls-hint">
+    🎮 Move: <strong>W A S D</strong> or Arrow Keys &nbsp;|&nbsp;
+    🥅 <strong>F</strong> = Shoot &nbsp;|&nbsp; 🎯 <strong>G</strong> = Pass &nbsp;|&nbsp;
+    📱 Use buttons below on mobile
+</div>
 
-    <!-- SCOREBOARD -->
-    <div id="scoreboard">
-        <div class="score-row">
-            <div>
-                <div class="team-label" id="home-team-name">YOUR CREW</div>
-                <div class="team-score" id="home-score">0</div>
-            </div>
-            <div>
-                VS
-                <div id="match-timer">⏱ 00:00</div>
-                <button id="end-match-btn" onclick="endMatch()">
-                    🏁 End Match
-                </button>
-            </div>
-            <div>
-                <div class="team-label" id="away-team-name">OPPONENTS</div>
-                <div class="team-score" id="away-score">0</div>
-            </div>
+<!-- BALL INDICATOR -->
+<div id="ball-indicator">Waiting for match to start...</div>
+
+<!-- IN-GAME ACTION BUTTONS -->
+<div id="ingame-controls">
+    <button class="action-btn" id="shoot-btn" onclick="humanShoot()">🥅 SHOOT (F)</button>
+    <button class="action-btn" id="pass-btn"  onclick="humanPass()">🎯 PASS (G)</button>
+    <button class="action-btn" id="tackle-btn" onclick="humanTackle()">⚔️ TACKLE (T)</button>
+</div>
+
+<!-- SCOREBOARD -->
+<div id="scoreboard">
+    <div class="score-row">
+        <div>
+            <div class="team-label" id="home-team-name">HOME</div>
+            <div class="team-score" id="home-score">0</div>
+        </div>
+        <div>
+            VS
+            <div id="match-timer">⏱ 00:00</div>
+            <button id="kick-off-btn" onclick="kickOff()">⚽ KICK OFF!</button>
+            <button id="end-match-btn" onclick="endMatch()">🏁 End Match</button>
+        </div>
+        <div>
+            <div class="team-label" id="away-team-name">AWAY</div>
+            <div class="team-score" id="away-score">0</div>
         </div>
     </div>
+</div>
 
-    <!-- PANELS -->
-    <div class="panel-grid">
-        <div class="panel">
-            <h3>👥 Street Crew Lobby</h3>
-            <input type="text" id="username-input"
-                placeholder="Your baller name (e.g. Chukwudi)">
-            <input type="text" id="team-name-input"
-                placeholder="Your crew name (e.g. Surulere Boys)">
-            <div>
-                <button onclick="createTeam()">🏟️ Form Crew</button>
-                <button class="secondary" onclick="showJoinPanel()">
-                    🔗 Join Crew
-                </button>
-            </div>
-            <div id="join-panel" style="display:none;margin-top:10px;">
-                <input type="text" id="invite-code-input"
-                    placeholder="Enter 6-digit invite code">
-                <button onclick="joinTeam()">⚽ Join Now</button>
-            </div>
-            <div id="invite-box"></div>
-            <ul id="player-list"></ul>
+<!-- STAMINA RECOVERY -->
+<div id="stamina-panel">
+    <h3>⚡ Stamina Recovery — Rest Up Before Next Match</h3>
+    <div class="recovery-options">
+        <div class="recovery-card">
+            <div class="rec-name">😴 Rest</div>
+            <div class="rec-restore">+25% Stamina</div>
+            <div class="rec-cost free">Free</div>
+            <button class="rec-btn" onclick="recoverStamina('rest')">Rest Now</button>
         </div>
-
-        <div class="panel">
-            <h3>💬 AgbaChat — E2EE Secured</h3>
-            <div id="chat-log">
-                <p class="msg-system">
-                    🔒 E2EE Active. Server cannot read your messages.
-                </p>
-            </div>
-            <input type="text" id="msg-input"
-                placeholder="Type your message..."
-                onkeypress="if(event.key==='Enter') sendMessage()">
-            <div>
-                <button onclick="sendMessage()">Send 📤</button>
-                <button class="secondary" onclick="simulateVoiceNote()">
-                    🎙️ Voice Note
-                </button>
-                <button class="secondary" onclick="simulateCall()">
-                    📞 Call
-                </button>
-            </div>
-            <div class="slang-wheel">
-                <button class="slang-btn"
-                    onclick="sendSlang('Open legs! 🦵')">Open legs!</button>
-                <button class="slang-btn"
-                    onclick="sendSlang('Overs! ⬆️')">Overs!</button>
-                <button class="slang-btn"
-                    onclick="sendSlang('Find me! 👋')">Find me!</button>
-                <button class="slang-btn"
-                    onclick="sendSlang('E don do! 🎉')">E don do!</button>
-                <button class="slang-btn"
-                    onclick="sendSlang('Shoot am! 🥅')">Shoot am!</button>
-                <button class="slang-btn"
-                    onclick="sendSlang('My guy! 🤝')">My guy!</button>
-            </div>
+        <div class="recovery-card">
+            <div class="rec-name">🌿 Agbo</div>
+            <div class="rec-restore">+30% Stamina</div>
+            <div class="rec-cost">₦600</div>
+            <button class="rec-btn" onclick="recoverStamina('agbo')">Buy Agbo</button>
+        </div>
+        <div class="recovery-card">
+            <div class="rec-name">⚡ Energy Drink</div>
+            <div class="rec-restore">+50% Stamina</div>
+            <div class="rec-cost">₦1,300</div>
+            <button class="rec-btn" onclick="recoverStamina('energy_drink')">Buy Drink</button>
         </div>
     </div>
+</div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script>
-    // =====================================================
-    // AGBA BALLER — Phase 2C+ Own Goal Penalty System
-    // =====================================================
-    const socket = io();
-    const statusEl = document.getElementById('connection-status');
+<!-- PANELS -->
+<div class="panel-grid">
+    <div class="panel">
+        <h3>👥 Street Crew Lobby</h3>
+        <input type="text" id="username-input" placeholder="Your baller name">
+        <input type="text" id="team-name-input" placeholder="Your crew name">
+        <div>
+            <button onclick="createTeam()">🏟️ Form Crew</button>
+            <button class="secondary" onclick="showJoinPanel()">🔗 Join Crew</button>
+        </div>
+        <div id="join-panel" style="display:none;margin-top:10px;">
+            <input type="text" id="invite-code-input" placeholder="Enter 6-digit invite code">
+            <button onclick="joinTeam()">⚽ Join Now</button>
+        </div>
+        <div id="invite-box"></div>
+        <ul id="player-list"></ul>
+    </div>
 
-    let sb              = null;
-    let currentPlayer   = null;
-    let currentSession  = null;
-    let currentRoomCode = null;
-    let localBalance    = 100000;
+    <div class="panel">
+        <h3>💬 AgbaChat — E2EE Secured</h3>
+        <div id="chat-log">
+            <p class="msg-system">🔒 E2EE Active. Server cannot read your messages.</p>
+        </div>
+        <input type="text" id="msg-input" placeholder="Type your message..."
+            onkeypress="if(event.key==='Enter') sendMessage()">
+        <div>
+            <button onclick="sendMessage()">Send 📤</button>
+            <button class="secondary" onclick="simulateVoiceNote()">🎙️ Voice Note</button>
+            <button class="secondary" onclick="simulateCall()">📞 Call</button>
+        </div>
+        <div class="slang-wheel">
+            <button class="slang-btn" onclick="sendSlang('Open legs! 🦵')">Open legs!</button>
+            <button class="slang-btn" onclick="sendSlang('Overs! ⬆️')">Overs!</button>
+            <button class="slang-btn" onclick="sendSlang('Find me! 👋')">Find me!</button>
+            <button class="slang-btn" onclick="sendSlang('E don do! 🎉')">E don do!</button>
+            <button class="slang-btn" onclick="sendSlang('Shoot am! 🥅')">Shoot am!</button>
+            <button class="slang-btn" onclick="sendSlang('My guy! 🤝')">My guy!</button>
+        </div>
+    </div>
+</div>
 
-    fetch('/api/config')
-        .then(r => r.json())
-        .then(cfg => {
-            sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
-            checkLoginStatus();
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// =====================================================
+// AGBA BALLER — Real Football Engine Client
+// =====================================================
+const socket = io();
+const statusEl = document.getElementById('connection-status');
+
+let sb             = null;
+let currentPlayer  = null;
+let currentSession = null;
+let currentRoom    = null;
+let isCaptain      = false;
+let localBalance   = 100000;
+let localStamina   = 100;
+let matchStarted   = false;
+let mySocketId     = null;
+let iHaveBall      = false;
+
+// Server state
+let serverBall    = { x: 375, y: 210, isLoose: true, carrier: null };
+let serverPlayers = {};
+
+// My local position
+let myX = 375, myY = 210, myFacing = 0;
+let myIsHome = true;
+
+// Canvas
+const canvas = document.getElementById('game-canvas');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// Keys
+const keys = {};
+document.addEventListener('keydown', e => {
+    keys[e.key] = true;
+    // Action keys
+    if (e.key === 'f' || e.key === 'F') humanShoot();
+    if (e.key === 'g' || e.key === 'G') humanPass();
+    if (e.key === 't' || e.key === 'T') humanTackle();
+});
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+
+// =====================================================
+// INIT
+// =====================================================
+fetch('/api/config')
+    .then(r => r.json())
+    .then(cfg => {
+        sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+        checkLoginStatus();
+    });
+
+async function checkLoginStatus() {
+    if (!sb) return;
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+        currentSession = session;
+        document.getElementById('logout-btn').style.display = 'block';
+        await loadPlayerProfile(session.access_token);
+    } else {
+        document.getElementById('guest-banner').style.display = 'block';
+    }
+}
+
+async function loadPlayerProfile(token) {
+    try {
+        const res  = await fetch('/api/player', {
+            headers: { 'Authorization': 'Bearer ' + token }
         });
-
-    async function checkLoginStatus() {
-        if (!sb) return;
-        const { data: { session } } = await sb.auth.getSession();
-        if (session) {
-            currentSession = session;
-            document.getElementById('logout-btn').style.display = 'block';
-            await loadPlayerProfile(session.access_token);
-        } else {
-            document.getElementById('guest-banner').style.display = 'block';
+        const data = await res.json();
+        if (data.success && data.player) {
+            currentPlayer = data.player;
+            localBalance  = data.player.naira_balance;
+            localStamina  = data.player.stamina;
+            renderHUD(data.player);
+            document.getElementById('username-input').value = data.player.username;
         }
-    }
+    } catch (err) { console.error('Profile error:', err); }
+}
 
-    async function loadPlayerProfile(token) {
-        try {
-            const res = await fetch('/api/player', {
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
-            const data = await res.json();
-            if (data.success && data.player) {
-                currentPlayer = data.player;
-                localBalance  = data.player.naira_balance;
-                renderHUD(data.player);
-                document.getElementById('username-input').value =
-                    data.player.username;
-            }
-        } catch (err) {
-            console.error('Profile load error:', err);
+function renderHUD(player) {
+    document.getElementById('player-hud').classList.add('visible');
+    document.getElementById('hud-username').textContent  = player.username;
+    document.getElementById('hud-location').textContent  = player.home_state + ' • ' + player.home_lga;
+    updateBalanceDisplay(player.naira_balance);
+    updateStaminaDisplay(player.stamina);
+    document.getElementById('hud-respect').textContent   = player.respect_points || 0;
+    document.getElementById('hud-speed').textContent     = player.attr_speed || 10;
+    document.getElementById('hud-dribbling').textContent = player.attr_dribbling || 10;
+    document.getElementById('hud-shooting').textContent  = player.attr_shooting || 10;
+}
+
+function updateBalanceDisplay(amount) {
+    localBalance = amount;
+    document.getElementById('hud-balance').textContent =
+        '₦' + Number(amount).toLocaleString('en-NG');
+}
+
+function updateStaminaDisplay(stamina) {
+    localStamina = stamina;
+    const el  = document.getElementById('hud-stamina');
+    const bar = document.getElementById('hud-stamina-bar');
+    el.textContent   = stamina + '%';
+    bar.style.width  = stamina + '%';
+    if (stamina >= 70) {
+        el.className = 'hud-stat-value stamina-high';
+        bar.style.background = '#00ff44';
+    } else if (stamina >= 35) {
+        el.className = 'hud-stat-value stamina-mid';
+        bar.style.background = '#ffaa00';
+    } else {
+        el.className = 'hud-stat-value stamina-low';
+        bar.style.background = '#ff4444';
+    }
+}
+
+function showRewardPopup(message, type) {
+    const popup = document.getElementById('reward-popup');
+    popup.textContent   = message;
+    popup.className     = type === 'reward' ? '' : type;
+    popup.style.display = 'block';
+    setTimeout(() => { popup.style.display = 'none'; }, 3500);
+}
+
+async function logOut() {
+    if (sb) await sb.auth.signOut();
+    window.location.href = '/auth.html';
+}
+
+// =====================================================
+// STAMINA RECOVERY
+// =====================================================
+async function recoverStamina(method) {
+    if (!currentSession) {
+        addChatMsg('system', '⚠️ Sign in to use stamina recovery!'); return;
+    }
+    try {
+        const res  = await fetch('/api/stamina/recover', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + currentSession.access_token
+            },
+            body: JSON.stringify({ method })
+        });
+        const data = await res.json();
+        if (!data.success) {
+            showRewardPopup('⚠️ ' + data.message, 'penalty');
+            addChatMsg('system', '⚠️ ' + data.message);
+            return;
         }
-    }
-
-    function renderHUD(player) {
-        document.getElementById('player-hud').classList.add('visible');
-        document.getElementById('hud-username').textContent =
-            player.username;
-        document.getElementById('hud-location').textContent =
-            player.home_state + ' • ' + player.home_lga;
-        updateBalanceDisplay(player.naira_balance);
-
-        const stamina    = player.stamina;
-        const staminaEl  = document.getElementById('hud-stamina');
-        const staminaBar = document.getElementById('hud-stamina-bar');
-        staminaEl.textContent    = stamina + '%';
-        staminaBar.style.width   = stamina + '%';
-        if (stamina >= 70) {
-            staminaEl.className      = 'hud-stat-value stamina-high';
-            staminaBar.style.background = '#00ff44';
-        } else if (stamina >= 35) {
-            staminaEl.className      = 'hud-stat-value stamina-mid';
-            staminaBar.style.background = '#ffaa00';
-        } else {
-            staminaEl.className      = 'hud-stat-value stamina-low';
-            staminaBar.style.background = '#ff4444';
-        }
-
-        document.getElementById('hud-respect').textContent =
-            player.respect_points || 0;
-        document.getElementById('hud-speed').textContent =
-            player.attr_speed || 10;
-        document.getElementById('hud-dribbling').textContent =
-            player.attr_dribbling || 10;
-        document.getElementById('hud-shooting').textContent =
-            player.attr_shooting || 10;
-    }
-
-    function updateBalanceDisplay(amount) {
-        localBalance = amount;
-        document.getElementById('hud-balance').textContent =
-            '₦' + Number(amount).toLocaleString('en-NG');
-    }
-
-    function showRewardPopup(message, type) {
-        // type: 'reward' | 'penalty' | 'loss'
-        const popup = document.getElementById('reward-popup');
-        popup.textContent = message;
-        popup.className   = type === 'reward' ? '' : type;
-        popup.style.display = 'block';
-        setTimeout(() => { popup.style.display = 'none'; }, 3500);
-    }
-
-    async function logOut() {
-        if (sb) await sb.auth.signOut();
-        window.location.href = '/auth.html';
-    }
-
-    // =====================================================
-    // SOCKET EVENTS — NAIRA REWARDS & PENALTIES
-    // =====================================================
-    socket.on('balance_updated', (data) => {
+        updateStaminaDisplay(data.newStamina);
         updateBalanceDisplay(data.newBalance);
+        showRewardPopup('⚡ ' + data.message, 'stamina');
+        addChatMsg('stamina', '⚡ ' + data.message);
+        if (data.newStamina >= 100)
+            document.getElementById('stamina-panel').classList.remove('visible');
+    } catch (err) {
+        addChatMsg('system', '⚠️ Recovery failed. Try again.');
+    }
+}
 
-        if (data.isOwnGoal) {
-            // Own goal — red penalty popup
-            showRewardPopup(data.reason, 'penalty');
-            addChatMsg('penalty', data.reason);
-        } else if (data.reward > 0) {
-            // Proper goal or match win/draw — gold popup
-            showRewardPopup(data.reason, 'reward');
-            addChatMsg('reward', data.reason);
+// =====================================================
+// SOCKET EVENTS
+// =====================================================
+socket.on('connect', () => {
+    mySocketId = socket.id;
+    statusEl.textContent = '● LIVE';
+    statusEl.classList.add('connected');
+    addChatMsg('system', '✅ Connected to AGBA BALLER server.');
+});
+
+socket.on('disconnect', () => {
+    statusEl.textContent = '● OFFLINE';
+    statusEl.classList.remove('connected');
+});
+
+socket.on('game_tick', (data) => {
+    serverBall    = data.ball;
+    serverPlayers = data.players;
+
+    // Check if I have the ball
+    iHaveBall = data.ball.carrier === mySocketId;
+
+    // Update ball indicator
+    const indicator = document.getElementById('ball-indicator');
+    if (iHaveBall) {
+        indicator.textContent = '⚽ YOU HAVE THE BALL! Press F to Shoot, G to Pass';
+        indicator.className   = 'has-ball';
+        document.getElementById('shoot-btn').classList.add('active');
+        document.getElementById('pass-btn').classList.add('active');
+    } else {
+        const carrier = data.players[data.ball.carrier];
+        if (carrier) {
+            indicator.textContent = `⚽ ${carrier.username} has the ball`;
+            indicator.className   = '';
         } else {
-            // Loss — orange popup
-            showRewardPopup(data.reason, 'loss');
-            addChatMsg('system', data.reason);
+            indicator.textContent = data.ball.isLoose ? '⚽ Ball is loose — chase it!' : '';
+            indicator.className   = '';
         }
+        document.getElementById('shoot-btn').classList.remove('active');
+        document.getElementById('pass-btn').classList.remove('active');
+    }
+
+    // Update scores and timer
+    document.getElementById('home-score').textContent = data.homeScore;
+    document.getElementById('away-score').textContent = data.awayScore;
+
+    if (matchStarted) {
+        const totalSecs = Math.floor(data.matchSeconds / 20);
+        const m = String(Math.floor(totalSecs / 60)).padStart(2,'0');
+        const s = String(totalSecs % 60).padStart(2,'0');
+        document.getElementById('match-timer').textContent = `⏱ ${m}:${s}`;
+    }
+});
+
+socket.on('match_kicked_off', (data) => {
+    matchStarted = true;
+    addChatMsg('system', data.message);
+    addChatMsg('system', '🎮 F = Shoot | G = Pass | T = Tackle | WASD = Move');
+    document.getElementById('kick-off-btn').style.display  = 'none';
+    document.getElementById('end-match-btn').style.display = 'inline-block';
+    document.getElementById('ingame-controls').classList.add('visible');
+});
+
+socket.on('balance_updated', (data) => {
+    updateBalanceDisplay(data.newBalance);
+    if (data.isOwnGoal) {
+        showRewardPopup(data.reason, 'penalty');
+        addChatMsg('penalty', data.reason);
+    } else if (data.reward > 0) {
+        showRewardPopup(data.reason, 'reward');
+        addChatMsg('reward', data.reason);
+    } else {
+        showRewardPopup(data.reason, 'loss');
+        addChatMsg('system', data.reason);
+    }
+});
+
+socket.on('stamina_drained', (data) => {
+    updateStaminaDisplay(data.newStamina);
+    showRewardPopup(data.message, 'stamina');
+    addChatMsg('stamina', data.message);
+    document.getElementById('stamina-panel').classList.add('visible');
+});
+
+socket.on('score_updated', (data) => {
+    const tag = data.isOwnGoal ? ' (OWN GOAL 😬)' : '';
+    addChatMsg('system',
+        `🥅 ${data.isOwnGoal ? 'OWN GOAL' : 'GOAL'} by ${data.scorerName}${tag}! ${data.homeScore} - ${data.awayScore}`
+    );
+});
+
+socket.on('match_result', (data) => {
+    const msg = data.isDraw
+        ? `🤝 DRAW! Final: ${data.homeScore} - ${data.awayScore}`
+        : data.homeWon
+        ? `🏆 HOME TEAM WINS! ${data.homeScore} - ${data.awayScore}`
+        : `🏆 AWAY TEAM WINS! ${data.homeScore} - ${data.awayScore}`;
+    addChatMsg('system', msg);
+    document.getElementById('end-match-btn').style.display = 'none';
+    document.getElementById('ingame-controls').classList.remove('visible');
+    matchStarted = false;
+});
+
+socket.on('player_joined', (data) => {
+    updatePlayerList(data.players);
+    addChatMsg('system', `⚽ ${data.username} joined! (${data.players.filter(p=>!p.isAI).length} humans)`);
+});
+
+socket.on('team_created', (data) => {
+    currentRoom = data.inviteCode;
+    isCaptain   = true;
+    document.getElementById('home-team-name').textContent = data.teamName;
+    const inviteBox = document.getElementById('invite-box');
+    inviteBox.style.display = 'block';
+    inviteBox.innerHTML = `
+        <strong>🔗 Share this code with your crew:</strong><br>
+        <span style="font-size:1.4rem;letter-spacing:3px;">${data.inviteCode}</span><br>
+        <small style="color:#666;">WhatsApp: "Join my AGBA BALLER crew! Code: ${data.inviteCode}"</small>`;
+    updatePlayerList(data.players);
+    addChatMsg('system', `🏟️ Crew "${data.teamName}" created! You are the Captain.`);
+    addChatMsg('system', `⚽ Share the code then click KICK OFF when ready!`);
+    document.getElementById('kick-off-btn').style.display = 'inline-block';
+});
+
+socket.on('error_message', (data) => {
+    addChatMsg('system', `⚠️ ${data.msg}`);
+});
+
+// =====================================================
+// CANVAS RENDER LOOP
+// =====================================================
+function drawPitch() {
+    // Grass
+    ctx.fillStyle = '#1e4d1e';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grass stripes
+    ctx.fillStyle = 'rgba(0,0,0,0.06)';
+    for (let i = 0; i < W; i += 60) {
+        ctx.fillRect(i, 0, 30, H);
+    }
+
+    // Lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(20, 20, W-40, H-40);
+    ctx.beginPath(); ctx.moveTo(W/2,20); ctx.lineTo(W/2,H-20); ctx.stroke();
+    ctx.beginPath(); ctx.arc(W/2,H/2,55,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fill();
+
+    // Penalty boxes
+    ctx.strokeRect(20,H/2-70,90,140);
+    ctx.strokeRect(W-110,H/2-70,90,140);
+
+    // Penalty spots
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.beginPath(); ctx.arc(80, H/2, 3, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(W-80, H/2, 3, 0, Math.PI*2); ctx.fill();
+
+    // Monkey Posts — Left (Master Document: wooden posts)
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(12, H/2-35, 8, 70);
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(12, H/2-37, 8, 5);
+    ctx.fillRect(12, H/2+32, 8, 5);
+    // Net lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    for (let ny = H/2-35; ny < H/2+35; ny += 8) {
+        ctx.beginPath(); ctx.moveTo(5, ny); ctx.lineTo(20, ny); ctx.stroke();
+    }
+
+    // Monkey Posts — Right
+    ctx.fillStyle = '#8B4513';
+    ctx.fillRect(W-20, H/2-35, 8, 70);
+    ctx.fillStyle = '#A0522D';
+    ctx.fillRect(W-20, H/2-37, 8, 5);
+    ctx.fillRect(W-20, H/2+32, 8, 5);
+    for (let ny = H/2-35; ny < H/2+35; ny += 8) {
+        ctx.beginPath(); ctx.moveTo(W-20, ny); ctx.lineTo(W-5, ny); ctx.stroke();
+    }
+}
+
+function drawBall(b) {
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(b.x+3, b.y+5, 9, 4, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Ball
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(b.x, b.y, 9, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = '#222'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Panels
+    ctx.strokeStyle = '#888'; ctx.lineWidth = 0.8;
+    ctx.beginPath(); ctx.arc(b.x, b.y, 4.5, 0, Math.PI*2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(b.x - 4, b.y - 7);
+    ctx.lineTo(b.x + 4, b.y - 7);
+    ctx.stroke();
+}
+
+function drawPlayer(p, isMe) {
+    const r = 14;
+    // Colour: home = green bib, away = yellow bib (Master Document: nylon pinnies)
+    const bibColor = p.isHome ? '#00cc44' : '#ffcc00';
+    const aiColor  = p.isHome ? '#005522' : '#887700';
+    const color    = p.isAI ? aiColor : bibColor;
+
+    // Shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.beginPath();
+    ctx.ellipse(p.x+2, p.y+r+3, r*0.7, r*0.3, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Body (bib)
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
+
+    // Highlight ring for ball carrier
+    if (p.hasBall) {
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth   = 3;
+        ctx.beginPath(); ctx.arc(p.x, p.y, r + 4, 0, Math.PI*2); ctx.stroke();
+        // Pulsing ring
+        ctx.strokeStyle = 'rgba(255,255,100,0.5)';
+        ctx.lineWidth   = 2;
+        ctx.beginPath(); ctx.arc(p.x, p.y, r + 8, 0, Math.PI*2); ctx.stroke();
+    }
+
+    // Border
+    ctx.strokeStyle = isMe ? '#ffffff' : 'rgba(0,0,0,0.5)';
+    ctx.lineWidth   = isMe ? 2.5 : 1.5;
+    ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.stroke();
+
+    // Name tag
+    ctx.fillStyle    = p.isAI ? '#aaa' : '#fff';
+    ctx.font         = 'bold 9px Arial';
+    ctx.textAlign    = 'center';
+    const label      = (p.username||'').length > 8
+        ? p.username.substring(0,7) + '.' : p.username;
+    ctx.fillText(label, p.x, p.y - r - 4);
+
+    // YOU tag
+    if (isMe) {
+        ctx.fillStyle = '#00ff44';
+        ctx.font      = 'bold 8px Arial';
+        ctx.fillText('YOU', p.x, p.y + 4);
+    }
+
+    // Role tag for AI
+    if (p.isAI) {
+        ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        ctx.font      = '7px Arial';
+        ctx.fillText(p.role || '', p.x, p.y + 4);
+    }
+
+    // Stamina bar under feet
+    if (!p.isAI) {
+        const stamPct = (p.stamina || 100) / 100;
+        const bw      = 28;
+        const bx      = p.x - bw/2;
+        const by      = p.y + r + 5;
+        ctx.fillStyle = '#111';
+        ctx.fillRect(bx, by, bw, 3);
+        ctx.fillStyle = stamPct > 0.5 ? '#00ff44' : stamPct > 0.2 ? '#ffaa00' : '#ff4444';
+        ctx.fillRect(bx, by, bw * stamPct, 3);
+    }
+}
+
+function getMySpeed() {
+    if (localStamina >= 35) return 3;
+    if (localStamina >= 10) return 2;
+    return 1;
+}
+
+function renderLoop() {
+    ctx.clearRect(0, 0, W, H);
+    drawPitch();
+
+    // Process WASD input and send to server
+    if (matchStarted && mySocketId) {
+        const spd = getMySpeed();
+        let moved = false;
+        if (keys['w']||keys['W']||keys['ArrowUp'])    { myY -= spd; moved = true; }
+        if (keys['s']||keys['S']||keys['ArrowDown'])  { myY += spd; moved = true; }
+        if (keys['a']||keys['A']||keys['ArrowLeft'])  { myX -= spd; moved = true; }
+        if (keys['d']||keys['D']||keys['ArrowRight']) { myX += spd; moved = true; }
+
+        myX = Math.max(28, Math.min(W-28, myX));
+        myY = Math.max(28, Math.min(H-28, myY));
+
+        if (moved) {
+            socket.emit('player_move', { x: myX, y: myY });
+        }
+    }
+
+    // Draw all server players
+    for (const id in serverPlayers) {
+        const p    = serverPlayers[id];
+        const isMe = id === mySocketId;
+        // Use my local position for smoother feel
+        if (isMe) {
+            drawPlayer({ ...p, x: myX, y: myY }, true);
+        } else {
+            drawPlayer(p, false);
+        }
+    }
+
+    // Draw ball
+    drawBall(serverBall);
+
+    requestAnimationFrame(renderLoop);
+}
+
+renderLoop();
+
+// =====================================================
+// HUMAN ACTIONS
+// =====================================================
+function humanShoot() {
+    if (!iHaveBall || !matchStarted) return;
+    socket.emit('player_shoot', {});
+    addChatMsg('system', '🥅 Shot!');
+}
+
+function humanPass() {
+    if (!iHaveBall || !matchStarted) return;
+    socket.emit('player_pass', {});
+    addChatMsg('system', '🎯 Pass played!');
+}
+
+function humanTackle() {
+    if (!matchStarted || iHaveBall) return;
+    // Move aggressively toward ball carrier
+    const carrier = Object.values(serverPlayers).find(p =>
+        serverBall.carrier === p.socketId || p.hasBall
+    );
+    if (carrier) {
+        socket.emit('player_move', { x: carrier.x, y: carrier.y });
+    }
+    addChatMsg('system', '⚔️ Tackle attempt!');
+}
+
+// =====================================================
+// LOBBY
+// =====================================================
+function createTeam() {
+    const username = currentPlayer
+        ? currentPlayer.username
+        : document.getElementById('username-input').value.trim();
+    const teamName = document.getElementById('team-name-input').value.trim();
+    if (!username || !teamName) { alert('Enter baller name AND crew name!'); return; }
+    myX = 562; myY = H/2; myIsHome = true; // Home ATT position
+    socket.emit('create_street_team', {
+        username, teamName,
+        userId:       currentSession ? currentSession.user.id : null,
+        nairaBalance: localBalance,
+        stamina:      localStamina
     });
+}
 
-    socket.on('score_updated', (data) => {
-        document.getElementById('home-score').textContent = data.homeScore;
-        document.getElementById('away-score').textContent = data.awayScore;
+function showJoinPanel() {
+    const jp = document.getElementById('join-panel');
+    jp.style.display = jp.style.display === 'none' ? 'block' : 'none';
+}
 
-        const ownGoalTag = data.isOwnGoal ? ' (OWN GOAL 😬)' : '';
-        addChatMsg('system',
-            `🥅 ${data.isOwnGoal ? 'OWN GOAL' : 'GOAL'} by ${data.scorerName}${ownGoalTag}! Score: ${data.homeScore} - ${data.awayScore}`
-        );
+function joinTeam() {
+    const username = currentPlayer
+        ? currentPlayer.username
+        : document.getElementById('username-input').value.trim();
+    const code = document.getElementById('invite-code-input').value.trim().toUpperCase();
+    if (!username || !code) { alert('Enter baller name AND invite code!'); return; }
+    myX = W-187; myY = H/2; myIsHome = false; // Away ATT position
+    currentRoom = code;
+    socket.emit('join_street_team', {
+        username, inviteCode: code,
+        userId:       currentSession ? currentSession.user.id : null,
+        nairaBalance: localBalance,
+        stamina:      localStamina
     });
+}
 
-    socket.on('match_result', (data) => {
-        const msg = data.isDraw
-            ? `🤝 DRAW! Final score: ${data.homeScore} - ${data.awayScore}`
-            : data.homeWon
-            ? `🏆 HOME TEAM WINS! ${data.homeScore} - ${data.awayScore}`
-            : `🏆 AWAY TEAM WINS! ${data.homeScore} - ${data.awayScore}`;
-        addChatMsg('system', msg);
-        document.getElementById('end-match-btn').style.display = 'none';
-    });
+function kickOff() {
+    if (!currentRoom || !isCaptain) return;
+    socket.emit('kick_off', { roomCode: currentRoom });
+    addChatMsg('system', '🎺 Whistle! Match starting...');
+}
 
-    // =====================================================
-    // CONNECTION
-    // =====================================================
-    socket.on('connect', () => {
-        statusEl.textContent = '● LIVE';
-        statusEl.classList.add('connected');
-        addChatMsg('system', '✅ Connected to AGBA BALLER server.');
-    });
-    socket.on('disconnect', () => {
-        statusEl.textContent = '● OFFLINE';
-        statusEl.classList.remove('connected');
-    });
+function endMatch() {
+    if (!currentRoom) return;
+    socket.emit('match_ended', { roomCode: currentRoom });
+    document.getElementById('end-match-btn').style.display = 'none';
+    addChatMsg('system', '🏁 Match ended! Calculating rewards...');
+}
 
-    // =====================================================
-    // CANVAS SETUP
-    // =====================================================
-    const canvas = document.getElementById('game-canvas');
-    const ctx    = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
+function updatePlayerList(players) {
+    document.getElementById('player-list').innerHTML =
+        players.filter(p => !p.isAI).map(p =>
+            `<li>${p.role==='ATT'?'👑':'⚽'} ${p.username}
+            <span style="color:#555;font-size:0.7rem;">${p.role}</span></li>`
+        ).join('');
+}
 
-    let myPlayer   = null;
-    const pitchPlayers = {};
-
-    const ball = {
-        x: W/2, y: H/2,
-        radius: 9, vx: 0, vy: 0, friction: 0.97
-    };
-
-    let homeScore = 0, awayScore = 0;
-    let matchSeconds = 0, timerInterval = null;
-
-    // Track who last touched the ball and which side they play
-    let lastToucherSocketId = null;
-    let lastToucherIsHome   = null;
-
-    const keys = {};
-    document.addEventListener('keydown', e => { keys[e.key] = true; });
-    document.addEventListener('keyup',   e => { keys[e.key] = false; });
-
-    // =====================================================
-    // DRAW FUNCTIONS
-    // =====================================================
-    function drawPitch() {
-        ctx.fillStyle = '#1e4d1e';
-        ctx.fillRect(0, 0, W, H);
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(20, 20, W-40, H-40);
-        ctx.beginPath(); ctx.moveTo(W/2,20); ctx.lineTo(W/2,H-20); ctx.stroke();
-        ctx.beginPath(); ctx.arc(W/2,H/2,55,0,Math.PI*2); ctx.stroke();
-        ctx.fillStyle = 'rgba(255,255,255,0.6)';
-        ctx.beginPath(); ctx.arc(W/2,H/2,4,0,Math.PI*2); ctx.fill();
-        ctx.strokeRect(20, H/2-70, 90, 140);
-        ctx.strokeRect(W-110, H/2-70, 90, 140);
-        // Monkey Posts L
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(12, H/2-35, 8, 70);
-        ctx.fillStyle = '#A0522D';
-        ctx.fillRect(12, H/2-37, 8, 4);
-        ctx.fillRect(12, H/2+33, 8, 4);
-        // Monkey Posts R
-        ctx.fillStyle = '#8B4513';
-        ctx.fillRect(W-20, H/2-35, 8, 70);
-        ctx.fillStyle = '#A0522D';
-        ctx.fillRect(W-20, H/2-37, 8, 4);
-        ctx.fillRect(W-20, H/2+33, 8, 4);
-    }
-
-    function drawBall() {
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        ctx.beginPath();
-        ctx.ellipse(ball.x+3, ball.y+4, ball.radius, ball.radius*0.5,
-            0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI*2);
-        ctx.fill();
-        ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.stroke();
-        ctx.strokeStyle = '#aaa'; ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.radius*0.5, 0, Math.PI*2);
-        ctx.stroke();
-    }
-
-    function drawPlayer(p) {
-        const color = p.isHome ? '#00cc44' : '#ffcc00';
-        const r = 14;
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
-        ctx.beginPath();
-        ctx.ellipse(p.x+2, p.y+r+2, r*0.7, r*0.3, 0, 0, Math.PI*2);
-        ctx.fill();
-        ctx.fillStyle = color;
-        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2); ctx.fill();
-        ctx.strokeStyle = p.isMe ? '#ffffff' : 'rgba(0,0,0,0.4)';
-        ctx.lineWidth = p.isMe ? 2.5 : 1.5;
-        ctx.stroke();
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 9px Arial';
-        ctx.textAlign = 'center';
-        const label = p.username.length > 8
-            ? p.username.substring(0,7)+'.' : p.username;
-        ctx.fillText(label, p.x, p.y-r-4);
-        if (p.isMe) {
-            ctx.fillStyle = '#00ff44';
-            ctx.font = 'bold 8px Arial';
-            ctx.fillText('YOU', p.x, p.y+4);
-        }
-    }
-
-    // =====================================================
-    // GAME LOOP
-    // =====================================================
-    function gameLoop() {
-        ctx.clearRect(0, 0, W, H);
-        drawPitch();
-
-        if (myPlayer) {
-            const speed = 3;
-            if (keys['w']||keys['W']||keys['ArrowUp'])    myPlayer.y -= speed;
-            if (keys['s']||keys['S']||keys['ArrowDown'])  myPlayer.y += speed;
-            if (keys['a']||keys['A']||keys['ArrowLeft'])  myPlayer.x -= speed;
-            if (keys['d']||keys['D']||keys['ArrowRight']) myPlayer.x += speed;
-
-            myPlayer.x = Math.max(28, Math.min(W-28, myPlayer.x));
-            myPlayer.y = Math.max(28, Math.min(H-28, myPlayer.y));
-
-            const dx   = myPlayer.x - ball.x;
-            const dy   = myPlayer.y - ball.y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-
-            if (dist < 14 + ball.radius) {
-                const angle = Math.atan2(ball.y-myPlayer.y, ball.x-myPlayer.x);
-                ball.vx = Math.cos(angle) * 6;
-                ball.vy = Math.sin(angle) * 6;
-                // Record who last touched it and which side they play
-                lastToucherSocketId = socket.id;
-                lastToucherIsHome   = myPlayer.isHome;
-            }
-
-            socket.emit('player_move', {
-                x: myPlayer.x, y: myPlayer.y,
-                username: myPlayer.username,
-                isHome: myPlayer.isHome
-            });
-            pitchPlayers[socket.id] = myPlayer;
-        }
-
-        // Move ball
-        ball.x += ball.vx; ball.y += ball.vy;
-        ball.vx *= ball.friction; ball.vy *= ball.friction;
-
-        // Wall bouncing
-        if (ball.x-ball.radius < 20) {
-            ball.x = 20+ball.radius; ball.vx *= -0.7;
-        }
-        if (ball.x+ball.radius > W-20) {
-            ball.x = W-20-ball.radius; ball.vx *= -0.7;
-        }
-        if (ball.y-ball.radius < 20) {
-            ball.y = 20+ball.radius; ball.vy *= -0.7;
-        }
-        if (ball.y+ball.radius > H-20) {
-            ball.y = H-20-ball.radius; ball.vy *= -0.7;
-        }
-
-        // ── LEFT GOAL (Away scores here normally) ──
-        if (ball.x-ball.radius <= 20 &&
-            ball.y > H/2-35 && ball.y < H/2+35) {
-
-            // Left goal scored — who gets it?
-            // Home team attacks RIGHT so left goal = own goal for home
-            // Away team attacks LEFT so left goal = proper goal for away
-            const isOwnGoal = lastToucherIsHome === true;
-
-            awayScore++;
-            document.getElementById('away-score').textContent = awayScore;
-
-            if (currentRoomCode) {
-                socket.emit('goal_scored', {
-                    roomCode:        currentRoomCode,
-                    scorerSocketId:  lastToucherSocketId || socket.id,
-                    isHomeGoal:      false,
-                    isOwnGoal:       isOwnGoal
-                });
-            }
-            resetBall();
-        }
-
-        // ── RIGHT GOAL (Home scores here normally) ──
-        if (ball.x+ball.radius >= W-20 &&
-            ball.y > H/2-35 && ball.y < H/2+35) {
-
-            // Right goal scored
-            // Away team attacks LEFT so right goal = own goal for away
-            // Home team attacks RIGHT so right goal = proper goal for home
-            const isOwnGoal = lastToucherIsHome === false;
-
-            homeScore++;
-            document.getElementById('home-score').textContent = homeScore;
-
-            if (currentRoomCode) {
-                socket.emit('goal_scored', {
-                    roomCode:        currentRoomCode,
-                    scorerSocketId:  lastToucherSocketId || socket.id,
-                    isHomeGoal:      true,
-                    isOwnGoal:       isOwnGoal
-                });
-            }
-            resetBall();
-        }
-
-        for (const id in pitchPlayers) drawPlayer(pitchPlayers[id]);
-        drawBall();
-        requestAnimationFrame(gameLoop);
-    }
-
-    function resetBall() {
-        ball.x = W/2; ball.y = H/2;
-        ball.vx = 0;  ball.vy = 0;
-        lastToucherSocketId = null;
-        lastToucherIsHome   = null;
-    }
-
-    gameLoop();
-
-    // =====================================================
-    // MATCH TIMER
-    // =====================================================
-    function startMatchTimer() {
-        if (timerInterval) return;
-        document.getElementById('end-match-btn').style.display = 'inline-block';
-        timerInterval = setInterval(() => {
-            matchSeconds++;
-            const m = String(Math.floor(matchSeconds/60)).padStart(2,'0');
-            const s = String(matchSeconds%60).padStart(2,'0');
-            document.getElementById('match-timer').textContent =
-                `⏱ ${m}:${s}`;
-        }, 1000);
-    }
-
-    function endMatch() {
-        if (!currentRoomCode) return;
-        clearInterval(timerInterval);
-        socket.emit('match_ended', { roomCode: currentRoomCode });
-        document.getElementById('end-match-btn').style.display = 'none';
-        addChatMsg('system', '🏁 Match ended! Calculating rewards...');
-    }
-
-    // =====================================================
-    // RECEIVE OTHER PLAYERS' POSITIONS
-    // =====================================================
-    socket.on('player_positions', (players) => {
-        for (const id in players) {
-            if (id === socket.id) continue;
-            pitchPlayers[id] = { ...players[id], isMe: false };
-        }
-        for (const id in pitchPlayers) {
-            if (!players[id] && id !== socket.id) delete pitchPlayers[id];
-        }
-    });
-
-    // =====================================================
-    // LOBBY FUNCTIONS
-    // =====================================================
-    function createTeam() {
-        const username = currentPlayer
-            ? currentPlayer.username
-            : document.getElementById('username-input').value.trim();
-        const teamName =
-            document.getElementById('team-name-input').value.trim();
-        if (!username || !teamName) {
-            alert('Enter baller name AND crew name!'); return;
-        }
-        myPlayer = { x:200, y:H/2, username, isHome:true, isMe:true };
-        pitchPlayers[socket.id] = myPlayer;
-        socket.emit('create_street_team', {
-            username, teamName,
-            userId:       currentSession ? currentSession.user.id : null,
-            nairaBalance: localBalance
-        });
-        startMatchTimer();
-    }
-
-    function showJoinPanel() {
-        const jp = document.getElementById('join-panel');
-        jp.style.display = jp.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function joinTeam() {
-        const username = currentPlayer
-            ? currentPlayer.username
-            : document.getElementById('username-input').value.trim();
-        const code = document.getElementById('invite-code-input')
-            .value.trim().toUpperCase();
-        if (!username || !code) {
-            alert('Enter baller name AND invite code!'); return;
-        }
-        myPlayer = { x:W-200, y:H/2, username, isHome:false, isMe:true };
-        pitchPlayers[socket.id] = myPlayer;
-        socket.emit('join_street_team', {
-            username, inviteCode: code,
-            userId:       currentSession ? currentSession.user.id : null,
-            nairaBalance: localBalance
-        });
-        startMatchTimer();
-    }
-
-    socket.on('team_created', (data) => {
-        currentRoomCode = data.inviteCode;
-        document.getElementById('home-team-name').textContent = data.teamName;
-        const inviteBox = document.getElementById('invite-box');
-        inviteBox.style.display = 'block';
-        inviteBox.innerHTML = `
-            <strong>🔗 Share this code with your crew:</strong><br>
-            <span style="font-size:1.4rem;letter-spacing:3px;">
-                ${data.inviteCode}
-            </span><br>
-            <small style="color:#666;">
-                WhatsApp: "Join my AGBA BALLER crew! Code: ${data.inviteCode}"
-            </small>`;
-        updatePlayerList(data.players);
-        addChatMsg('system',
-            `🏟️ Crew "${data.teamName}" created! You are the Captain.`);
-    });
-
-    socket.on('player_joined', (data) => {
-        if (!currentRoomCode) currentRoomCode = data.inviteCode;
-        updatePlayerList(data.players);
-        addChatMsg('system',
-            `⚽ ${data.username} joined! (${data.players.length}/5)`);
-    });
-
-    socket.on('error_message', (data) => {
-        addChatMsg('system', `⚠️ ${data.msg}`);
-    });
-
-    function updatePlayerList(players) {
-        document.getElementById('player-list').innerHTML =
-            players.map(p =>
-                `<li>${p.role==='Captain'?'👑':'⚽'} ${p.username}
-                <span style="color:#555;font-size:0.7rem;">
-                    ${p.role}
-                </span></li>`
-            ).join('');
-    }
-
-    // =====================================================
-    // CHAT FUNCTIONS
-    // =====================================================
-    function sendMessage() {
-        const input = document.getElementById('msg-input');
-        const txt = input.value.trim();
-        if (!txt) return;
-        addChatMsg('sent', `[🔒 Encrypted & Sent]: ${txt}`);
-        input.value = '';
-    }
-    function sendSlang(phrase) {
-        addChatMsg('sent', `[Quick Slang]: ${phrase}`);
-    }
-    function simulateVoiceNote() {
-        addChatMsg('sent', '[🎙️ Voice Note]: Audio packet encrypted and sent.');
-    }
-    function simulateCall() {
-        addChatMsg('call',
-            '[📞 WebRTC]: Opening peer-to-peer audio tunnel... Connected!');
-    }
-    function addChatMsg(type, text) {
-        const log = document.getElementById('chat-log');
-        const p   = document.createElement('p');
-        p.className   = `msg-${type}`;
-        p.textContent = text;
-        log.appendChild(p);
-        log.scrollTop = log.scrollHeight;
-    }
-    </script>
+// =====================================================
+// CHAT
+// =====================================================
+function sendMessage() {
+    const input = document.getElementById('msg-input');
+    const txt = input.value.trim();
+    if (!txt) return;
+    addChatMsg('sent', `[🔒 Encrypted & Sent]: ${txt}`);
+    input.value = '';
+}
+function sendSlang(phrase)   { addChatMsg('sent', `[Quick Slang]: ${phrase}`); }
+function simulateVoiceNote() { addChatMsg('sent', '[🎙️ Voice Note]: Audio encrypted and sent.'); }
+function simulateCall()      { addChatMsg('call', '[📞 WebRTC]: Peer-to-peer tunnel... Connected!'); }
+function addChatMsg(type, text) {
+    const log = document.getElementById('chat-log');
+    const p   = document.createElement('p');
+    p.className   = `msg-${type}`;
+    p.textContent = text;
+    log.appendChild(p);
+    log.scrollTop = log.scrollHeight;
+}
+</script>
 </body>
 </html>
