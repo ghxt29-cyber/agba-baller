@@ -1116,6 +1116,409 @@ io.on('connection', (socket) => {
         }
     });
 });
+// ============================================
+// MARKETPLACE API
+// ============================================
+
+// Market config
+const MARKET_CONFIG = {
+    BASIC_STALL_RENT:   15000,
+    PREMIUM_STALL_RENT: 25000,
+    HAGGLE_MIN_PCT:     0.70,  // vendor won't go below 70% of asking price
+    HAGGLE_MAX_ROUNDS:  3      // max haggle rounds per transaction
+};
+
+// Government stalls — always stocked, fixed base prices
+const GOV_STALLS = [
+    {
+        id:          'gov_001',
+        stallNumber: 'A1',
+        type:        'government',
+        vendorName:  'Mama Chidinma',
+        stallName:   "Mama Chidinma's Agbo Spot",
+        category:    'Health & Stamina',
+        personality: 'warm',
+        greeting:    'My pikin! You don come. Wetin you need today?',
+        items: [
+            { id: 'agbo',         name: 'Agbo (Herbal Remedy)', price: 600,  stock: 999, effect: 'stamina+30',  description: 'Local herbs. Restore 30% stamina.' },
+            { id: 'agbo_strong',  name: 'Strong Agbo',          price: 1100, stock: 999, effect: 'stamina+55',  description: 'Extra strong batch. Restore 55% stamina.' },
+            { id: 'cold_water',   name: 'Pure Water (Sachet)',   price: 100,  stock: 999, effect: 'stamina+5',   description: 'Quick hydration. +5% stamina.' }
+        ]
+    },
+    {
+        id:          'gov_002',
+        stallNumber: 'A2',
+        type:        'government',
+        vendorName:  'Chukwudi',
+        stallName:   "Chukwudi's Energy Kiosk",
+        category:    'Energy Drinks',
+        personality: 'hype',
+        greeting:    'Guy! You don come to the right place. I get the best energy drink for Lagos!',
+        items: [
+            { id: 'energy_drink',  name: 'Energy Drink (Power Horse)', price: 1300, stock: 999, effect: 'stamina+50', description: 'Imported energy. Restore 50% stamina.' },
+            { id: 'malt_drink',    name: 'Maltina',                    price: 400,  stock: 999, effect: 'stamina+15', description: 'Sweet malt. +15% stamina.' },
+            { id: 'lucozade',      name: 'Lucozade Sport',             price: 800,  stock: 999, effect: 'stamina+25', description: 'Sport drink. +25% stamina.' }
+        ]
+    },
+    {
+        id:          'gov_003',
+        stallNumber: 'B1',
+        type:        'government',
+        vendorName:  'Mama Tunde',
+        stallName:   "Mama Tunde's Buka",
+        category:    'Food',
+        personality: 'motherly',
+        greeting:    'Oya come and chop! Food don ready. You go play better when your belle full.',
+        items: [
+            { id: 'jollof_rice',   name: 'Jollof Rice + Chicken',  price: 1800, stock: 50, effect: 'stamina+40,health', description: 'Full meal. +40% stamina and health boost.' },
+            { id: 'eba_egusi',     name: 'Eba + Egusi Soup',       price: 1500, stock: 50, effect: 'stamina+35',        description: 'Heavy local meal. +35% stamina.' },
+            { id: 'suya',          name: 'Suya (5 sticks)',         price: 1000, stock: 80, effect: 'stamina+20',        description: 'Spiced grilled meat. +20% stamina.' },
+            { id: 'pure_water_x3', name: 'Pure Water x3',           price: 250,  stock: 999, effect: 'stamina+10',       description: 'Stay hydrated. +10% stamina.' }
+        ]
+    },
+    {
+        id:          'gov_004',
+        stallNumber: 'B2',
+        type:        'government',
+        vendorName:  'Emeka Shoe',
+        stallName:   "Emeka's Aba Footwear",
+        category:    'Football Boots',
+        personality: 'salesman',
+        greeting:    'Oga! See fine boots! Aba made, quality guaranteed. Your speed go increase!',
+        items: [
+            { id: 'canvas_boots',  name: 'Canvas Boots (Aba Made)',   price: 8000,  stock: 20, effect: 'speed+5',  description: '+5 Speed attribute. Durable street boots.' },
+            { id: 'leather_boots', name: 'Leather Football Boots',    price: 18000, stock: 10, effect: 'speed+12', description: '+12 Speed attribute. Premium quality.' },
+            { id: 'slides',        name: 'Slides (Street Special)',    price: 3000,  stock: 30, effect: 'speed+2',  description: '+2 Speed. The street classic.' }
+        ]
+    },
+    {
+        id:          'gov_005',
+        stallNumber: 'C1',
+        type:        'government',
+        vendorName:  'Tailor Biodun',
+        stallName:   "Biodun's Jersey Stall",
+        category:    'Jerseys & Kits',
+        personality: 'creative',
+        greeting:    'Ah-ah! You still dey wear that bib? Come make I dress you proper for the street!',
+        items: [
+            { id: 'basic_jersey',    name: 'Basic Custom Jersey',      price: 5000,  stock: 30, effect: 'kit:CustomJersey', description: 'Upgrade from bib to custom jersey.' },
+            { id: 'premium_jersey',  name: 'Premium Jersey + Name',    price: 12000, stock: 15, effect: 'kit:CustomJersey+name', description: 'Premium jersey with your name on back.' },
+            { id: 'full_kit',        name: 'Full Kit (Jersey+Shorts)',  price: 20000, stock: 10, effect: 'kit:FullKit', description: 'Complete matching kit. Full respect.' }
+        ]
+    },
+    {
+        id:          'gov_006',
+        stallNumber: 'C2',
+        type:        'government',
+        vendorName:  'Pharmacist Ngozi',
+        stallName:   "Ngozi's Street Chemist",
+        category:    'Medical',
+        personality: 'professional',
+        greeting:    'Good day. How can I help you? We have medication for all football injuries.',
+        items: [
+            { id: 'pain_relief',   name: 'Pain Relief Tablet',    price: 500,  stock: 100, effect: 'health:Healthy',   description: 'Clears minor injuries. Back to Healthy.' },
+            { id: 'muscle_rub',    name: 'Deep Heat Muscle Rub',  price: 1200, stock: 50,  effect: 'stamina+10,health', description: 'Eases muscle pain. +10% stamina.' },
+            { id: 'glucose',       name: 'Glucose Drink',         price: 800,  stock: 80,  effect: 'stamina+20',        description: 'Quick energy boost. +20% stamina.' }
+        ]
+    }
+];
+
+// In-memory player stalls (rented by real players)
+const playerStalls = {};
+
+// Available rental spots
+const RENTAL_SPOTS = [
+    { id: 'rent_D1', stallNumber: 'D1', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT },
+    { id: 'rent_D2', stallNumber: 'D2', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT },
+    { id: 'rent_D3', stallNumber: 'D3', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT },
+    { id: 'rent_E1', stallNumber: 'E1', type: 'premium', monthlyRent: MARKET_CONFIG.PREMIUM_STALL_RENT },
+    { id: 'rent_E2', stallNumber: 'E2', type: 'premium', monthlyRent: MARKET_CONFIG.PREMIUM_STALL_RENT },
+    { id: 'rent_F1', stallNumber: 'F1', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT },
+    { id: 'rent_F2', stallNumber: 'F2', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT },
+    { id: 'rent_F3', stallNumber: 'F3', type: 'basic',   monthlyRent: MARKET_CONFIG.BASIC_STALL_RENT }
+];
+
+// GET all stalls (gov + player rented)
+app.get('/api/market/stalls', (req, res) => {
+    const rentedStalls = Object.values(playerStalls);
+    res.json({
+        success:      true,
+        govStalls:    GOV_STALLS,
+        playerStalls: rentedStalls,
+        rentalSpots:  RENTAL_SPOTS.map(spot => ({
+            ...spot,
+            isOccupied: !!playerStalls[spot.id]
+        })),
+        config:       MARKET_CONFIG
+    });
+});
+
+// GET single stall details
+app.get('/api/market/stall/:stallId', (req, res) => {
+    const { stallId } = req.params;
+    const govStall    = GOV_STALLS.find(s => s.id === stallId);
+    const playerStall = playerStalls[stallId];
+    const stall       = govStall || playerStall;
+
+    if (!stall) return res.json({ success: false, message: 'Stall not found.' });
+    res.json({ success: true, stall });
+});
+
+// POST — buy item from stall (with haggle support)
+app.post('/api/market/buy', async (req, res) => {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.json({ success: false, message: 'Sign in to buy.' });
+
+    const { stallId, itemId, offeredPrice } = req.body;
+
+    try {
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
+
+        // Find the stall and item
+        const stall = GOV_STALLS.find(s => s.id === stallId)
+                   || playerStalls[stallId];
+        if (!stall) return res.json({ success: false, message: 'Stall not found.' });
+
+        const item = stall.items.find(i => i.id === itemId);
+        if (!item) return res.json({ success: false, message: 'Item not found.' });
+        if (item.stock <= 0) return res.json({ success: false, message: 'Item out of stock!' });
+
+        // Determine final price after haggle
+        const askingPrice = offeredPrice || item.price;
+        const minPrice    = Math.floor(item.price * MARKET_CONFIG.HAGGLE_MIN_PCT);
+
+        let finalPrice    = item.price;
+        let vendorResponse = '';
+        let haggleResult  = 'accepted';
+
+        if (offeredPrice && offeredPrice < item.price) {
+            if (offeredPrice < minPrice) {
+                // Offer too low — vendor rejects
+                haggleResult   = 'rejected';
+                vendorResponse = getVendorReject(stall.personality, item.name, item.price);
+                return res.json({
+                    success:       false,
+                    haggleResult,
+                    vendorResponse,
+                    minPrice,
+                    message:       vendorResponse
+                });
+            } else {
+                // Vendor meets in the middle
+                finalPrice     = Math.floor((offeredPrice + item.price) / 2);
+                haggleResult   = 'countered';
+                vendorResponse = getVendorCounter(stall.personality, finalPrice);
+            }
+        }
+
+        // Get player balance
+        const { data: player } = await supabaseAdmin
+            .from('players')
+            .select('naira_balance, stamina, health_status, attr_speed')
+            .eq('user_id', user.id)
+            .single();
+
+        if (!player) return res.json({ success: false, message: 'Player not found.' });
+        if (player.naira_balance < finalPrice)
+            return res.json({
+                success: false,
+                message: `Not enough Naira! You need ₦${finalPrice.toLocaleString()}.`
+            });
+
+        // Apply item effect
+        const updates    = { naira_balance: player.naira_balance - finalPrice };
+        let effectMessage = '';
+
+        if (item.effect.includes('stamina')) {
+            const match    = item.effect.match(/stamina\+(\d+)/);
+            const restore  = match ? parseInt(match[1]) : 0;
+            updates.stamina = Math.min(100, (player.stamina || 100) + restore);
+            effectMessage  += `⚡ Stamina +${restore}% (now ${updates.stamina}%). `;
+        }
+        if (item.effect.includes('health')) {
+            updates.health_status = 'Healthy';
+            effectMessage += `💊 Health restored to Healthy. `;
+        }
+        if (item.effect.includes('speed')) {
+            const match   = item.effect.match(/speed\+(\d+)/);
+            const boost   = match ? parseInt(match[1]) : 0;
+            updates.attr_speed = Math.min(99, (player.attr_speed || 10) + boost);
+            effectMessage += `💨 Speed +${boost} (now ${updates.attr_speed}). `;
+        }
+        if (item.effect.includes('kit')) {
+            updates.kit_status = 'CustomJersey';
+            effectMessage += `👕 Kit upgraded! `;
+        }
+
+        // Update player in database
+        await supabaseAdmin.from('players').update(updates).eq('user_id', user.id);
+
+        // Reduce stock for player stalls
+        if (playerStalls[stallId]) {
+            item.stock--;
+        }
+
+        const acceptMsg = haggleResult === 'countered'
+            ? `Deal at ₦${finalPrice.toLocaleString()}! ${getVendorAccept(stall.personality)}`
+            : getVendorAccept(stall.personality);
+
+        console.log(`🏪 Purchase: ${item.name} for ₦${finalPrice.toLocaleString()} by user ${user.id}`);
+
+        return res.json({
+            success:        true,
+            haggleResult:   haggleResult === 'countered' ? 'deal' : 'accepted',
+            finalPrice,
+            vendorResponse: acceptMsg,
+            effectMessage,
+            newBalance:     updates.naira_balance,
+            newStamina:     updates.stamina,
+            newSpeed:       updates.attr_speed,
+            item
+        });
+
+    } catch (err) {
+        console.error('Market buy error:', err);
+        return res.json({ success: false, message: 'Server error.' });
+    }
+});
+
+// POST — rent a stall
+app.post('/api/market/rent', async (req, res) => {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.json({ success: false, message: 'Sign in to rent a stall.' });
+
+    const { spotId, stallName, items } = req.body;
+
+    try {
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
+
+        const spot = RENTAL_SPOTS.find(s => s.id === spotId);
+        if (!spot) return res.json({ success: false, message: 'Rental spot not found.' });
+        if (playerStalls[spotId]) return res.json({ success: false, message: 'This stall is already rented.' });
+
+        const { data: player } = await supabaseAdmin
+            .from('players')
+            .select('naira_balance, username')
+            .eq('user_id', user.id)
+            .single();
+
+        if (!player) return res.json({ success: false, message: 'Player not found.' });
+        if (player.naira_balance < spot.monthlyRent)
+            return res.json({
+                success: false,
+                message: `Not enough Naira! Rent is ₦${spot.monthlyRent.toLocaleString()}/month.`
+            });
+
+        // Deduct rent
+        await supabaseAdmin
+            .from('players')
+            .update({ naira_balance: player.naira_balance - spot.monthlyRent })
+            .eq('user_id', user.id);
+
+        // Create the player stall
+        playerStalls[spotId] = {
+            id:          spotId,
+            stallNumber: spot.stallNumber,
+            type:        'player',
+            vendorName:  player.username,
+            stallName:   stallName || `${player.username}'s Stall`,
+            category:    'Mixed',
+            personality: 'player',
+            greeting:    `Welcome to ${stallName || player.username + "'s stall"}! What do you need?`,
+            ownerId:     user.id,
+            items:       items || [],
+            rentedAt:    new Date().toISOString(),
+            rentExpiry:  new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+        };
+
+        console.log(`🏪 Stall rented: ${spot.stallNumber} by ${player.username}`);
+
+        return res.json({
+            success:    true,
+            stall:      playerStalls[spotId],
+            newBalance: player.naira_balance - spot.monthlyRent,
+            message:    `Stall ${spot.stallNumber} rented! ₦${spot.monthlyRent.toLocaleString()} deducted.`
+        });
+
+    } catch (err) {
+        console.error('Rent error:', err);
+        return res.json({ success: false, message: 'Server error.' });
+    }
+});
+
+// POST — add item to your stall
+app.post('/api/market/stall/additem', async (req, res) => {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.json({ success: false, message: 'Not authorised.' });
+
+    const { spotId, item } = req.body;
+
+    try {
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
+
+        const stall = playerStalls[spotId];
+        if (!stall) return res.json({ success: false, message: 'Stall not found.' });
+        if (stall.ownerId !== user.id) return res.json({ success: false, message: 'This is not your stall.' });
+
+        stall.items.push({
+            id:          item.id || `item_${Date.now()}`,
+            name:        String(item.name).replace(/[<>'"]/g, '').trim(),
+            price:       Math.max(1, parseInt(item.price) || 100),
+            stock:       Math.max(1, parseInt(item.stock) || 10),
+            effect:      item.effect || 'none',
+            description: String(item.description || '').replace(/[<>'"]/g, '').trim()
+        });
+
+        return res.json({ success: true, stall, message: 'Item added to your stall!' });
+    } catch (err) {
+        return res.json({ success: false, message: 'Server error.' });
+    }
+});
+
+// ============================================
+// VENDOR DIALOGUE HELPERS
+// ============================================
+function getVendorReject(personality, itemName, price) {
+    const responses = {
+        warm:         `Ehhh my pikin! ₦${price.toLocaleString()} is already my last price. I no fit go lower than that o!`,
+        hype:         `Guy abeg! That price wey you talk, e no make sense at all. Come with better offer!`,
+        motherly:     `Haba! You wan make me lose money? That one no possible. The price is the price!`,
+        salesman:     `Oga! You dey price Aba quality like common market? Come back with serious money!`,
+        creative:     `My friend! This na handwork o. The price wey you offer, e no reach half the effort!`,
+        professional: `I'm sorry, that offer is below our minimum. We cannot accept that price.`,
+        player:       `That price too low abeg. Make we do better.`
+    };
+    return responses[personality] || responses.warm;
+}
+
+function getVendorCounter(personality, counterPrice) {
+    const responses = {
+        warm:         `Okay my pikin, because you be my customer — I go do ₦${counterPrice.toLocaleString()}. That's my final!`,
+        hype:         `Okay okay! I like your energy. ₦${counterPrice.toLocaleString()} — we go settle there!`,
+        motherly:     `Ah, you don beg me well well. Okay — ₦${counterPrice.toLocaleString()}. But tell your friends about my buka o!`,
+        salesman:     `See, I like you. ₦${counterPrice.toLocaleString()} and we done. Shake body!`,
+        creative:     `Fine! ₦${counterPrice.toLocaleString()}. But only because I want you to look sharp on the pitch!`,
+        professional: `We can meet at ₦${counterPrice.toLocaleString()}. That is our best offer.`,
+        player:       `Okay, ₦${counterPrice.toLocaleString()}. Deal?`
+    };
+    return responses[personality] || responses.warm;
+}
+
+function getVendorAccept(personality) {
+    const responses = {
+        warm:         'Thank you my pikin! God go bless you. Come back soon!',
+        hype:         'Aye! Transaction complete! You go perform well today!',
+        motherly:     'Take am! Chop well and play well. I dey pray for you!',
+        salesman:     'Business done! Come back when you need more. I get plenty stock!',
+        creative:     'Enjoy am! You go look sharp on that pitch. My work never fail!',
+        professional: 'Thank you for your purchase. Please come again.',
+        player:       'Thanks! Good luck out there!'
+    };
+    return responses[personality] || responses.warm;
+}
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
