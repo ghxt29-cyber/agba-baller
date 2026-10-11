@@ -42,11 +42,7 @@
             text-decoration: none;
         }
         .back-btn:hover { color: #fff; border-color: #555; }
-        #player-balance {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #ffd700;
-        }
+        #player-balance { font-size: 0.9rem; font-weight: bold; color: #ffd700; }
 
         /* MARKET BANNER */
         #market-banner {
@@ -55,534 +51,338 @@
             padding: 20px;
             text-align: center;
         }
-        #market-banner h2 {
-            font-size: 1.8rem;
-            color: #ffaa00;
-            letter-spacing: 3px;
-            margin-bottom: 6px;
-        }
-        #market-banner p {
-            color: #888;
-            font-size: 0.85rem;
-        }
-        .market-stats {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-        .market-stat {
-            text-align: center;
-        }
-        .market-stat-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ffaa00;
-        }
-        .market-stat-label {
-            font-size: 0.7rem;
-            color: #555;
-            text-transform: uppercase;
-        }
+        #market-banner h2 { font-size: 1.8rem; color: #ffaa00; letter-spacing: 3px; margin-bottom: 6px; }
+        #market-banner p { color: #888; font-size: 0.85rem; }
+        .market-stats { display: flex; justify-content: center; gap: 30px; margin-top: 12px; flex-wrap: wrap; }
+        .market-stat { text-align: center; }
+        .market-stat-value { font-size: 1.2rem; font-weight: bold; color: #ffaa00; }
+        .market-stat-label { font-size: 0.7rem; color: #555; text-transform: uppercase; }
 
         /* MARKET LAYOUT */
-        #market-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+        #market-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
         /* SECTION HEADERS */
         .section-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 25px 0 15px;
-            padding-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+            margin: 25px 0 15px; padding-bottom: 8px;
             border-bottom: 2px solid #cc8800;
         }
-        .section-header h3 {
-            font-size: 1rem;
-            color: #ffaa00;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
+        .section-header h3 { font-size: 1rem; color: #ffaa00; text-transform: uppercase; letter-spacing: 2px; }
         .section-badge {
-            background: #cc8800;
-            color: #000;
-            font-size: 0.65rem;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 10px;
+            background: #cc8800; color: #000;
+            font-size: 0.65rem; font-weight: bold;
+            padding: 2px 8px; border-radius: 10px;
         }
 
         /* STALL GRID */
-        .stall-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+        .stall-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; margin-bottom: 20px; }
 
         /* STALL CARD */
         .stall-card {
-            background: #161616;
-            border: 1px solid #2a2a2a;
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: #161616; border: 1px solid #2a2a2a;
+            border-radius: 10px; overflow: hidden;
+            cursor: pointer; transition: all 0.2s;
         }
         .stall-card:hover {
-            border-color: #cc8800;
-            transform: translateY(-2px);
+            border-color: #cc8800; transform: translateY(-2px);
             box-shadow: 0 4px 20px rgba(204,136,0,0.2);
         }
         .stall-top {
             background: linear-gradient(135deg, #1a1000, #2a1800);
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid #2a2a2a;
+            padding: 12px 15px; display: flex; align-items: center;
+            gap: 12px; border-bottom: 1px solid #2a2a2a;
         }
         .stall-number {
-            background: #cc8800;
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
-            min-width: 32px;
-            text-align: center;
+            background: #cc8800; color: #000;
+            font-size: 0.75rem; font-weight: bold;
+            padding: 3px 8px; border-radius: 4px;
+            min-width: 32px; text-align: center;
         }
-        .stall-number.premium {
-            background: #ffd700;
-        }
-        .stall-vendor-name {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #ffaa00;
-        }
-        .stall-name {
-            font-size: 0.75rem;
-            color: #888;
-            margin-top: 2px;
-        }
+        .stall-number.premium { background: #ffd700; }
+        .stall-vendor-name { font-size: 0.9rem; font-weight: bold; color: #ffaa00; }
+        .stall-name-label { font-size: 0.75rem; color: #888; margin-top: 2px; }
         .gov-badge {
-            margin-left: auto;
-            background: #003300;
-            border: 1px solid #006600;
-            color: #00cc00;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 3px;
+            margin-left: auto; background: #003300;
+            border: 1px solid #006600; color: #00cc00;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 3px;
         }
-        .stall-body {
-            padding: 12px 15px;
+        .my-stall-badge {
+            margin-left: auto; background: #001a33;
+            border: 1px solid #0055aa; color: #4499ff;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 3px;
         }
-        .stall-category {
-            font-size: 0.7rem;
-            color: #555;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-        .stall-greeting {
-            font-size: 0.8rem;
-            color: #aaa;
-            font-style: italic;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        .item-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .item-tag {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: #888;
-            font-size: 0.68rem;
-            padding: 2px 6px;
-            border-radius: 3px;
-        }
+        .stall-body { padding: 12px 15px; }
+        .stall-category { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stall-greeting { font-size: 0.8rem; color: #aaa; font-style: italic; margin-bottom: 10px; line-height: 1.4; }
+        .item-preview { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+        .item-tag { background: #1a1a1a; border: 1px solid #333; color: #888; font-size: 0.68rem; padding: 2px 6px; border-radius: 3px; }
         .enter-stall-btn {
-            width: 100%;
-            background: #cc8800;
-            border: none;
-            color: #000;
-            padding: 8px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.82rem;
-            transition: background 0.2s;
+            width: 100%; background: #cc8800; border: none; color: #000;
+            padding: 8px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.82rem; transition: background 0.2s;
         }
         .enter-stall-btn:hover { background: #ffaa00; }
+        .manage-stall-btn {
+            width: 100%; background: #001a33; border: 1px solid #0055aa;
+            color: #4499ff; padding: 8px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.82rem; transition: all 0.2s; margin-top: 5px;
+        }
+        .manage-stall-btn:hover { background: #002244; }
 
         /* RENTAL SPOTS */
-        .rental-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 12px;
-        }
+        .rental-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
         .rental-spot {
-            background: #0d0d0d;
-            border: 2px dashed #333;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: #0d0d0d; border: 2px dashed #333;
+            border-radius: 8px; padding: 15px; text-align: center;
+            cursor: pointer; transition: all 0.2s;
         }
-        .rental-spot:hover {
-            border-color: #cc8800;
-            background: #1a1000;
-        }
-        .rental-spot.occupied {
-            border-style: solid;
-            border-color: #444;
-            cursor: default;
-            opacity: 0.6;
-        }
-        .rental-spot.occupied:hover {
-            border-color: #444;
-            background: #0d0d0d;
-        }
-        .spot-number {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #cc8800;
-            margin-bottom: 6px;
-        }
-        .spot-type {
-            font-size: 0.7rem;
-            color: #555;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-        .spot-rent {
-            font-size: 0.82rem;
-            color: #ffd700;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-        .spot-status {
-            font-size: 0.72rem;
-            color: #888;
-        }
+        .rental-spot:hover { border-color: #cc8800; background: #1a1000; }
+        .rental-spot.occupied { border-style: solid; border-color: #444; cursor: default; opacity: 0.6; }
+        .rental-spot.occupied:hover { border-color: #444; background: #0d0d0d; }
+        .spot-number { font-size: 1.2rem; font-weight: bold; color: #cc8800; margin-bottom: 6px; }
+        .spot-type { font-size: 0.7rem; color: #555; text-transform: uppercase; margin-bottom: 8px; }
+        .spot-rent { font-size: 0.82rem; color: #ffd700; font-weight: bold; margin-bottom: 8px; }
+        .spot-status { font-size: 0.72rem; color: #888; }
         .rent-btn {
-            background: #1a1a00;
-            border: 1px solid #cc8800;
-            color: #cc8800;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
-            margin-top: 6px;
+            background: #1a1a00; border: 1px solid #cc8800; color: #cc8800;
+            padding: 5px 12px; border-radius: 4px; cursor: pointer;
+            font-size: 0.75rem; font-weight: bold; margin-top: 6px;
         }
         .rent-btn:hover { background: #2a2a00; }
 
-        /* MODAL */
+        /* STALL MODAL */
         #modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
-            z-index: 200;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            z-index: 200; display: none;
+            align-items: center; justify-content: center;
         }
         #modal-overlay.open { display: flex; }
         #stall-modal {
-            background: #161616;
-            border: 1px solid #cc8800;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 85vh;
-            overflow-y: auto;
+            background: #161616; border: 1px solid #cc8800;
+            border-radius: 12px; width: 90%; max-width: 620px;
+            max-height: 88vh; overflow-y: auto;
         }
         .modal-header {
             background: linear-gradient(135deg, #1a1000, #2a1800);
-            padding: 15px 20px;
-            border-bottom: 1px solid #cc8800;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
+            padding: 15px 20px; border-bottom: 1px solid #cc8800;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 10;
         }
         .modal-header h3 { color: #ffaa00; font-size: 1rem; }
         .modal-close {
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 1.4rem;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
+            background: none; border: none; color: #888;
+            font-size: 1.4rem; cursor: pointer; padding: 0; line-height: 1;
         }
         .modal-close:hover { color: #fff; background: none; }
         .modal-body { padding: 20px; }
+        .modal-tabs {
+            display: flex; gap: 0;
+            border-bottom: 1px solid #333; margin-bottom: 20px;
+        }
+        .modal-tab {
+            padding: 8px 16px; cursor: pointer;
+            font-size: 0.82rem; color: #555;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .modal-tab.active { color: #ffaa00; border-bottom-color: #cc8800; }
+        .modal-tab:hover { color: #aaa; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* VENDOR DIALOGUE */
         .vendor-bubble {
-            background: #1a1000;
-            border: 1px solid #cc8800;
-            border-radius: 10px;
-            border-bottom-left-radius: 2px;
-            padding: 12px 15px;
-            font-size: 0.85rem;
-            color: #ffdd88;
-            font-style: italic;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            background: #1a1000; border: 1px solid #cc8800;
+            border-radius: 10px; border-bottom-left-radius: 2px;
+            padding: 12px 15px; font-size: 0.85rem; color: #ffdd88;
+            font-style: italic; margin-bottom: 20px; line-height: 1.5;
         }
         .vendor-name-tag {
-            font-size: 0.7rem;
-            color: #cc8800;
-            font-weight: bold;
-            font-style: normal;
-            margin-bottom: 5px;
+            font-size: 0.7rem; color: #cc8800; font-weight: bold;
+            font-style: normal; margin-bottom: 5px;
         }
 
-        /* ITEMS LIST */
+        /* ITEMS */
         .items-list { display: flex; flex-direction: column; gap: 10px; }
         .item-row {
-            background: #0d0d0d;
-            border: 1px solid #222;
-            border-radius: 8px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 8px; padding: 12px;
         }
-        .item-row:hover { border-color: #444; }
+        .item-row-top {
+            display: flex; align-items: flex-start;
+            justify-content: space-between; gap: 10px; flex-wrap: wrap;
+        }
         .item-info { flex: 1; }
-        .item-name {
-            font-size: 0.88rem;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 3px;
-        }
-        .item-desc {
-            font-size: 0.75rem;
-            color: #666;
-            margin-bottom: 4px;
-        }
-        .item-effect {
-            font-size: 0.72rem;
-            color: #00cc44;
-        }
-        .item-stock {
-            font-size: 0.7rem;
-            color: #555;
-            margin-top: 2px;
-        }
-        .item-price-area { text-align: right; }
-        .item-price {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ffd700;
-            display: block;
-            margin-bottom: 5px;
-        }
+        .item-name { font-size: 0.88rem; font-weight: bold; color: #fff; margin-bottom: 3px; }
+        .item-desc { font-size: 0.75rem; color: #666; margin-bottom: 4px; }
+        .item-effect { font-size: 0.72rem; color: #00cc44; }
+        .item-stock { font-size: 0.7rem; color: #555; margin-top: 2px; }
+        .item-price-area { text-align: right; min-width: 100px; }
+        .item-price { font-size: 1rem; font-weight: bold; color: #ffd700; display: block; margin-bottom: 5px; }
         .buy-btn {
-            background: #cc8800;
-            border: none;
-            color: #000;
-            padding: 6px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.78rem;
-            display: block;
-            width: 100%;
-            margin: 0;
+            background: #cc8800; border: none; color: #000;
+            padding: 6px 14px; border-radius: 4px; cursor: pointer;
+            font-weight: bold; font-size: 0.78rem; display: block; width: 100%; margin: 0;
         }
         .buy-btn:hover { background: #ffaa00; }
         .haggle-btn {
-            background: #1a1a00;
-            border: 1px solid #cc8800;
-            color: #cc8800;
-            padding: 5px 14px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
-            display: block;
-            width: 100%;
-            margin: 3px 0 0;
+            background: #1a1a00; border: 1px solid #cc8800; color: #cc8800;
+            padding: 5px 14px; border-radius: 4px; cursor: pointer;
+            font-size: 0.75rem; font-weight: bold;
+            display: block; width: 100%; margin: 3px 0 0;
         }
         .haggle-btn:hover { background: #2a2a00; }
-
-        /* HAGGLE PANEL */
         .haggle-panel {
-            background: #0a0a00;
-            border: 1px solid #554400;
-            border-radius: 6px;
-            padding: 10px;
-            margin-top: 8px;
-            display: none;
+            background: #0a0a00; border: 1px solid #554400;
+            border-radius: 6px; padding: 10px; margin-top: 8px; display: none;
         }
         .haggle-panel.open { display: block; }
-        .haggle-panel label {
-            font-size: 0.75rem;
-            color: #888;
-            display: block;
-            margin-bottom: 5px;
-        }
+        .haggle-panel label { font-size: 0.75rem; color: #888; display: block; margin-bottom: 5px; }
         .haggle-input {
-            width: 100%;
-            background: #0d0d0d;
-            border: 1px solid #554400;
-            color: #ffd700;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            outline: none;
-            margin-bottom: 6px;
+            width: 100%; background: #0d0d0d; border: 1px solid #554400;
+            color: #ffd700; padding: 6px 10px; border-radius: 4px;
+            font-size: 0.85rem; outline: none; margin-bottom: 6px;
         }
         .haggle-submit {
-            background: #554400;
-            border: none;
-            color: #ffaa00;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.78rem;
-            font-weight: bold;
-            margin: 0;
+            background: #554400; border: none; color: #ffaa00;
+            padding: 6px 12px; border-radius: 4px; cursor: pointer;
+            font-size: 0.78rem; font-weight: bold; margin: 0;
         }
         .haggle-submit:hover { background: #776600; }
-
-        /* VENDOR RESPONSE */
         .vendor-response {
-            background: #1a1000;
-            border-left: 3px solid #cc8800;
-            padding: 8px 12px;
-            font-size: 0.82rem;
-            color: #ffdd88;
-            font-style: italic;
-            margin-top: 8px;
-            border-radius: 0 4px 4px 0;
-            display: none;
-            line-height: 1.4;
+            background: #1a1000; border-left: 3px solid #cc8800;
+            padding: 8px 12px; font-size: 0.82rem; color: #ffdd88;
+            font-style: italic; margin-top: 8px; border-radius: 0 4px 4px 0;
+            display: none; line-height: 1.4;
         }
         .vendor-response.open { display: block; }
 
-        /* NOTIFICATION */
-        #notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #0b1f0b;
-            border: 2px solid #00aa00;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #00ff44;
-            z-index: 999;
-            display: none;
-            text-align: center;
+        /* MANAGE STALL PANEL */
+        .manage-section { margin-bottom: 25px; }
+        .manage-section h4 {
+            color: #ffaa00; font-size: 0.85rem; margin-bottom: 12px;
+            text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px solid #2a2a2a; padding-bottom: 6px;
         }
-        #notification.error {
-            background: #1f0b0b;
-            border-color: #aa0000;
-            color: #ff4444;
+        .manage-item-row {
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 6px; padding: 10px 12px;
+            display: flex; align-items: center;
+            justify-content: space-between; gap: 10px;
+            margin-bottom: 8px; flex-wrap: wrap;
         }
-        #notification.info {
-            background: #0a0a1f;
-            border-color: #4444aa;
-            color: #aaaaff;
+        .manage-item-info { flex: 1; }
+        .manage-item-name { font-size: 0.85rem; font-weight: bold; color: #fff; }
+        .manage-item-meta { font-size: 0.72rem; color: #666; margin-top: 2px; }
+        .remove-item-btn {
+            background: #1f0b0b; border: 1px solid #aa0000;
+            color: #ff4444; padding: 4px 10px; border-radius: 4px;
+            cursor: pointer; font-size: 0.72rem; font-weight: bold; margin: 0;
         }
+        .remove-item-btn:hover { background: #2a0000; }
 
-        /* RENT MODAL */
+        /* ADD ITEM FORM */
+        .add-item-form {
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 8px; padding: 15px;
+        }
+        .form-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; margin-bottom: 10px;
+        }
+        .form-row.single { grid-template-columns: 1fr; }
+        .form-label { font-size: 0.72rem; color: #888; margin-bottom: 4px; display: block; text-transform: uppercase; }
+        .form-input {
+            width: 100%; background: #111; border: 1px solid #333;
+            color: #fff; padding: 8px 10px; border-radius: 5px;
+            font-size: 0.85rem; outline: none;
+        }
+        .form-input:focus { border-color: #cc8800; }
+        .form-select {
+            width: 100%; background: #111; border: 1px solid #333;
+            color: #fff; padding: 8px 10px; border-radius: 5px;
+            font-size: 0.85rem; outline: none;
+        }
+        .form-select:focus { border-color: #cc8800; }
+        .add-item-btn {
+            width: 100%; background: #cc8800; border: none; color: #000;
+            padding: 10px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.88rem; margin-top: 5px;
+        }
+        .add-item-btn:hover { background: #ffaa00; }
+
+        /* STALL STATS */
+        .stall-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; margin-bottom: 20px;
+        }
+        .stall-stat-card {
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 6px; padding: 12px; text-align: center;
+        }
+        .stall-stat-val { font-size: 1.2rem; font-weight: bold; color: #ffaa00; }
+        .stall-stat-lbl { font-size: 0.68rem; color: #555; text-transform: uppercase; margin-top: 3px; }
+
+        /* RENTAL MODAL */
         #rent-modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0,0,0,0.85);
-            z-index: 300;
-            display: none;
-            align-items: center;
-            justify-content: center;
+            z-index: 300; display: none;
+            align-items: center; justify-content: center;
         }
         #rent-modal-overlay.open { display: flex; }
         #rent-modal {
-            background: #161616;
-            border: 1px solid #cc8800;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 440px;
-            padding: 25px;
+            background: #161616; border: 1px solid #cc8800;
+            border-radius: 12px; width: 90%; max-width: 440px; padding: 25px;
         }
-        #rent-modal h3 { color: #ffaa00; margin-bottom: 15px; font-size: 1rem; }
+        #rent-modal h3 { color: #ffaa00; margin-bottom: 8px; font-size: 1rem; }
+        .rent-info { color: #888; font-size: 0.82rem; margin-bottom: 15px; line-height: 1.5; }
         .rent-modal-input {
-            width: 100%;
-            background: #0d0d0d;
-            border: 1px solid #333;
-            color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            outline: none;
-            margin-bottom: 10px;
+            width: 100%; background: #0d0d0d; border: 1px solid #333;
+            color: #fff; padding: 10px; border-radius: 5px;
+            font-size: 0.9rem; outline: none; margin-bottom: 10px;
         }
         .rent-modal-input:focus { border-color: #cc8800; }
         .rent-confirm-btn {
-            width: 100%;
-            background: #cc8800;
-            border: none;
-            color: #000;
-            padding: 10px;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            width: 100%; background: #cc8800; border: none; color: #000;
+            padding: 10px; font-weight: bold; border-radius: 5px;
+            cursor: pointer; font-size: 0.9rem; margin-bottom: 8px;
         }
         .rent-confirm-btn:hover { background: #ffaa00; }
         .rent-cancel-btn {
-            width: 100%;
-            background: transparent;
-            border: 1px solid #333;
-            color: #888;
-            padding: 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.85rem;
+            width: 100%; background: transparent; border: 1px solid #333;
+            color: #888; padding: 8px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;
         }
         .rent-cancel-btn:hover { color: #fff; border-color: #555; background: transparent; }
 
-        /* LOADING */
-        #loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: #555;
-            font-size: 0.9rem;
+        /* NOTIFICATION */
+        #notification {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background: #0b1f0b; border: 2px solid #00aa00;
+            border-radius: 10px; padding: 12px 24px;
+            font-size: 0.9rem; font-weight: bold; color: #00ff44;
+            z-index: 999; display: none; text-align: center;
+            max-width: 90%;
         }
+        #notification.error { background: #1f0b0b; border-color: #aa0000; color: #ff4444; }
+        #notification.info  { background: #0a0a1f; border-color: #4444aa; color: #aaaaff; }
+
+        #loading { text-align: center; padding: 60px 20px; color: #555; font-size: 0.9rem; }
 
         @media (max-width: 600px) {
             .stall-grid { grid-template-columns: 1fr; }
             .rental-grid { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .stall-stats { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-<!-- NOTIFICATION -->
 <div id="notification"></div>
 
 <!-- HEADER -->
@@ -618,7 +418,7 @@
     </div>
 </div>
 
-<!-- MAIN MARKET CONTAINER -->
+<!-- MAIN CONTAINER -->
 <div id="market-container">
     <div id="loading">⏳ Loading market stalls...</div>
 </div>
@@ -631,11 +431,100 @@
             <button class="modal-close" onclick="closeStallModal()">✕</button>
         </div>
         <div class="modal-body">
-            <div class="vendor-bubble">
-                <div class="vendor-name-tag" id="modal-vendor-name"></div>
-                <div id="modal-greeting"></div>
+
+            <!-- TABS — only show manage tab for stall owner -->
+            <div class="modal-tabs" id="modal-tabs">
+                <div class="modal-tab active" onclick="switchTab('shop')">🛒 Shop</div>
+                <div class="modal-tab" id="manage-tab" style="display:none"
+                    onclick="switchTab('manage')">⚙️ Manage My Stall</div>
             </div>
-            <div class="items-list" id="modal-items"></div>
+
+            <!-- SHOP TAB -->
+            <div class="tab-content active" id="tab-shop">
+                <div class="vendor-bubble">
+                    <div class="vendor-name-tag" id="modal-vendor-name"></div>
+                    <div id="modal-greeting"></div>
+                </div>
+                <div class="items-list" id="modal-items"></div>
+            </div>
+
+            <!-- MANAGE TAB -->
+            <div class="tab-content" id="tab-manage">
+                <div class="stall-stats">
+                    <div class="stall-stat-card">
+                        <div class="stall-stat-val" id="manage-item-count">0</div>
+                        <div class="stall-stat-lbl">Items Listed</div>
+                    </div>
+                    <div class="stall-stat-card">
+                        <div class="stall-stat-val" id="manage-stall-num">—</div>
+                        <div class="stall-stat-lbl">Stall Number</div>
+                    </div>
+                    <div class="stall-stat-card">
+                        <div class="stall-stat-val" id="manage-expiry">—</div>
+                        <div class="stall-stat-lbl">Rent Expires</div>
+                    </div>
+                </div>
+
+                <!-- CURRENT ITEMS -->
+                <div class="manage-section">
+                    <h4>📦 Your Items</h4>
+                    <div id="manage-items-list">
+                        <p style="color:#555;font-size:0.82rem;">No items listed yet. Add your first item below.</p>
+                    </div>
+                </div>
+
+                <!-- ADD ITEM FORM -->
+                <div class="manage-section">
+                    <h4>➕ Add New Item</h4>
+                    <div class="add-item-form">
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">Item Name *</label>
+                                <input class="form-input" id="new-item-name"
+                                    placeholder="e.g. Agbo Special">
+                            </div>
+                            <div>
+                                <label class="form-label">Price (₦) *</label>
+                                <input class="form-input" id="new-item-price"
+                                    type="number" min="1" placeholder="e.g. 800">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">Stock Quantity *</label>
+                                <input class="form-input" id="new-item-stock"
+                                    type="number" min="1" placeholder="e.g. 20">
+                            </div>
+                            <div>
+                                <label class="form-label">Item Effect</label>
+                                <select class="form-select" id="new-item-effect">
+                                    <option value="none">No effect (cosmetic/other)</option>
+                                    <option value="stamina+10">+10% Stamina</option>
+                                    <option value="stamina+20">+20% Stamina</option>
+                                    <option value="stamina+30">+30% Stamina</option>
+                                    <option value="stamina+50">+50% Stamina</option>
+                                    <option value="health">Restore Health</option>
+                                    <option value="stamina+20,health">+20% Stamina + Health</option>
+                                    <option value="speed+2">+2 Speed</option>
+                                    <option value="speed+5">+5 Speed</option>
+                                    <option value="kit:CustomJersey">Upgrade Kit to Jersey</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row single">
+                            <div>
+                                <label class="form-label">Description</label>
+                                <input class="form-input" id="new-item-desc"
+                                    placeholder="e.g. My special home blend. Very effective!">
+                            </div>
+                        </div>
+                        <button class="add-item-btn" onclick="addItemToStall()">
+                            ➕ Add Item to My Stall
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -644,11 +533,11 @@
 <div id="rent-modal-overlay" onclick="closeRentModal(event)">
     <div id="rent-modal">
         <h3>🏪 Rent a Stall</h3>
-        <p style="color:#888;font-size:0.82rem;margin-bottom:15px;" id="rent-spot-info"></p>
+        <p class="rent-info" id="rent-spot-info"></p>
         <input class="rent-modal-input" id="rent-stall-name"
             placeholder="Your stall name (e.g. Emeka's Boot Store)">
         <button class="rent-confirm-btn" onclick="confirmRent()">
-            Pay Rent & Open Stall
+            💰 Pay Rent & Open Stall
         </button>
         <button class="rent-cancel-btn" onclick="closeRentModal()">Cancel</button>
     </div>
@@ -659,13 +548,14 @@
 // =====================================================
 // AGBA BALLER MARKET
 // =====================================================
-let sb              = null;
-let currentSession  = null;
-let currentBalance  = 0;
-let selectedSpot    = null;
-let activeStallId   = null;
-let activeStall     = null;
-let haggleRounds    = {};
+let sb             = null;
+let currentSession = null;
+let currentUserId  = null;
+let currentBalance = 0;
+let selectedSpot   = null;
+let activeStall    = null;
+let haggleRounds   = {};
+let marketData     = null;
 
 // =====================================================
 // INIT
@@ -678,16 +568,14 @@ fetch('/api/config')
     });
 
 async function initMarket() {
-    // Check login
     const { data: { session } } = await sb.auth.getSession();
     if (session) {
         currentSession = session;
+        currentUserId  = session.user.id;
         await loadPlayerBalance(session.access_token);
     } else {
-        document.getElementById('player-balance').textContent = 'Guest';
+        document.getElementById('player-balance').textContent = 'Guest — Sign in to buy';
     }
-
-    // Load market
     await loadMarket();
 }
 
@@ -710,8 +598,8 @@ async function loadMarket() {
         const res  = await fetch('/api/market/stalls');
         const data = await res.json();
         if (!data.success) return;
+        marketData = data;
 
-        // Update stats
         const totalItems = data.govStalls.reduce((n, s) => n + s.items.length, 0)
                          + data.playerStalls.reduce((n, s) => n + s.items.length, 0);
         const openSpots  = data.rentalSpots.filter(s => !s.isOccupied).length;
@@ -723,53 +611,52 @@ async function loadMarket() {
             data.govStalls.length + data.playerStalls.length;
         document.getElementById('stat-spots').textContent   = openSpots;
 
-        // Render market
         renderMarket(data);
-
     } catch (e) {
-        document.getElementById('loading').textContent = '⚠️ Could not load market. Is the server running?';
+        document.getElementById('loading').textContent =
+            '⚠️ Could not load market. Is the server running?';
     }
 }
 
+// =====================================================
+// RENDER MARKET
+// =====================================================
 function renderMarket(data) {
     const container = document.getElementById('market-container');
     container.innerHTML = '';
 
-    // ── GOVERNMENT STALLS ──
+    // GOV STALLS
     const govSection = document.createElement('div');
     govSection.innerHTML = `
         <div class="section-header">
             <h3>🏛️ Government Stalls</h3>
             <span class="section-badge">OFFICIAL</span>
         </div>
-        <div class="stall-grid" id="gov-stall-grid"></div>
-    `;
+        <div class="stall-grid" id="gov-grid"></div>`;
     container.appendChild(govSection);
-
-    const govGrid = govSection.querySelector('#gov-stall-grid');
+    const govGrid = govSection.querySelector('#gov-grid');
     for (const stall of data.govStalls) {
-        govGrid.appendChild(buildStallCard(stall));
+        govGrid.appendChild(buildStallCard(stall, false));
     }
 
-    // ── PLAYER STALLS ──
+    // PLAYER STALLS
     if (data.playerStalls.length > 0) {
-        const playerSection = document.createElement('div');
-        playerSection.innerHTML = `
+        const pSection = document.createElement('div');
+        pSection.innerHTML = `
             <div class="section-header">
                 <h3>👤 Player Stalls</h3>
                 <span class="section-badge">COMMUNITY</span>
             </div>
-            <div class="stall-grid" id="player-stall-grid"></div>
-        `;
-        container.appendChild(playerSection);
-
-        const playerGrid = playerSection.querySelector('#player-stall-grid');
+            <div class="stall-grid" id="player-grid"></div>`;
+        container.appendChild(pSection);
+        const pGrid = pSection.querySelector('#player-grid');
         for (const stall of data.playerStalls) {
-            playerGrid.appendChild(buildStallCard(stall));
+            const isOwner = currentUserId && stall.ownerId === currentUserId;
+            pGrid.appendChild(buildStallCard(stall, isOwner));
         }
     }
 
-    // ── RENTAL SPOTS ──
+    // RENTAL SPOTS
     const rentSection = document.createElement('div');
     rentSection.innerHTML = `
         <div class="section-header">
@@ -777,73 +664,78 @@ function renderMarket(data) {
             <span class="section-badge">OPEN SPOTS</span>
         </div>
         <p style="color:#666;font-size:0.82rem;margin-bottom:15px;">
-            Set up your own business in the market. Sell anything you want to other players.
-            Basic stalls: ₦15,000/month. Premium corner stalls: ₦25,000/month.
+            Open your own business. Sell anything you want to other players.
+            Set your own prices. The market is yours to hustle in.
+            Basic: ₦15,000/month · Premium corner: ₦25,000/month.
         </p>
-        <div class="rental-grid" id="rental-grid"></div>
-    `;
+        <div class="rental-grid" id="rental-grid"></div>`;
     container.appendChild(rentSection);
-
     const rentalGrid = rentSection.querySelector('#rental-grid');
     for (const spot of data.rentalSpots) {
         rentalGrid.appendChild(buildRentalSpot(spot));
     }
 }
 
-function buildStallCard(stall) {
-    const card = document.createElement('div');
+function buildStallCard(stall, isOwner) {
+    const card     = document.createElement('div');
     card.className = 'stall-card';
-    card.onclick   = () => openStall(stall);
 
-    const itemPreview = stall.items.slice(0, 3)
-        .map(i => `<span class="item-tag">${i.name}</span>`)
-        .join('');
+    const itemPreview = (stall.items || []).slice(0, 3)
+        .map(i => `<span class="item-tag">${i.name}</span>`).join('');
+    const extraCount  = (stall.items || []).length - 3;
+
+    const badgeHtml = isOwner
+        ? '<span class="my-stall-badge">MY STALL</span>'
+        : stall.type === 'government'
+        ? '<span class="gov-badge">GOV</span>'
+        : '<span class="gov-badge" style="background:#111;border-color:#555;color:#888;">PRIVATE</span>';
 
     card.innerHTML = `
         <div class="stall-top">
-            <span class="stall-number">${stall.stallNumber}</span>
+            <span class="stall-number ${stall.type === 'premium' ? 'premium' : ''}">
+                ${stall.stallNumber}
+            </span>
             <div>
                 <div class="stall-vendor-name">${stall.vendorName}</div>
-                <div class="stall-name">${stall.stallName}</div>
+                <div class="stall-name-label">${stall.stallName}</div>
             </div>
-            ${stall.type === 'government'
-                ? '<span class="gov-badge">GOV</span>'
-                : '<span class="gov-badge" style="background:#111;border-color:#555;color:#888;">PRIVATE</span>'
-            }
+            ${badgeHtml}
         </div>
         <div class="stall-body">
             <div class="stall-category">${stall.category}</div>
             <div class="stall-greeting">"${stall.greeting}"</div>
-            <div class="item-preview">${itemPreview}
-                ${stall.items.length > 3
-                    ? `<span class="item-tag">+${stall.items.length - 3} more</span>`
-                    : ''}
+            <div class="item-preview">
+                ${itemPreview}
+                ${extraCount > 0 ? `<span class="item-tag">+${extraCount} more</span>` : ''}
+                ${(stall.items||[]).length === 0 ? '<span class="item-tag" style="color:#555;">No items yet</span>' : ''}
             </div>
-            <button class="enter-stall-btn">Enter Stall →</button>
-        </div>
-    `;
+            <button class="enter-stall-btn" onclick="openStall('${stall.id}')">
+                Enter Stall →
+            </button>
+            ${isOwner ? `<button class="manage-stall-btn" onclick="openStall('${stall.id}', true)">
+                ⚙️ Manage My Stall
+            </button>` : ''}
+        </div>`;
     return card;
 }
 
 function buildRentalSpot(spot) {
-    const div = document.createElement('div');
-    div.className = `rental-spot${spot.isOccupied ? ' occupied' : ''}`;
+    const div      = document.createElement('div');
+    div.className  = `rental-spot${spot.isOccupied ? ' occupied' : ''}`;
 
     if (spot.isOccupied) {
         div.innerHTML = `
             <div class="spot-number">${spot.stallNumber}</div>
             <div class="spot-type">${spot.type}</div>
-            <div class="spot-status">🔒 Occupied</div>
-        `;
+            <div class="spot-status">🔒 Occupied</div>`;
     } else {
-        div.onclick = () => openRentModal(spot);
+        div.onclick   = () => openRentModal(spot);
         div.innerHTML = `
             <div class="spot-number">${spot.stallNumber}</div>
             <div class="spot-type">${spot.type === 'premium' ? '⭐ Premium' : 'Basic'}</div>
             <div class="spot-rent">₦${spot.monthlyRent.toLocaleString()}/month</div>
             <div class="spot-status">✅ Available</div>
-            <button class="rent-btn">Rent Now</button>
-        `;
+            <button class="rent-btn">Rent Now</button>`;
     }
     return div;
 }
@@ -851,153 +743,168 @@ function buildRentalSpot(spot) {
 // =====================================================
 // STALL MODAL
 // =====================================================
-function openStall(stall) {
-    activeStallId = stall.id;
-    activeStall   = stall;
-    haggleRounds  = {};
+function openStall(stallId, goToManage = false) {
+    const allStalls = [
+        ...(marketData?.govStalls || []),
+        ...(marketData?.playerStalls || [])
+    ];
+    const stall = allStalls.find(s => s.id === stallId);
+    if (!stall) return;
 
+    activeStall  = stall;
+    haggleRounds = {};
+
+    const isOwner = currentUserId && stall.ownerId === currentUserId;
+
+    // Set header
     document.getElementById('modal-stall-name').textContent  = stall.stallName;
     document.getElementById('modal-vendor-name').textContent = stall.vendorName + ' says:';
     document.getElementById('modal-greeting').textContent    = stall.greeting;
 
-    // Build items
-    const itemsList = document.getElementById('modal-items');
-    itemsList.innerHTML = '';
+    // Show/hide manage tab
+    const manageTab = document.getElementById('manage-tab');
+    manageTab.style.display = isOwner ? 'block' : 'none';
 
-    if (!stall.items || stall.items.length === 0) {
-        itemsList.innerHTML = '<p style="color:#555;text-align:center;padding:20px;">No items available right now.</p>';
-    } else {
-        for (const item of stall.items) {
-            itemsList.appendChild(buildItemRow(item, stall));
-        }
-    }
+    // Build shop items
+    buildShopItems(stall);
+
+    // Build manage panel if owner
+    if (isOwner) buildManagePanel(stall);
+
+    // Switch to appropriate tab
+    switchTab(goToManage && isOwner ? 'manage' : 'shop');
 
     document.getElementById('modal-overlay').classList.add('open');
 }
 
+function buildShopItems(stall) {
+    const list = document.getElementById('modal-items');
+    list.innerHTML = '';
+
+    if (!stall.items || stall.items.length === 0) {
+        list.innerHTML = `
+            <p style="color:#555;text-align:center;padding:30px 20px;">
+                This stall has no items yet. Check back later!
+            </p>`;
+        return;
+    }
+
+    for (const item of stall.items) {
+        list.appendChild(buildItemRow(item, stall));
+    }
+}
+
 function buildItemRow(item, stall) {
-    const row = document.createElement('div');
-    row.className = 'item-row';
-    row.id        = `item-row-${item.id}`;
+    const row       = document.createElement('div');
+    row.className   = 'item-row';
+    row.id          = `item-row-${item.id}`;
 
     const effectLabel = formatEffect(item.effect);
+    const stockLabel  = item.stock > 100 ? '∞' : item.stock;
 
     row.innerHTML = `
-        <div class="item-info">
-            <div class="item-name">${item.name}</div>
-            <div class="item-desc">${item.description || ''}</div>
-            <div class="item-effect">${effectLabel}</div>
-            <div class="item-stock">Stock: ${item.stock > 100 ? '∞' : item.stock}</div>
-        </div>
-        <div class="item-price-area">
-            <span class="item-price">₦${Number(item.price).toLocaleString()}</span>
-            <button class="buy-btn" onclick="buyItem('${stall.id}', '${item.id}', ${item.price})">
-                Buy
-            </button>
-            <button class="haggle-btn" onclick="toggleHaggle('${item.id}', ${item.price})">
-                💬 Haggle
-            </button>
-            <div class="haggle-panel" id="haggle-${item.id}">
-                <label>Your offer:</label>
-                <input class="haggle-input" id="offer-${item.id}"
-                    type="number"
-                    placeholder="₦ your price"
-                    min="1"
-                    value="${Math.floor(item.price * 0.85)}">
-                <button class="haggle-submit"
-                    onclick="submitHaggle('${stall.id}', '${item.id}', ${item.price})">
-                    Submit Offer
+        <div class="item-row-top">
+            <div class="item-info">
+                <div class="item-name">${item.name}</div>
+                <div class="item-desc">${item.description || ''}</div>
+                ${effectLabel ? `<div class="item-effect">${effectLabel}</div>` : ''}
+                <div class="item-stock">Stock: ${stockLabel}</div>
+            </div>
+            <div class="item-price-area">
+                <span class="item-price">₦${Number(item.price).toLocaleString()}</span>
+                <button class="buy-btn"
+                    onclick="buyItem('${stall.id}', '${item.id}', ${item.price})">
+                    Buy
                 </button>
-                <div class="vendor-response" id="response-${item.id}"></div>
+                <button class="haggle-btn"
+                    onclick="toggleHaggle('${item.id}', ${item.price})">
+                    💬 Haggle
+                </button>
             </div>
         </div>
-    `;
+        <div class="haggle-panel" id="haggle-${item.id}">
+            <label>Your offer (min ~₦${Math.floor(item.price * 0.7).toLocaleString()}):</label>
+            <input class="haggle-input" id="offer-${item.id}"
+                type="number" min="1"
+                value="${Math.floor(item.price * 0.85)}"
+                placeholder="₦ your offer">
+            <button class="haggle-submit"
+                onclick="submitHaggle('${stall.id}', '${item.id}', ${item.price})">
+                Submit Offer
+            </button>
+            <div class="vendor-response" id="response-${item.id}"></div>
+        </div>`;
     return row;
+}
+
+function buildManagePanel(stall) {
+    // Stats
+    document.getElementById('manage-item-count').textContent = (stall.items || []).length;
+    document.getElementById('manage-stall-num').textContent  = stall.stallNumber;
+    const expiry = stall.rentExpiry
+        ? new Date(stall.rentExpiry).toLocaleDateString('en-NG', { day:'numeric', month:'short' })
+        : '—';
+    document.getElementById('manage-expiry').textContent = expiry;
+
+    // Current items
+    const manageList = document.getElementById('manage-items-list');
+    if (!stall.items || stall.items.length === 0) {
+        manageList.innerHTML = `
+            <p style="color:#555;font-size:0.82rem;">
+                No items listed yet. Add your first item below.
+            </p>`;
+    } else {
+        manageList.innerHTML = '';
+        for (const item of stall.items) {
+            const row       = document.createElement('div');
+            row.className   = 'manage-item-row';
+            row.id          = `manage-row-${item.id}`;
+            row.innerHTML   = `
+                <div class="manage-item-info">
+                    <div class="manage-item-name">${item.name}</div>
+                    <div class="manage-item-meta">
+                        ₦${Number(item.price).toLocaleString()} ·
+                        Stock: ${item.stock} ·
+                        ${formatEffect(item.effect) || 'No effect'}
+                    </div>
+                </div>
+                <button class="remove-item-btn"
+                    onclick="removeItem('${item.id}')">
+                    Remove
+                </button>`;
+            manageList.appendChild(row);
+        }
+    }
 }
 
 function formatEffect(effect) {
     if (!effect || effect === 'none') return '';
     const parts = [];
-    if (effect.includes('stamina')) {
-        const m = effect.match(/stamina\+(\d+)/);
-        if (m) parts.push(`⚡ +${m[1]}% Stamina`);
-    }
-    if (effect.includes('health')) parts.push('💊 Restores Health');
-    if (effect.includes('speed')) {
-        const m = effect.match(/speed\+(\d+)/);
-        if (m) parts.push(`💨 +${m[1]} Speed`);
-    }
-    if (effect.includes('kit')) parts.push('👕 Upgrades Kit');
+    const sm    = effect.match(/stamina\+(\d+)/);
+    if (sm) parts.push(`⚡ +${sm[1]}% Stamina`);
+    if (effect.includes('health'))  parts.push('💊 Restores Health');
+    const sp = effect.match(/speed\+(\d+)/);
+    if (sp) parts.push(`💨 +${sp[1]} Speed`);
+    if (effect.includes('kit'))     parts.push('👕 Upgrades Kit');
     return parts.join(' · ');
 }
 
-function toggleHaggle(itemId, price) {
-    const panel = document.getElementById(`haggle-${itemId}`);
-    panel.classList.toggle('open');
-    // Reset response
-    const resp = document.getElementById(`response-${itemId}`);
-    resp.classList.remove('open');
-    resp.textContent = '';
+function switchTab(tab) {
+    document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    const tabs = document.querySelectorAll('.modal-tab');
+    if (tab === 'shop')   tabs[0].classList.add('active');
+    if (tab === 'manage' && tabs[1]) tabs[1].classList.add('active');
 }
 
-async function submitHaggle(stallId, itemId, originalPrice) {
-    if (!currentSession) {
-        showNotification('Sign in to haggle!', 'error'); return;
-    }
-
-    const offerInput = document.getElementById(`offer-${itemId}`);
-    const offer      = parseInt(offerInput.value);
-    if (!offer || offer <= 0) {
-        showNotification('Enter a valid offer!', 'error'); return;
-    }
-
-    const rounds = haggleRounds[itemId] || 0;
-    if (rounds >= 3) {
-        showNotification('Maximum haggle rounds reached!', 'error'); return;
-    }
-
-    haggleRounds[itemId] = rounds + 1;
-
-    try {
-        const res  = await fetch('/api/market/buy', {
-            method: 'POST',
-            headers: {
-                'Content-Type':  'application/json',
-                'Authorization': 'Bearer ' + currentSession.access_token
-            },
-            body: JSON.stringify({
-                stallId,
-                itemId,
-                offeredPrice: offer
-            })
-        });
-        const data = await res.json();
-
-        const respEl = document.getElementById(`response-${itemId}`);
-        respEl.textContent = data.vendorResponse || data.message;
-        respEl.classList.add('open');
-
-        if (data.success) {
-            // Deal made!
-            currentBalance = data.newBalance;
-            document.getElementById('player-balance').textContent =
-                '₦' + Number(currentBalance).toLocaleString('en-NG');
-            showNotification(
-                `✅ Deal! Bought for ₦${data.finalPrice.toLocaleString()}. ${data.effectMessage}`,
-                'success'
-            );
-            haggleRounds[itemId] = 0;
-        } else if (data.haggleResult === 'countered') {
-            // Vendor countered — update offer input
-            const stall = activeStall;
-            const item  = stall.items.find(i => i.id === itemId);
-            if (item) {
-                offerInput.value = data.finalPrice || offer;
-            }
-        }
-    } catch (e) {
-        showNotification('Transaction failed. Try again.', 'error');
-    }
+// =====================================================
+// BUYING & HAGGLING
+// =====================================================
+function toggleHaggle(itemId) {
+    const panel = document.getElementById(`haggle-${itemId}`);
+    panel.classList.toggle('open');
+    document.getElementById(`response-${itemId}`).classList.remove('open');
 }
 
 async function buyItem(stallId, itemId, price) {
@@ -1005,7 +912,7 @@ async function buyItem(stallId, itemId, price) {
         showNotification('Sign in to buy items!', 'error'); return;
     }
     if (currentBalance < price) {
-        showNotification(`Not enough Naira! You need ₦${price.toLocaleString()}.`, 'error');
+        showNotification(`Not enough Naira! Need ₦${price.toLocaleString()}.`, 'error');
         return;
     }
 
@@ -1025,17 +932,16 @@ async function buyItem(stallId, itemId, price) {
             document.getElementById('player-balance').textContent =
                 '₦' + Number(currentBalance).toLocaleString('en-NG');
 
-            // Show vendor acceptance dialogue
+            // Show vendor dialogue
             const respEl = document.getElementById(`response-${itemId}`);
             if (respEl) {
                 respEl.textContent = data.vendorResponse;
                 respEl.classList.add('open');
+                const panel = document.getElementById(`haggle-${itemId}`);
+                if (!panel.classList.contains('open')) panel.classList.add('open');
             }
 
-            showNotification(
-                `✅ Bought! ${data.effectMessage}`,
-                'success'
-            );
+            showNotification(`✅ Bought! ${data.effectMessage}`, 'success');
         } else {
             showNotification(data.message || 'Purchase failed.', 'error');
         }
@@ -1044,16 +950,152 @@ async function buyItem(stallId, itemId, price) {
     }
 }
 
+async function submitHaggle(stallId, itemId, originalPrice) {
+    if (!currentSession) {
+        showNotification('Sign in to haggle!', 'error'); return;
+    }
+
+    const rounds = haggleRounds[itemId] || 0;
+    if (rounds >= 3) {
+        showNotification('You have used all your haggle rounds for this item!', 'error');
+        return;
+    }
+
+    const offer = parseInt(document.getElementById(`offer-${itemId}`).value);
+    if (!offer || offer <= 0) {
+        showNotification('Enter a valid offer!', 'error'); return;
+    }
+
+    haggleRounds[itemId] = rounds + 1;
+
+    try {
+        const res  = await fetch('/api/market/buy', {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': 'Bearer ' + currentSession.access_token
+            },
+            body: JSON.stringify({ stallId, itemId, offeredPrice: offer })
+        });
+        const data = await res.json();
+
+        const respEl = document.getElementById(`response-${itemId}`);
+        respEl.textContent = data.vendorResponse || data.message;
+        respEl.classList.add('open');
+
+        if (data.success) {
+            currentBalance = data.newBalance;
+            document.getElementById('player-balance').textContent =
+                '₦' + Number(currentBalance).toLocaleString('en-NG');
+            showNotification(
+                `✅ Deal at ₦${data.finalPrice.toLocaleString()}! ${data.effectMessage}`,
+                'success'
+            );
+            haggleRounds[itemId] = 0;
+        } else if (data.haggleResult === 'countered') {
+            // Vendor countered — update input with counter price
+            document.getElementById(`offer-${itemId}`).value = data.finalPrice;
+            showNotification(
+                `Vendor countered at ₦${data.finalPrice.toLocaleString()}. Accept or offer again.`,
+                'info'
+            );
+        }
+    } catch (e) {
+        showNotification('Haggle failed. Try again.', 'error');
+    }
+}
+
+// =====================================================
+// MANAGE STALL — ADD / REMOVE ITEMS
+// =====================================================
+async function addItemToStall() {
+    if (!currentSession || !activeStall) return;
+    if (activeStall.ownerId !== currentUserId) {
+        showNotification('This is not your stall!', 'error'); return;
+    }
+
+    const name   = document.getElementById('new-item-name').value.trim();
+    const price  = parseInt(document.getElementById('new-item-price').value);
+    const stock  = parseInt(document.getElementById('new-item-stock').value);
+    const effect = document.getElementById('new-item-effect').value;
+    const desc   = document.getElementById('new-item-desc').value.trim();
+
+    if (!name || !price || !stock) {
+        showNotification('Fill in item name, price and stock!', 'error'); return;
+    }
+    if (price < 1) {
+        showNotification('Price must be at least ₦1!', 'error'); return;
+    }
+
+    try {
+        const res  = await fetch('/api/market/stall/additem', {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': 'Bearer ' + currentSession.access_token
+            },
+            body: JSON.stringify({
+                spotId: activeStall.id,
+                item:   { name, price, stock, effect, description: desc }
+            })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // Update local stall
+            activeStall = data.stall;
+
+            // Update in market data
+            const idx = marketData.playerStalls.findIndex(s => s.id === activeStall.id);
+            if (idx >= 0) marketData.playerStalls[idx] = activeStall;
+
+            // Refresh modal
+            buildManagePanel(activeStall);
+            buildShopItems(activeStall);
+
+            // Clear form
+            document.getElementById('new-item-name').value  = '';
+            document.getElementById('new-item-price').value = '';
+            document.getElementById('new-item-stock').value = '';
+            document.getElementById('new-item-desc').value  = '';
+            document.getElementById('new-item-effect').value = 'none';
+
+            showNotification(`✅ "${name}" added to your stall!`, 'success');
+
+            // Refresh market display
+            renderMarket(marketData);
+        } else {
+            showNotification(data.message || 'Failed to add item.', 'error');
+        }
+    } catch (e) {
+        showNotification('Failed to add item. Try again.', 'error');
+    }
+}
+
+function removeItem(itemId) {
+    if (!activeStall) return;
+    // Remove from local stall object
+    activeStall.items = activeStall.items.filter(i => i.id !== itemId);
+
+    // Update in market data
+    const idx = marketData.playerStalls.findIndex(s => s.id === activeStall.id);
+    if (idx >= 0) marketData.playerStalls[idx] = activeStall;
+
+    // Refresh panels
+    buildManagePanel(activeStall);
+    buildShopItems(activeStall);
+    renderMarket(marketData);
+
+    showNotification('Item removed from your stall.', 'info');
+}
+
 function closeStallModal() {
     document.getElementById('modal-overlay').classList.remove('open');
-    activeStallId = null;
-    activeStall   = null;
+    activeStall = null;
 }
 
 function closeModal(e) {
-    if (e.target === document.getElementById('modal-overlay')) {
-        closeStallModal();
-    }
+    if (e.target === document.getElementById('modal-overlay')) closeStallModal();
 }
 
 // =====================================================
@@ -1064,8 +1106,11 @@ function openRentModal(spot) {
         showNotification('Sign in to rent a stall!', 'error'); return;
     }
     selectedSpot = spot;
-    document.getElementById('rent-spot-info').textContent =
-        `Stall ${spot.stallNumber} (${spot.type}) — ₦${spot.monthlyRent.toLocaleString()}/month`;
+    document.getElementById('rent-spot-info').innerHTML = `
+        <strong style="color:#ffaa00;">Stall ${spot.stallNumber}</strong> —
+        ${spot.type === 'premium' ? '⭐ Premium Corner' : 'Basic Stall'}<br>
+        Monthly Rent: <strong style="color:#ffd700;">₦${spot.monthlyRent.toLocaleString()}</strong><br>
+        Your Balance: <strong style="color:#ffd700;">₦${currentBalance.toLocaleString()}</strong>`;
     document.getElementById('rent-stall-name').value = '';
     document.getElementById('rent-modal-overlay').classList.add('open');
 }
@@ -1092,10 +1137,7 @@ async function confirmRent() {
                 'Content-Type':  'application/json',
                 'Authorization': 'Bearer ' + currentSession.access_token
             },
-            body: JSON.stringify({
-                spotId:    selectedSpot.id,
-                stallName: stallName
-            })
+            body: JSON.stringify({ spotId: selectedSpot.id, stallName })
         });
         const data = await res.json();
 
@@ -1104,11 +1146,10 @@ async function confirmRent() {
             document.getElementById('player-balance').textContent =
                 '₦' + Number(currentBalance).toLocaleString('en-NG');
             showNotification(
-                `🏪 Stall rented! Welcome to the market, ${stallName}!`,
+                `🏪 Welcome to the market! "${stallName}" is now open for business!`,
                 'success'
             );
             closeRentModal();
-            // Reload market
             await loadMarket();
         } else {
             showNotification(data.message, 'error');
@@ -1130,12 +1171,12 @@ function closeRentModal(e) {
 // =====================================================
 let notifTimeout = null;
 function showNotification(msg, type = 'success') {
-    const el    = document.getElementById('notification');
+    const el       = document.getElementById('notification');
     el.textContent = msg;
     el.className   = type === 'error' ? 'error' : type === 'info' ? 'info' : '';
     el.style.display = 'block';
     if (notifTimeout) clearTimeout(notifTimeout);
-    notifTimeout = setTimeout(() => { el.style.display = 'none'; }, 4000);
+    notifTimeout   = setTimeout(() => { el.style.display = 'none'; }, 4500);
 }
 </script>
 </body>
