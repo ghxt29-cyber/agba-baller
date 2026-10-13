@@ -178,7 +178,7 @@ app.get('/api/player', async (req, res) => {
         if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
         const { data: player, error: pe } = await supabaseAdmin
             .from('players')
-            .select('username, home_state, home_lga, naira_balance, stamina, respect_points, attr_speed, attr_dribbling, attr_shooting')
+                 .select('username, home_state, home_lga, naira_balance, stamina, respect_points, attr_speed, attr_dribbling, attr_shooting, avatar_skin, avatar_hair, avatar_body, avatar_outfit, avatar_kit_color, avatar_kit_away, avatar_number, avatar_complete')
             .eq('user_id', user.id)
             .single();
         if (pe || !player) return res.json({ success: false, message: 'Player not found.' });
@@ -1115,6 +1115,50 @@ io.on('connection', (socket) => {
             }
         }
     });
+});
+// ============================================
+// AVATAR API
+// ============================================
+app.post('/api/avatar/save', async (req, res) => {
+    const token = (req.headers.authorization || '').replace('Bearer ', '');
+    if (!token) return res.json({ success: false, message: 'Not authorised.' });
+
+    try {
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
+
+        const {
+            avatar_skin, avatar_hair, avatar_body,
+            avatar_outfit, avatar_kit_color, avatar_kit_away,
+            avatar_number, avatar_complete
+        } = req.body;
+
+        const { error: updateError } = await supabaseAdmin
+            .from('players')
+            .update({
+                avatar_skin:      String(avatar_skin      || 'medium').substring(0, 20),
+                avatar_hair:      String(avatar_hair      || 'lowcut').substring(0, 30),
+                avatar_body:      String(avatar_body      || 'athletic').substring(0, 20),
+                avatar_outfit:    String(avatar_outfit    || 'casuals').substring(0, 30),
+                avatar_kit_color: String(avatar_kit_color || '#00cc44').substring(0, 10),
+                avatar_kit_away:  String(avatar_kit_away  || '#ffcc00').substring(0, 10),
+                avatar_number:    Math.min(99, Math.max(1, parseInt(avatar_number) || 10)),
+                avatar_complete:  true
+            })
+            .eq('user_id', user.id);
+
+        if (updateError) {
+            console.error('Avatar save error:', updateError.message);
+            return res.json({ success: false, message: updateError.message });
+        }
+
+        console.log(`👤 Avatar saved for user ${user.id}`);
+        return res.json({ success: true, message: 'Avatar saved!' });
+
+    } catch (err) {
+        console.error('Avatar error:', err);
+        return res.json({ success: false, message: 'Server error.' });
+    }
 });
 // ============================================
 // MARKETPLACE API

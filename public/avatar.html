@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGBA BALLER — Build Your Baller</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        #header {
+            width: 100%;
+            background: #111;
+            border-bottom: 3px solid #00aa00;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #header h1 { font-size: 1.3rem; color: #00ff44; letter-spacing: 2px; }
+        .back-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            padding: 5px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-decoration: none;
+        }
+        .back-btn:hover { color: #fff; border-color: #555; }
+
+        /* LAYOUT */
+        #builder {
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            min-height: calc(100vh - 54px);
+        }
+        @media (max-width: 750px) {
+            #builder { grid-template-columns: 1fr; }
+            #preview-panel { height: auto; position: relative; top: 0; }
+        }
+
+        /* PREVIEW */
+        #preview-panel {
+            background: #0d0d0d;
+            border-right: 1px solid #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            position: sticky;
+            top: 54px;
+            height: calc(100vh - 54px);
+        }
+        #preview-label {
+            font-size: 0.72rem;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+        }
+
+        /* PLAYER CARD */
+        .player-card {
+            width: 240px;
+            background: linear-gradient(160deg, #1a2a1a, #0a150a);
+            border: 2px solid #00aa00;
+            border-radius: 16px;
+            padding: 20px 15px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0,170,0,0.2);
+        }
+        .card-team-badge {
+            font-size: 0.65rem;
+            color: #00aa00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        #svg-avatar {
+            width: 160px;
+            height: 240px;
+        }
+        .card-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff44;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+        .card-location {
+            font-size: 0.7rem;
+            color: #555;
+            margin-top: 3px;
+        }
+        .card-stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .card-stat {
+            text-align: center;
+        }
+        .card-stat-val {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+        }
+        .card-stat-lbl {
+            font-size: 0.6rem;
+            color: #555;
+            text-transform: uppercase;
+        }
+
+        #save-btn {
+            margin-top: 16px;
+            background: #00aa00;
+            border: none;
+            color: white;
+            padding: 11px 0;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            width: 240px;
+            transition: background 0.2s;
+        }
+        #save-btn:hover { background: #008800; }
+        #save-status {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #555;
+            text-align: center;
+            min-height: 18px;
+        }
+
+        /* OPTIONS PANEL */
+        #options-panel {
+            background: #111;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* STEP NAV */
+        .steps-nav {
+            display: flex;
+            border-bottom: 1px solid #222;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .step-btn {
+            padding: 9px 14px;
+            font-size: 0.75rem;
+            color: #555;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .step-btn.active { color: #00ff44; border-bottom-color: #00aa00; }
+        .step-btn:hover  { color: #aaa; }
+
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+
+        .step-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #00ff44;
+            margin-bottom: 4px;
+        }
+        .step-desc {
+            font-size: 0.78rem;
+            color: #555;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        /* OPTION GROUPS */
+        .option-group { margin-bottom: 20px; }
+        .option-label {
+            font-size: 0.7rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* TYPE CARDS */
+        .type-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .type-card {
+            background: #1a1a1a;
+            border: 2px solid #222;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .type-card.selected {
+            border-color: #00aa00;
+            background: #001a00;
+        }
+        .type-card:hover { border-color: #444; }
+        .type-icon  { font-size: 1.8rem; margin-bottom: 6px; }
+        .type-name  { font-size: 0.85rem; font-weight: bold; color: #fff; margin-bottom: 3px; }
+        .type-desc  { font-size: 0.68rem; color: #555; line-height: 1.3; }
+
+        /* SKIN SWATCHES */
+        .skin-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .skin-sw {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .skin-sw.selected {
+            border-color: #00ff44;
+            transform: scale(1.18);
+        }
+        .skin-sw:hover { transform: scale(1.1); }
+
+        /* PILLS */
+        .pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .pill {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .pill.selected {
+            background: #003300;
+            border-color: #00aa00;
+            color: #00ff44;
+        }
+        .pill:hover { border-color: #555; color: #fff; }
+
+        /* COLOUR SWATCHES */
+        .color-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .color-sw {
+            width: 34px;
+            height: 34px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .color-sw.selected {
+            border-color: #fff;
+            transform: scale(1.18);
+        }
+        .color-sw:hover { transform: scale(1.1); }
+
+        /* OUTFIT GRID */
+        .outfit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .outfit-card {
+            background: #1a1a1a;
+            border: 2px solid #222;
+            border-radius: 8px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .outfit-card.selected {
+            border-color: #00aa00;
+            background: #001a00;
+        }
+        .outfit-card:hover { border-color: #444; }
+        .outfit-icon { font-size: 1.5rem; margin-bottom: 4px; }
+        .outfit-name { font-size: 0.68rem; color: #888; }
+        .outfit-card.selected .outfit-name { color: #00ff44; }
+
+        /* NUMBER */
+        .num-input {
+            background: #0d0d0d;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            width: 80px;
+            outline: none;
+            text-align: center;
+        }
+        .num-input:focus { border-color: #00aa00; }
+
+        /* NAV BUTTONS */
+        .nav-btns {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+        .nav-next {
+            flex: 1;
+            background: #00aa00;
+            border: none;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+        }
+        .nav-next:hover { background: #008800; }
+        .nav-back {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #888;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.88rem;
+        }
+        .nav-back:hover { color: #fff; border-color: #555; background: transparent; }
+
+        hr.divider { border: none; border-top: 1px solid #1a1a1a; margin: 18px 0; }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <h1>👤 BUILD YOUR BALLER</h1>
+    <a href="/" class="back-btn">⚽ Back to Pitch</a>
+</div>
+
+<div id="builder">
+
+    <!-- PREVIEW -->
+    <div id="preview-panel">
+        <div id="preview-label">Live Preview</div>
+        <div class="player-card">
+                      <div class="card-team-badge">Pick Your Avatar</div>
+            <svg id="svg-avatar" viewBox="0 0 160 240" xmlns="http://www.w3.org/2000/svg">
+                <!-- Rendered by JS -->
+            </svg>
+            <div class="card-name" id="card-name">Your Baller</div>
+            <div class="card-location" id="card-location">Street Baller</div>
+            <div class="card-stats">
+                <div class="card-stat">
+                    <div class="card-stat-val">10</div>
+                    <div class="card-stat-lbl">SPD</div>
+                </div>
+                <div class="card-stat">
+                    <div class="card-stat-val">10</div>
+                    <div class="card-stat-lbl">DRB</div>
+                </div>
+                <div class="card-stat">
+                    <div class="card-stat-val">10</div>
+                    <div class="card-stat-lbl">SHT</div>
+                </div>
+            </div>
+        </div>
+                <button id="save-btn" onclick="saveAvatar()">✅ Save My Avatar</button>
+        <div id="save-status"></div>
+    </div>
+
+    <!-- OPTIONS -->
+    <div id="options-panel">
+
+        <div class="steps-nav">
+            <div class="step-btn active" onclick="goStep(0)">1. Type</div>
+            <div class="step-btn" onclick="goStep(1)">2. Body</div>
+            <div class="step-btn" onclick="goStep(2)">3. Hair</div>
+            <div class="step-btn" onclick="goStep(3)">4. Outfit</div>
+            <div class="step-btn" onclick="goStep(4)">5. Kit</div>
+        </div>
+
+        <!-- STEP 0 TYPE -->
+        <div class="step-content active" id="step-0">
+            <div class="step-title">Who Are You?</div>
+            <div class="step-desc">Choose your role in the AGBA BALLER world.</div>
+            <div class="type-cards">
+                <div class="type-card selected" id="tc-footballer"
+                    onclick="pick('type','footballer')">
+                    <div class="type-icon">⚽</div>
+                    <div class="type-name">Street Baller</div>
+                    <div class="type-desc">Play 5v5, earn Naira, rise through the tiers</div>
+                </div>
+                <div class="type-card" id="tc-civilian"
+                    onclick="pick('type','civilian')">
+                    <div class="type-icon">🧑‍💼</div>
+                    <div class="type-name">Civilian Sim</div>
+                    <div class="type-desc">Run a business, trade, work jobs, watch matches</div>
+                </div>
+            </div>
+            <div class="nav-btns">
+                <button class="nav-next" onclick="goStep(1)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 1 BODY -->
+        <div class="step-content" id="step-1">
+            <div class="step-title">Your Body</div>
+            <div class="step-desc">Choose your skin tone, body and gender.</div>
+
+            <div class="option-group">
+                <span class="option-label">Skin Tone</span>
+                <div class="skin-row">
+                    <div class="skin-sw" style="background:#F5CBA7;"
+                        onclick="pick('skin','light','#F5CBA7')"></div>
+                    <div class="skin-sw selected" style="background:#D4956A;"
+                        onclick="pick('skin','medium_light','#D4956A')"></div>
+                    <div class="skin-sw" style="background:#A0522D;"
+                        onclick="pick('skin','medium','#A0522D')"></div>
+                    <div class="skin-sw" style="background:#7B3F1E;"
+                        onclick="pick('skin','medium_dark','#7B3F1E')"></div>
+                    <div class="skin-sw" style="background:#4A2010;"
+                        onclick="pick('skin','dark','#4A2010')"></div>
+                    <div class="skin-sw" style="background:#2C1206;"
+                        onclick="pick('skin','deep','#2C1206')"></div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Body Type</span>
+                <div class="pills">
+                    <div class="pill selected" onclick="pick('body','slim')">Slim</div>
+                    <div class="pill" onclick="pick('body','athletic')">Athletic</div>
+                    <div class="pill" onclick="pick('body','stocky')">Stocky</div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Gender</span>
+                <div class="pills">
+                    <div class="pill selected" onclick="pick('gender','male')">Male</div>
+                    <div class="pill" onclick="pick('gender','female')">Female</div>
+                </div>
+            </div>
+
+            <div class="nav-btns">
+                <button class="nav-back" onclick="goStep(0)">← Back</button>
+                <button class="nav-next" onclick="goStep(2)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 2 HAIR -->
+        <div class="step-content" id="step-2">
+            <div class="step-title">Face & Hair</div>
+            <div class="step-desc">Style your look.</div>
+
+            <div class="option-group">
+                <span class="option-label">Hair Style</span>
+                <div class="pills" id="hair-pills">
+                    <div class="pill selected" onclick="pick('hair','bald')">Bald</div>
+                    <div class="pill" onclick="pick('hair','lowcut')">Low Cut</div>
+                    <div class="pill" onclick="pick('hair','fade')">Fade</div>
+                    <div class="pill" onclick="pick('hair','afro')">Afro</div>
+                    <div class="pill" onclick="pick('hair','dreads')">Dreads</div>
+                    <div class="pill" onclick="pick('hair','cornrows')">Cornrows</div>
+                    <div class="pill" onclick="pick('hair','mohawk')">Mohawk</div>
+                    <div class="pill" onclick="pick('hair','braids')">Braids</div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Hair Colour</span>
+                <div class="color-row">
+                    <div class="color-sw selected" style="background:#0d0603;"
+                        onclick="pick('hairColor','#0d0603')"></div>
+                    <div class="color-sw" style="background:#3d200f;"
+                        onclick="pick('hairColor','#3d200f')"></div>
+                    <div class="color-sw" style="background:#777;"
+                        onclick="pick('hairColor','#777')"></div>
+                    <div class="color-sw" style="background:#cc2200;"
+                        onclick="pick('hairColor','#cc2200')"></div>
+                    <div class="color-sw" style="background:#cc9900;"
+                        onclick="pick('hairColor','#cc9900')"></div>
+                    <div class="color-sw" style="background:#0055cc;"
+                        onclick="pick('hairColor','#0055cc')"></div>
+                    <div class="color-sw" style="background:#fff;"
+                        onclick="pick('hairColor','#fff')"></div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Facial Hair</span>
+                <div class="pills">
+                    <div class="pill selected" onclick="pick('beard','none')">Clean</div>
+                    <div class="pill" onclick="pick('beard','stubble')">Stubble</div>
+                    <div class="pill" onclick="pick('beard','beard')">Full Beard</div>
+                    <div class="pill" onclick="pick('beard','goatee')">Goatee</div>
+                    <div class="pill" onclick="pick('beard','moustache')">Moustache</div>
+                </div>
+            </div>
+
+            <div class="nav-btns">
+                <button class="nav-back" onclick="goStep(1)">← Back</button>
+                <button class="nav-next" onclick="goStep(3)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 3 OUTFIT -->
+        <div class="step-content" id="step-3">
+            <div class="step-title">Your Style</div>
+            <div class="step-desc">
+                What you wear off the pitch. Buy more from boutiques in the market.
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Default Outfit</span>
+                <div class="outfit-grid">
+                    <div class="outfit-card selected" onclick="pick('outfit','casuals')">
+                        <div class="outfit-icon">👕</div>
+                        <div class="outfit-name">Casuals</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','tracksuit')">
+                        <div class="outfit-icon">🏃</div>
+                        <div class="outfit-name">Tracksuit</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','hoodie')">
+                        <div class="outfit-icon">🧥</div>
+                        <div class="outfit-name">Hoodie</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','ankara')">
+                        <div class="outfit-icon">🎨</div>
+                        <div class="outfit-name">Ankara</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','agbada')">
+                        <div class="outfit-icon">👘</div>
+                        <div class="outfit-name">Agbada</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','suit')">
+                        <div class="outfit-icon">👔</div>
+                        <div class="outfit-name">Suit</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','gele')">
+                        <div class="outfit-icon">👑</div>
+                        <div class="outfit-name">Gele & Iro</div>
+                    </div>
+                    <div class="outfit-card" onclick="pick('outfit','jeans')">
+                        <div class="outfit-icon">👖</div>
+                        <div class="outfit-name">Jeans</div>
+                    </div>
+                                       <div class="outfit-card" onclick="pick('outfit','shorts')">
+                        <div class="outfit-icon">🩳</div>
+                        <div class="outfit-name">Shorts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Footwear</span>
+                <div class="pills">
+                    <div class="pill selected" onclick="pick('shoes','slides')">🩴 Slides</div>
+                    <div class="pill" onclick="pick('shoes','canvas')">👟 Canvas</div>
+                    <div class="pill" onclick="pick('shoes','boots')">👞 Leather Boots</div>
+                    <div class="pill" onclick="pick('shoes','barefoot')">🦶 Barefoot</div>
+                    <div class="pill" onclick="pick('shoes','sneakers')">👟 Sneakers</div>
+                </div>
+            </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Outfit Colour</span>
+                <div class="color-row">
+                    <div class="color-sw selected" style="background:#1a1a2e;"
+                        onclick="pick('outfitColor','#1a1a2e')"></div>
+                    <div class="color-sw" style="background:#eee;"
+                        onclick="pick('outfitColor','#eee')"></div>
+                    <div class="color-sw" style="background:#cc2200;"
+                        onclick="pick('outfitColor','#cc2200')"></div>
+                    <div class="color-sw" style="background:#0044cc;"
+                        onclick="pick('outfitColor','#0044cc')"></div>
+                    <div class="color-sw" style="background:#007700;"
+                        onclick="pick('outfitColor','#007700')"></div>
+                    <div class="color-sw" style="background:#884400;"
+                        onclick="pick('outfitColor','#884400')"></div>
+                    <div class="color-sw" style="background:#660088;"
+                        onclick="pick('outfitColor','#660088')"></div>
+                    <div class="color-sw" style="background:#cc9900;"
+                        onclick="pick('outfitColor','#cc9900')"></div>
+                </div>
+            </div>
+
+            <div class="nav-btns">
+                <button class="nav-back" onclick="goStep(2)">← Back</button>
+                <button class="nav-next" onclick="goStep(4)">Next →</button>
+            </div>
+        </div>
+
+        <!-- STEP 4 KIT -->
+        <div class="step-content" id="step-4">
+            <div class="step-title">Football Kit</div>
+            <div class="step-desc">
+                All ballers start with a nylon bib. Earn Naira and Respect to upgrade.
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Home Kit Colour</span>
+                <div class="color-row">
+                    <div class="color-sw selected" style="background:#00cc44;"
+                        onclick="pick('kitHome','#00cc44')"></div>
+                    <div class="color-sw" style="background:#0044cc;"
+                        onclick="pick('kitHome','#0044cc')"></div>
+                    <div class="color-sw" style="background:#cc0000;"
+                        onclick="pick('kitHome','#cc0000')"></div>
+                    <div class="color-sw" style="background:#eee;"
+                        onclick="pick('kitHome','#eee')"></div>
+                    <div class="color-sw" style="background:#ff6600;"
+                        onclick="pick('kitHome','#ff6600')"></div>
+                    <div class="color-sw" style="background:#660088;"
+                        onclick="pick('kitHome','#660088')"></div>
+                    <div class="color-sw" style="background:#111;"
+                        onclick="pick('kitHome','#111')"></div>
+                    <div class="color-sw" style="background:#ffaa00;"
+                        onclick="pick('kitHome','#ffaa00')"></div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Away Kit Colour</span>
+                <div class="color-row">
+                    <div class="color-sw" style="background:#00cc44;"
+                        onclick="pick('kitAway','#00cc44')"></div>
+                    <div class="color-sw" style="background:#0044cc;"
+                        onclick="pick('kitAway','#0044cc')"></div>
+                    <div class="color-sw" style="background:#cc0000;"
+                        onclick="pick('kitAway','#cc0000')"></div>
+                    <div class="color-sw selected" style="background:#ffcc00;"
+                        onclick="pick('kitAway','#ffcc00')"></div>
+                    <div class="color-sw" style="background:#eee;"
+                        onclick="pick('kitAway','#eee')"></div>
+                    <div class="color-sw" style="background:#ff6600;"
+                        onclick="pick('kitAway','#ff6600')"></div>
+                    <div class="color-sw" style="background:#660088;"
+                        onclick="pick('kitAway','#660088')"></div>
+                    <div class="color-sw" style="background:#111;"
+                        onclick="pick('kitAway','#111')"></div>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <span class="option-label">Jersey Number</span>
+                <input class="num-input" id="jersey-num" type="number"
+                    min="1" max="99" value="10"
+                    oninput="pick('number', parseInt(this.value)||10)">
+            </div>
+
+            <div class="nav-btns">
+                <button class="nav-back" onclick="goStep(3)">← Back</button>
+                <button class="nav-next" onclick="saveAvatar()"
+                    style="background:#00aa00;">
+                     ✅ Save My Avatar
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// =====================================================
+// AVATAR STATE
+// =====================================================
+const av = {
+    type:        'footballer',
+    skin:        'medium_light',
+    skinColor:   '#D4956A',
+    body:        'slim',
+    gender:      'male',
+    hair:        'bald',
+    hairColor:   '#0d0603',
+    beard:       'none',
+    outfit:      'casuals',
+    outfitColor: '#1a1a2e',
+    kitHome:     '#00cc44',
+    kitAway:     '#ffcc00',
+    number:      10,
+    shoes:       'slides'
+};
+
+let sb = null, session = null;
+let pName = 'Your Baller', pLoc = 'Street Baller';
+let currentStep = 0;
+
+// =====================================================
+// INIT
+// =====================================================
+fetch('/api/config').then(r=>r.json()).then(cfg=>{
+    sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    init();
+});
+
+async function init() {
+    const { data: { session: s } } = await sb.auth.getSession();
+    if (!s) { window.location.href = '/auth.html'; return; }
+    session = s;
+
+    const res  = await fetch('/api/player', {
+        headers: { 'Authorization': 'Bearer ' + s.access_token }
+    });
+    const data = await res.json();
+
+    if (data.success && data.player) {
+        pName = data.player.username;
+        pLoc  = data.player.home_state + ' · ' + data.player.home_lga;
+        document.getElementById('card-name').textContent     = pName;
+        document.getElementById('card-location').textContent = pLoc;
+
+        if (data.player.avatar_complete) {
+            const p = data.player;
+            if (p.avatar_skin)      { av.skin = p.avatar_skin; setSkinColor(p.avatar_skin); }
+            if (p.avatar_hair)      av.hair        = p.avatar_hair;
+            if (p.avatar_body)      av.body        = p.avatar_body;
+            if (p.avatar_outfit)    av.outfit      = p.avatar_outfit;
+            if (p.avatar_kit_color) av.kitHome     = p.avatar_kit_color;
+            if (p.avatar_kit_away)  av.kitAway     = p.avatar_kit_away;
+            if (p.avatar_number)    av.number      = p.avatar_number;
+            document.getElementById('jersey-num').value = av.number;
+        }
+    }
+    render();
+}
+
+function setSkinColor(key) {
+    const m = {
+        light:'#F5CBA7', medium_light:'#D4956A', medium:'#A0522D',
+        medium_dark:'#7B3F1E', dark:'#4A2010', deep:'#2C1206'
+    };
+    av.skinColor = m[key] || '#D4956A';
+}
+
+// =====================================================
+// NAVIGATION
+// =====================================================
+function goStep(n) {
+    document.querySelectorAll('.step-content').forEach((el,i)=>el.classList.toggle('active',i===n));
+    document.querySelectorAll('.step-btn').forEach((el,i)=>el.classList.toggle('active',i===n));
+    currentStep = n;
+}
+
+// =====================================================
+// UNIFIED PICKER
+// =====================================================
+function pick(prop, value, color) {
+    if (prop === 'skin') {
+        av.skin      = value;
+        av.skinColor = color;
+        document.querySelectorAll('.skin-sw').forEach(s=>s.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    } else if (prop === 'hairColor') {
+        av.hairColor = value;
+        document.querySelectorAll('#step-2 .color-row .color-sw').forEach(s=>s.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    } else if (prop === 'outfitColor') {
+        av.outfitColor = value;
+        document.querySelectorAll('#step-3 .color-row .color-sw').forEach(s=>s.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    } else if (prop === 'kitHome') {
+        av.kitHome = value;
+        document.querySelectorAll('#step-4 .option-group:nth-child(1) .color-sw').forEach(s=>s.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    } else if (prop === 'kitAway') {
+        av.kitAway = value;
+        document.querySelectorAll('#step-4 .option-group:nth-child(2) .color-sw').forEach(s=>s.classList.remove('selected'));
+        event.currentTarget.classList.add('selected');
+    } else if (prop === 'type') {
+        av.type = value;
+        document.getElementById('tc-footballer').classList.toggle('selected', value==='footballer');
+        document.getElementById('tc-civilian').classList.toggle('selected', value==='civilian');
+    } else if (prop === 'body') {
+        av.body = value;
+        updatePills('#step-1 .option-group:nth-child(2) .pill', value);
+    } else if (prop === 'gender') {
+        av.gender = value;
+        updatePills('#step-1 .option-group:nth-child(3) .pill', value);
+    } else if (prop === 'hair') {
+        av.hair = value;
+        updatePills('#hair-pills .pill', value);
+    } else if (prop === 'beard') {
+        av.beard = value;
+        updatePills('#step-2 .option-group:nth-child(3) .pill', value);
+    } else if (prop === 'outfit') {
+        av.outfit = value;
+        document.querySelectorAll('.outfit-card').forEach(c=>c.classList.remove('selected'));
+        event.currentTarget.closest('.outfit-card').classList.add('selected');
+    } else if (prop === 'number') {
+        av.number = Math.max(1, Math.min(99, parseInt(value)||10));
+    }
+    render();
+}
+
+function updatePills(sel, val) {
+    document.querySelectorAll(sel).forEach(p=>{
+        p.classList.toggle('selected', p.textContent.trim().toLowerCase()===val.toLowerCase());
+    });
+}
+
+// =====================================================
+// SVG AVATAR RENDERER
+// =====================================================
+function render() {
+    const svg = document.getElementById('svg-avatar');
+
+    const S  = av.skinColor;
+    const H  = av.hairColor;
+    const KC = av.type==='footballer' ? av.kitHome : av.outfitColor;
+
+    // Body width
+    const bw  = av.body==='stocky' ? 48 : av.body==='athletic' ? 40 : 34;
+    const bx  = 80 - bw/2;  // left edge of body
+    const brx = 80 + bw/2;  // right edge
+
+    // Shadow tones
+    const skinDark  = darken(S, 0.75);
+    const skinShade = darken(S, 0.88);
+    const kitDark   = darken(KC, 0.7);
+    const kitShade  = darken(KC, 0.85);
+
+    svg.innerHTML = `
+    <defs>
+        <radialGradient id="skinG" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="${lighten(S,1.08)}"/>
+            <stop offset="100%" stop-color="${skinDark}"/>
+        </radialGradient>
+        <radialGradient id="skinFaceG" cx="45%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="${lighten(S,1.12)}"/>
+            <stop offset="100%" stop-color="${skinShade}"/>
+        </radialGradient>
+        <linearGradient id="kitG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${lighten(KC,1.1)}"/>
+            <stop offset="100%" stop-color="${kitDark}"/>
+        </linearGradient>
+        <linearGradient id="shortG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a2a2a"/>
+            <stop offset="100%" stop-color="#111"/>
+        </linearGradient>
+        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.4)"/>
+        </filter>
+    </defs>
+
+    <!-- GROUND SHADOW -->
+    <ellipse cx="80" cy="232" rx="38" ry="6"
+        fill="rgba(0,0,0,0.25)"/>
+
+    <!-- BOOTS -->
+    ${renderBoots(80, 218, bw)}
+
+    <!-- LEGS -->
+    ${renderLegs(80, 176, bw, S, skinDark)}
+
+    <!-- SHORTS / TROUSERS -->
+    ${renderBottoms(80, 168, bw, KC, kitDark)}
+
+    <!-- TORSO -->
+    ${renderTorso(80, 110, bw, bx, brx, KC, kitDark, kitShade, av)}
+
+    <!-- ARMS -->
+    ${renderArms(80, 118, bw, S, skinDark, KC, kitDark)}
+
+    <!-- NECK -->
+    <rect x="76" y="100" width="8" height="14" rx="3"
+        fill="url(#skinG)"/>
+
+    <!-- HEAD -->
+    ${renderHead(80, 76, S, av)}
+
+    <!-- HAIR -->
+    ${renderHair(80, 76, H, av)}
+
+    <!-- BEARD -->
+    ${av.beard!=='none' ? renderBeard(80, 90, H, av) : ''}
+
+    <!-- KIT NUMBER -->
+    ${av.type==='footballer' ? `
+    <text x="80" y="150" text-anchor="middle"
+        font-family="Arial" font-size="14" font-weight="bold"
+        fill="rgba(255,255,255,0.9)">${av.number}</text>` : ''}
+    `;
+}
+
+// ── HEAD ──
+function renderHead(cx, cy, S, av) {
+    const skinDark  = darken(S, 0.78);
+    const earColor  = darken(S, 0.92);
+    // Jaw width varies by gender
+    const jawW = av.gender==='female' ? 20 : 22;
+    return `
+    <!-- Ears -->
+    <ellipse cx="${cx-24}" cy="${cy+6}" rx="5" ry="7" fill="${earColor}"/>
+    <ellipse cx="${cx+24}" cy="${cy+6}" rx="5" ry="7" fill="${earColor}"/>
+    <!-- Inner ear -->
+    <ellipse cx="${cx-24}" cy="${cy+6}" rx="3" ry="4.5"
+        fill="${darken(S,0.7)}"/>
+    <ellipse cx="${cx+24}" cy="${cy+6}" rx="3" ry="4.5"
+        fill="${darken(S,0.7)}"/>
+
+    <!-- Head shape -->
+    <ellipse cx="${cx}" cy="${cy}" rx="23" ry="27"
+        fill="url(#skinFaceG)" filter="url(#shadow)"/>
+
+    <!-- Forehead highlight -->
+    <ellipse cx="${cx-5}" cy="${cy-14}" rx="9" ry="6"
+        fill="${lighten(S,1.15)}" opacity="0.35"/>
+
+    <!-- Brow bone -->
+    <path d="M${cx-16} ${cy-8} Q${cx} ${cy-12} ${cx+16} ${cy-8}"
+        stroke="${darken(S,0.7)}" stroke-width="1.5" fill="none" opacity="0.5"/>
+
+    <!-- Eyebrows -->
+    <path d="M${cx-16} ${cy-6} Q${cx-10} ${cy-10} ${cx-4} ${cy-7}"
+        stroke="${darken(S,0.4)}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M${cx+4} ${cy-7} Q${cx+10} ${cy-10} ${cx+16} ${cy-6}"
+        stroke="${darken(S,0.4)}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Eyes -->
+    <!-- Left eye -->
+    <ellipse cx="${cx-10}" cy="${cy}" rx="5.5" ry="4.5" fill="white"/>
+    <ellipse cx="${cx-9}" cy="${cy}" rx="3" ry="3.5" fill="#1a0a00"/>
+    <ellipse cx="${cx-8.5}" cy="${cy}" rx="2.2" ry="2.5" fill="#333"/>
+    <ellipse cx="${cx-7.5}" cy="${cy-1}" rx="0.8" ry="0.8" fill="white"/>
+    <!-- Eyelid crease -->
+    <path d="M${cx-15.5} ${cy-1} Q${cx-10} ${cy-5} ${cx-4.5} ${cy-1}"
+        stroke="${darken(S,0.7)}" stroke-width="0.8" fill="none" opacity="0.6"/>
+
+    <!-- Right eye -->
+    <ellipse cx="${cx+10}" cy="${cy}" rx="5.5" ry="4.5" fill="white"/>
+    <ellipse cx="${cx+9}" cy="${cy}" rx="3" ry="3.5" fill="#1a0a00"/>
+    <ellipse cx="${cx+9.5}" cy="${cy}" rx="2.2" ry="2.5" fill="#333"/>
+    <ellipse cx="${cx+10.5}" cy="${cy-1}" rx="0.8" ry="0.8" fill="white"/>
+    <path d="M${cx+4.5} ${cy-1} Q${cx+10} ${cy-5} ${cx+15.5} ${cy-1}"
+        stroke="${darken(S,0.7)}" stroke-width="0.8" fill="none" opacity="0.6"/>
+
+    <!-- Nose -->
+    <path d="M${cx} ${cy+4} Q${cx-4} ${cy+10} ${cx-5} ${cy+14}
+             Q${cx} ${cy+16} ${cx+5} ${cy+14} Q${cx+4} ${cy+10} ${cx} ${cy+4}"
+        fill="${darken(S,0.82)}" opacity="0.7"/>
+    <!-- Nostrils -->
+    <ellipse cx="${cx-5}" cy="${cy+14}" rx="2.5" ry="1.8"
+        fill="${darken(S,0.6)}" opacity="0.6"/>
+    <ellipse cx="${cx+5}" cy="${cy+14}" rx="2.5" ry="1.8"
+        fill="${darken(S,0.6)}" opacity="0.6"/>
+
+    <!-- Lips -->
+    ${av.gender==='female' ? `
+    <path d="M${cx-9} ${cy+19} Q${cx} ${cy+17} ${cx+9} ${cy+19}
+             Q${cx+5} ${cy+23} ${cx} ${cy+24} Q${cx-5} ${cy+23} ${cx-9} ${cy+19}Z"
+        fill="${darken(S,0.7)}"/>
+    <path d="M${cx-9} ${cy+19} Q${cx-4} ${cy+20} ${cx} ${cy+19.5}
+             Q${cx+4} ${cy+20} ${cx+9} ${cy+19}"
+        stroke="${darken(S,0.5)}" stroke-width="0.8" fill="none"/>
+    ` : `
+    <path d="M${cx-8} ${cy+19} Q${cx} ${cy+17} ${cx+8} ${cy+19}
+             Q${cx+4} ${cy+23} ${cx} ${cy+23.5} Q${cx-4} ${cy+23} ${cx-8} ${cy+19}Z"
+        fill="${darken(S,0.72)}"/>
+    <line x1="${cx-8}" y1="${cy+19}" x2="${cx+8}" y2="${cy+19}"
+        stroke="${darken(S,0.55)}" stroke-width="0.8" opacity="0.7"/>
+    `}
+
+    <!-- Cheek shading -->
+    <ellipse cx="${cx-17}" cy="${cy+8}" rx="5" ry="4"
+        fill="${darken(S,0.85)}" opacity="0.2"/>
+    <ellipse cx="${cx+17}" cy="${cy+8}" rx="5" ry="4"
+        fill="${darken(S,0.85)}" opacity="0.2"/>
+    `;
+}
+
+// ── HAIR ──
+function renderHair(cx, cy, H, av) {
+    if (av.hair==='bald') return '';
+    const Hd = darken(H, 0.7);
+    const Hl = lighten(H, 1.2);
+
+    if (av.hair==='lowcut') return `
+        <ellipse cx="${cx}" cy="${cy-12}" rx="22" ry="16"
+            fill="${H}" clip-path="url(#headClip)"/>
+        <ellipse cx="${cx-8}" cy="${cy-22}" rx="8" ry="5"
+            fill="${Hd}" opacity="0.4"/>`;
+
+    if (av.hair==='fade') return `
+        <ellipse cx="${cx}" cy="${cy-14}" rx="22" ry="18" fill="${H}"/>
+        <!-- Faded sides -->
+        <rect x="${cx-26}" y="${cy-10}" width="8" height="16"
+            fill="${Hd}" opacity="0.6" rx="3"/>
+        <rect x="${cx+18}" y="${cy-10}" width="8" height="16"
+            fill="${Hd}" opacity="0.6" rx="3"/>
+        <ellipse cx="${cx}" cy="${cy-22}" rx="14" ry="8" fill="${H}"/>`;
+
+    if (av.hair==='afro') return `
+        <circle cx="${cx}" cy="${cy-14}" r="31" fill="${H}"/>
+        <circle cx="${cx-20}" cy="${cy-4}" r="14" fill="${H}"/>
+        <circle cx="${cx+20}" cy="${cy-4}" r="14" fill="${H}"/>
+        <!-- Texture -->
+        ${[...Array(18)].map((_,i)=>{
+            const tx=cx-24+Math.sin(i*1.8)*22;
+            const ty=cy-28+Math.cos(i*1.4)*18;
+            return `<circle cx="${tx}" cy="${ty}" r="3.5" fill="${Hd}" opacity="0.5"/>`;
+        }).join('')}
+        <ellipse cx="${cx-8}" cy="${cy-30}" rx="6" ry="4"
+            fill="${Hl}" opacity="0.25"/>`;
+
+    if (av.hair==='dreads') {
+        let d='';
+        for(let i=-3;i<=3;i++){
+            const dx=cx+i*9;
+            const len=32+Math.abs(i)*8;
+            d+=`<rect x="${dx-3}" y="${cy-28}" width="6" height="${len}"
+                rx="3" fill="${H}"/>
+                <ellipse cx="${dx}" cy="${cy-28+len}" rx="3" ry="4"
+                fill="${Hd}"/>`;
+        }
+        return `<ellipse cx="${cx}" cy="${cy-14}" rx="22" ry="16" fill="${H}"/>
+            ${d}`;
+    }
+
+    if (av.hair==='cornrows') return `
+        <ellipse cx="${cx}" cy="${cy-12}" rx="22" ry="16" fill="${H}"/>
+        ${[-16,-8,0,8,16].map(ox=>`
+        <path d="M${cx+ox} ${cy-26} Q${cx+ox+2} ${cy-15} ${cx+ox} ${cy-4}"
+            stroke="${Hd}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        `).join('')}`;
+
+    if (av.hair==='mohawk') return `
+        <!-- Shaved sides -->
+        <ellipse cx="${cx-18}" cy="${cy-5}" rx="7" ry="10"
+            fill="${darken(av.skinColor,0.88)}" opacity="0.7"/>
+        <ellipse cx="${cx+18}" cy="${cy-5}" rx="7" ry="10"
+            fill="${darken(av.skinColor,0.88)}" opacity="0.7"/>
+        <!-- Mohawk strip -->
+        <rect x="${cx-7}" y="${cy-40}" width="14" height="34"
+            rx="6" fill="${H}"/>
+        <rect x="${cx-5}" y="${cy-42}" width="10" height="10"
+            rx="4" fill="${Hl}" opacity="0.4"/>`;
+
+    if (av.hair==='braids') {
+        let b='';
+        for(let s=-1;s<=1;s+=2){
+            for(let i=0;i<4;i++){
+                const bx=cx+s*(10+i*6);
+                b+=`<rect x="${bx-2.5}" y="${cy+2}" width="5"
+                    height="${28+i*6}" rx="2.5" fill="${H}"/>
+                    <ellipse cx="${bx}" cy="${cy+30+i*6}" rx="2.5" ry="3.5"
+                    fill="${Hd}"/>`;
+            }
+        }
+        return `<ellipse cx="${cx}" cy="${cy-12}" rx="22" ry="16" fill="${H}"/>
+            ${b}`;
+    }
+    return '';
+}
+
+// ── BEARD ──
+function renderBeard(cx, cy, H, av) {
+    const Hd = darken(H, 0.7);
+    if (av.beard==='stubble') return `
+        <ellipse cx="${cx}" cy="${cy+10}" rx="16" ry="11"
+            fill="${H}" opacity="0.35"/>`;
+    if (av.beard==='beard') return `
+        <path d="M${cx-18} ${cy+2} Q${cx-20} ${cy+18} ${cx-12} ${cy+28}
+                 Q${cx} ${cy+34} ${cx+12} ${cy+28}
+                 Q${cx+20} ${cy+18} ${cx+18} ${cy+2}"
+            fill="${H}"/>
+        <ellipse cx="${cx}" cy="${cy+28}" rx="12" ry="7" fill="${H}"/>
+        <path d="M${cx-10} ${cy+6} Q${cx} ${cy+10} ${cx+10} ${cy+6}"
+            stroke="${Hd}" stroke-width="1.5" fill="none" opacity="0.5"/>`;
+    if (av.beard==='goatee') return `
+        <ellipse cx="${cx}" cy="${cy+22}" rx="9" ry="12" fill="${H}"/>
+        <ellipse cx="${cx}" cy="${cy+32}" rx="6" ry="5" fill="${H}"/>`;
+    if (av.beard==='moustache') return `
+        <path d="M${cx-12} ${cy+8} Q${cx-6} ${cy+4} ${cx} ${cy+7}
+                 Q${cx+6} ${cy+4} ${cx+12} ${cy+8}
+                 Q${cx+8} ${cy+12} ${cx} ${cy+11}
+                 Q${cx-8} ${cy+12} ${cx-12} ${cy+8}Z"
+            fill="${H}"/>`;
+    return '';
+}
+
+// ── TORSO ──
+function renderTorso(cx, cy, bw, bx, brx, KC, Kd, Ks, av) {
+    if (av.type==='footballer') {
+        return `
+        <!-- Main body/bib -->
+        <rect x="${bx}" y="${cy}" width="${bw}" height="58"
+            rx="6" fill="url(#kitG)" filter="url(#shadow)"/>
+        <!-- Side shading -->
+        <rect x="${bx}" y="${cy}" width="8" height="58"
+            rx="6" fill="${Kd}" opacity="0.4"/>
+        <rect x="${brx-8}" y="${cy}" width="8" height="58"
+            rx="6" fill="${Kd}" opacity="0.4"/>
+        <!-- Collar -->
+        <path d="M${cx-8} ${cy} Q${cx} ${cy+10} ${cx+8} ${cy}"
+            stroke="${darken(KC,0.6)}" stroke-width="2" fill="none"/>
+        <!-- Shoulder seams -->
+        <line x1="${bx+2}" y1="${cy+4}" x2="${bx+8}" y2="${cy+4}"
+            stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <line x1="${brx-8}" y1="${cy+4}" x2="${brx-2}" y2="${cy+4}"
+            stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        <!-- Bib mesh lines (nylon pinnie texture) -->
+        <line x1="${bx+12}" y1="${cy+8}" x2="${bx+12}" y2="${cy+50}"
+            stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <line x1="${brx-12}" y1="${cy+8}" x2="${brx-12}" y2="${cy+50}"
+            stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        `;
+    } else {
+        return renderCivilianTorso(cx, cy, bw, bx, brx, av);
+    }
+}
+
+function renderCivilianTorso(cx, cy, bw, bx, brx, av) {
+    const C  = av.outfitColor;
+    const Cd = darken(C, 0.72);
+
+    if (av.outfit==='casuals'||av.outfit==='jeans') return `
+        <rect x="${bx}" y="${cy}" width="${bw}" height="52" rx="5" fill="${C}"/>
+        <rect x="${bx}" y="${cy}" width="7" height="52" rx="5" fill="${Cd}" opacity="0.5"/>
+        <rect x="${brx-7}" y="${cy}" width="7" height="52" rx="5" fill="${Cd}" opacity="0.5"/>
+        <path d="M${cx-6} ${cy} Q${cx} ${cy+8} ${cx+6} ${cy}"
+            stroke="${Cd}" stroke-width="1.5" fill="none"/>`;
+
+    if (av.outfit==='suit') return `
+        <!-- Jacket -->
+        <rect x="${bx-3}" y="${cy}" width="${bw+6}" height="60" rx="5" fill="${C}"/>
+        <!-- Lapels -->
+        <path d="M${cx-8} ${cy} L${cx-14} ${cy+18} L${cx-4} ${cy+18} L${cx} ${cy+6}Z"
+            fill="${darken(C,0.75)}"/>
+        <path d="M${cx+8} ${cy} L${cx+14} ${cy+18} L${cx+4} ${cy+18} L${cx} ${cy+6}Z"
+            fill="${darken(C,0.75)}"/>
+        <!-- Shirt -->
+        <rect x="${cx-5}" y="${cy}" width="10" height="55" rx="2" fill="#f0f0f0"/>
+        <!-- Tie -->
+        <path d="M${cx-3} ${cy+4} L${cx+3} ${cy+4} L${cx+4} ${cy+30}
+                 L${cx} ${cy+36} L${cx-4} ${cy+30}Z"
+            fill="#cc1100"/>
+        <!-- Pocket square -->
+        <rect x="${bx+6}" y="${cy+10}" width="10" height="8" rx="2" fill="#f0f0f0" opacity="0.7"/>`;
+
+    if (av.outfit==='ankara') return `
+        <rect x="${bx}" y="${cy}" width="${bw}" height="56" rx="5" fill="${C}"/>
+        <!-- Ankara pattern -->
+        ${[...Array(15)].map((_,i)=>{
+            const px=bx+4+(i%4)*10;
+            const py=cy+4+Math.floor(i/4)*12;
+            return `<circle cx="${px}" cy="${py}" r="3"
+                fill="${lighten(C,1.4)}" opacity="0.6"/>
+                <circle cx="${px+5}" cy="${py+6}" r="2"
+                fill="${darken(C,0.6)}" opacity="0.5"/>`;
+        }).join('')}
+        <path d="M${cx-6} ${cy} Q${cx} ${cy+10} ${cx+6} ${cy}"
+            stroke="${darken(C,0.6)}" stroke-width="2" fill="none"/>`;
+
+    if (av.outfit==='agbada') return `
+        <!-- Outer robe -->
+        <rect x="${bx-14}" y="${cy-4}" width="${bw+28}" height="70"
+            rx="8" fill="${C}" opacity="0.9"/>
+        <!-- Inner layer -->
+        <rect x="${bx-4}" y="${cy}" width="${bw+8}" height="66"
+            rx="6" fill="${lighten(C,1.1)}"/>
+        <!-- Embroidery neckline -->
+        <path d="M${cx-10} ${cy} Q${cx} ${cy+12} ${cx+10} ${cy}"
+            stroke="${darken(C,0.5)}" stroke-width="3" fill="none"/>
+        <path d="M${cx-10} ${cy} Q${cx} ${cy+12} ${cx+10} ${cy}"
+            stroke="${lighten(C,1.4)}" stroke-width="1.5" fill="none"
+            stroke-dasharray="3,2"/>`;
+
+    if (av.outfit==='hoodie') return `
+        <rect x="${bx}" y="${cy}" width="${bw}" height="58" rx="5" fill="${C}"/>
+        <!-- Hood -->
+        <path d="M${bx} ${cy+2} Q${cx} ${cy-20} ${brx} ${cy+2}"
+            fill="${darken(C,0.85)}"/>
+        <!-- Pocket -->
+        <rect x="${cx-14}" y="${cy+34}" width="28" height="14"
+            rx="4" fill="${darken(C,0.8)}"/>
+        <!-- Drawstrings -->
+        <line x1="${cx-4}" y1="${cy+4}" x2="${cx-6}" y2="${cy+20}"
+            stroke="${darken(C,0.6)}" stroke-width="1.5"/>
+        <line x1="${cx+4}" y1="${cy+4}" x2="${cx+6}" y2="${cy+20}"
+            stroke="${darken(C,0.6)}" stroke-width="1.5"/>`;
+
+    if (av.outfit==='tracksuit') return `
+        <rect x="${bx}" y="${cy}" width="${bw}" height="56" rx="5" fill="${C}"/>
+        <!-- Stripes -->
+        <rect x="${bx+4}" y="${cy}" width="5" height="56"
+            fill="white" opacity="0.25" rx="2"/>
+        <rect x="${brx-9}" y="${cy}" width="5" height="56"
+            fill="white" opacity="0.25" rx="2"/>
+        <path d="M${cx-6} ${cy} Q${cx} ${cy+8} ${cx+6} ${cy}"
+            stroke="${darken(C,0.6)}" stroke-width="2" fill="none"/>`;
+
+    if (av.outfit==='gele') return `
+        <rect x="${bx-2}" y="${cy}" width="${bw+4}" height="55" rx="5" fill="${C}"/>
+        <!-- Neckline decoration -->
+        <path d="M${cx-10} ${cy} Q${cx} ${cy+10} ${cx+10} ${cy}"
+            stroke="${lighten(C,1.3)}" stroke-width="2" fill="none"
+            stroke-dasharray="3,2"/>`;
+
+    // default casuals fallback
+    return `
+        <rect x="${bx}" y="${cy}" width="${bw}" height="52" rx="5" fill="${C}"/>`;
+}
+
+// ── BOTTOMS (shorts / trousers) ──
+function renderBottoms(cx, cy, bw, KC, Kd) {
+    const isFootballer = av.type==='footballer';
+    const bottomColor  = isFootballer ? '#1c1c1c' : '#1e2a44';
+    const bottomDark   = darken(bottomColor, 0.7);
+
+    return `
+    <!-- Left leg bottom -->
+    <rect x="${cx-bw/2+1}" y="${cy}" width="${bw/2-3}" height="26"
+        rx="4" fill="${bottomColor}"/>
+    <!-- Right leg bottom -->
+    <rect x="${cx+3}" y="${cy}" width="${bw/2-3}" height="26"
+        rx="4" fill="${bottomColor}"/>
+    <!-- Crotch seam -->
+    <line x1="${cx}" y1="${cy}" x2="${cx}" y2="${cy+26}"
+        stroke="${bottomDark}" stroke-width="1.5"/>
+    <!-- Belt/waistband -->
+    <rect x="${cx-bw/2+1}" y="${cy}" width="${bw-4}" height="5"
+        rx="2" fill="${darken(bottomColor,0.7)}"/>
+    `;
+}
+
+// ── LEGS ──
+function renderLegs(cx, cy, bw, S, Sd) {
+    return `
+    <!-- Left shin -->
+    <rect x="${cx-bw/2+3}" y="${cy}" width="${bw/2-7}" height="34"
+        rx="5" fill="${S}"/>
+    <!-- Right shin -->
+    <rect x="${cx+5}" y="${cy}" width="${bw/2-7}" height="34"
+        rx="5" fill="${S}"/>
+    <!-- Shin highlight -->
+    <rect x="${cx-bw/2+5}" y="${cy+2}" width="4" height="20"
+        rx="2" fill="${lighten(S,1.1)}" opacity="0.3"/>
+    <rect x="${cx+7}" y="${cy+2}" width="4" height="20"
+        rx="2" fill="${lighten(S,1.1)}" opacity="0.3"/>
+    <!-- Calf shade -->
+    <rect x="${cx-bw/2+3}" y="${cy+24}" width="${bw/2-7}" height="10"
+        rx="3" fill="${Sd}" opacity="0.4"/>
+    <rect x="${cx+5}" y="${cy+24}" width="${bw/2-7}" height="10"
+        rx="3" fill="${Sd}" opacity="0.4"/>
+    `;
+}
+
+// ── BOOTS ──
+function renderBoots(cx, cy, bw) {
+    const bootC = '#1a1010';
+    const bootH = '#3a2020';
+    const sole  = '#333';
+    return `
+    <!-- Left boot -->
+    <rect x="${cx-bw/2}" y="${cy}" width="${bw/2-1}" height="10"
+        rx="4" fill="${bootC}"/>
+    <!-- Left sole -->
+    <rect x="${cx-bw/2-1}" y="${cy+7}" width="${bw/2+1}" height="4"
+        rx="2" fill="${sole}"/>
+    <!-- Left highlight -->
+    <rect x="${cx-bw/2+3}" y="${cy+1}" width="${bw/4}" height="4"
+        rx="2" fill="${bootH}"/>
+
+    <!-- Right boot -->
+    <rect x="${cx+3}" y="${cy}" width="${bw/2-1}" height="10"
+        rx="4" fill="${bootC}"/>
+    <!-- Right sole -->
+    <rect x="${cx+2}" y="${cy+7}" width="${bw/2+1}" height="4"
+        rx="2" fill="${sole}"/>
+    <!-- Right highlight -->
+    <rect x="${cx+5}" y="${cy+1}" width="${bw/4}" height="4"
+        rx="2" fill="${bootH}"/>
+    `;
+}
+
+// ── ARMS ──
+function renderArms(cx, cy, bw, S, Sd, KC, Kd) {
+    const sleeveColor = av.type==='footballer' ? KC : av.outfitColor;
+    const sleeveShade = darken(sleeveColor, 0.75);
+    return `
+    <!-- Left upper arm (sleeve) -->
+    <rect x="${cx-bw/2-13}" y="${cy}" width="14" height="26"
+        rx="6" fill="${sleeveColor}"/>
+    <rect x="${cx-bw/2-13}" y="${cy}" width="6" height="26"
+        rx="6" fill="${sleeveShade}" opacity="0.5"/>
+    <!-- Left forearm (skin) -->
+    <rect x="${cx-bw/2-12}" y="${cy+23}" width="12" height="22"
+        rx="5" fill="${S}"/>
+    <rect x="${cx-bw/2-12}" y="${cy+23}" width="5" height="22"
+        rx="5" fill="${Sd}" opacity="0.35"/>
+    <!-- Left hand -->
+    <ellipse cx="${cx-bw/2-6}" cy="${cy+47}" rx="6" ry="5" fill="${S}"/>
+
+    <!-- Right upper arm (sleeve) -->
+    <rect x="${cx+bw/2}" y="${cy}" width="14" height="26"
+        rx="6" fill="${sleeveColor}"/>
+    <rect x="${cx+bw/2+8}" y="${cy}" width="6" height="26"
+        rx="6" fill="${sleeveShade}" opacity="0.5"/>
+    <!-- Right forearm (skin) -->
+    <rect x="${cx+bw/2+1}" y="${cy+23}" width="12" height="22"
+        rx="5" fill="${S}"/>
+    <rect x="${cx+bw/2+8}" y="${cy+23}" width="5" height="22"
+        rx="5" fill="${Sd}" opacity="0.35"/>
+    <!-- Right hand -->
+    <ellipse cx="${cx+bw/2+7}" cy="${cy+47}" rx="6" ry="5" fill="${S}"/>
+    `;
+}
+
+// ── COLOUR HELPERS ──
+function darken(hex, factor) {
+    return adjustColor(hex, factor);
+}
+function lighten(hex, factor) {
+    return adjustColor(hex, factor);
+}
+function adjustColor(hex, factor) {
+    hex = hex.replace('#','');
+    if (hex.length===3) hex=hex.split('').map(c=>c+c).join('');
+    let r=parseInt(hex.slice(0,2),16);
+    let g=parseInt(hex.slice(2,4),16);
+    let b=parseInt(hex.slice(4,6),16);
+    r=Math.min(255,Math.max(0,Math.round(r*factor)));
+    g=Math.min(255,Math.max(0,Math.round(g*factor)));
+    b=Math.min(255,Math.max(0,Math.round(b*factor)));
+    return '#'+[r,g,b].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
+
+// =====================================================
+// SAVE
+// =====================================================
+async function saveAvatar() {
+    if (!session) { window.location.href='/auth.html'; return; }
+
+    document.getElementById('save-status').textContent = '⏳ Saving...';
+    document.getElementById('save-btn').disabled = true;
+
+    try {
+        // Refresh session token first
+        const { data: { session: fresh } } = await sb.auth.refreshSession();
+        if (fresh) session = fresh;
+
+        const res  = await fetch('/api/avatar/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type':  'application/json',
+                'Authorization': 'Bearer ' + session.access_token
+            },
+            body: JSON.stringify({
+                avatar_skin:      av.skin,
+                avatar_hair:      av.hair,
+                avatar_body:      av.body,
+                avatar_outfit:    av.outfit,
+                avatar_kit_color: av.kitHome,
+                avatar_kit_away:  av.kitAway,
+                avatar_number:    av.number,
+                avatar_complete:  true
+            })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById('save-status').textContent =
+                '✅ Baller saved!';
+            setTimeout(() => { window.location.href = '/'; }, 1400);
+        } else {
+            document.getElementById('save-status').textContent =
+                '❌ ' + (data.message || 'Save failed.');
+            document.getElementById('save-btn').disabled = false;
+        }
+    } catch (e) {
+        document.getElementById('save-status').textContent =
+            '❌ Network error. Try again.';
+        document.getElementById('save-btn').disabled = false;
+    }
+}
+</script>
+</body>
+</html>
