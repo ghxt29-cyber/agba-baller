@@ -178,8 +178,7 @@ app.get('/api/player', async (req, res) => {
         if (error || !user) return res.json({ success: false, message: 'Invalid session.' });
         const { data: player, error: pe } = await supabaseAdmin
             .from('players')
-                 .select('username, home_state, home_lga, naira_balance, stamina, respect_points, attr_speed, attr_dribbling, attr_shooting, avatar_skin, avatar_hair, avatar_body, avatar_outfit, avatar_kit_color, avatar_kit_away, avatar_number, avatar_complete')
-            .eq('user_id', user.id)
+                .select('username, home_state, home_lga, naira_balance, stamina, respect_points, respect_tier, matches_played, matches_won, total_goals, attr_speed, attr_dribbling, attr_shooting, avatar_skin, avatar_hair, avatar_body, avatar_outfit, avatar_kit_color, avatar_kit_away, avatar_number, avatar_complete')
             .single();
         if (pe || !player) return res.json({ success: false, message: 'Player not found.' });
         return res.json({ success: true, player });
@@ -226,7 +225,67 @@ app.post('/api/stamina/recover', async (req, res) => {
         return res.json({ success: false, message: 'Server error.' });
     }
 });
+// ============================================
+// RESPECT SYSTEM
+// ============================================
+const RESPECT = {
+    WIN:          15,
+    GOAL:          5,
+    DRAW:          3,
+    MATCH_PLAYED:  1,
+    OWN_GOAL:     -2,
+    BUY_JERSEY:   10,
+    RENT_STALL:   20
+};
 
+const RESPECT_TIERS = [
+    { name: 'Street Rookie',        min: 0    },
+    { name: 'Area Boy',             min: 50   },
+    { name: 'Neighbourhood Legend', min: 150  },
+    { name: 'LGA Rep',              min: 350  },
+    { name: 'State Champion',       min: 750  },
+    { name: 'Agba Baller',          min: 1500 }
+];
+
+function getRespectTier(points) {
+    let tier = RESPECT_TIERS[0];
+    for (const t of RESPECT_TIERS) {
+        if (points >= t.min) tier = t;
+    }
+    return tier.name;
+}
+
+async function addRespect(userId, currentRespect, amount, reason) {
+    if (!userId) return null;
+    const newRespect = Math.max(0, currentRespect + amount);
+    const newTier    = getRespectTier(newRespect);
+    const { error }  = await supabaseAdmin
+        .from('players')
+        .update({
+            respect_points: newRespect,
+            respect_tier:   newTier
+        })
+        .eq('user_id', userId);
+    if (error) { console.error('Respect error:', error.message); return null; }
+    console.log(`🏆 Respect: ${reason} → +${amount} (${newRespect} total, ${newTier})`);
+    return { newRespect, newTier };
+}
+
+async function updateMatchStats(userId, result, goals) {
+    if (!userId) return;
+    const { data: player } = await supabaseAdmin
+        .from('players')
+        .select('matches_played, matches_won, total_goals')
+        .eq('user_id', userId)
+        .single();
+    if (!player) return;
+
+    await supabaseAdmin.from('players').update({
+        matches_played: (player.matches_played || 0) + 1,
+        matches_won:    (player.matches_won    || 0) + (result === 'win' ? 1 : 0),
+        total_goals:    (player.total_goals    || 0) + (goals || 0)
+    }).eq('user_id', userId);
+}
 // ============================================
 // NAIRA & STAMINA HELPERS
 // ============================================
@@ -699,6 +758,27 @@ function startGameLoop(code) {
                         newBalance: newBal, reason, reward: amount, isOwnGoal
                     });
                 }
+
+                // Respect for goal / own goal
+                const respectAmount = isOwnGoal ? RESPECT.OWN_GOAL : RESPECT.GOAL;
+                const respectReason = isOwnGoal ? 'Own goal' : 'Goal scored';
+                if (scorer.respectPoints === undefined) scorer.respectPoints = 0;
+                const rResult = await addRespect(
+                    scorer.userId,
+                    scorer.respectPoints,
+                    respectAmount,
+                    respectReason
+                );
+                if (rResult) {
+                    scorer.respectPoints = rResult.newRespect;
+                    scorer.goals = (scorer.goals || 0) + (isOwnGoal ? 0 : 1);
+                    io.to(scorer.socketId).emit('respect_updated', {
+                        newRespect:  rResult.newRespect,
+                        newTier:     rResult.newTier,
+                        change:      respectAmount,
+                        reason:      respectReason
+                    });
+                }
             }
 
             io.to(code).emit('score_updated', {
@@ -1070,6 +1150,39 @@ io.on('connection', (socket) => {
                     newBalance: player.nairaBalance, reason, reward: 0
                 });
             }
+
+            // Respect on match end
+            const respectGain = result === 'win'  ? RESPECT.WIN + RESPECT.MATCH_PLAYED
+                              : result === 'draw' ? RESPECT.DRAW + RESPECT.MATCH_PLAYED
+                              :                     RESPECT.MATCH_PLAYED;
+            const respectReason = result === 'win'  ? 'Match won'
+                                : result === 'draw' ? 'Match drawn'
+                                :                     'Match completed';
+
+            if (player.respectPoints === undefined) player.respectPoints = 0;
+            const rResult = await addRespect(
+                player.userId,
+                player.respectPoints,
+                respectGain,
+                respectReason
+            );
+            if (rResult) {
+                player.respectPoints = rResult.newRespect;
+                const tierUp = rResult.newTier !== player.respectTier;
+                player.respectTier = rResult.newTier;
+                io.to(player.socketId).emit('respect_updated', {
+                    newRespect: rResult.newRespect,
+                    newTier:    rResult.newTier,
+                    change:     respectGain,
+                    reason:     respectReason,
+                    tierUp
+                });
+            }
+
+            // Update match stats
+            await updateMatchStats(
+                player.userId, result, player.goals || 0
+            );
 
             const newStam = await drainStaminaDB(player.userId, player.stamina);
             if (newStam !== null) {

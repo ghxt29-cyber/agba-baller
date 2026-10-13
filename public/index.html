@@ -282,6 +282,15 @@
             <div class="hud-stat">
                 <div class="hud-stat-label">🏆 Respect</div>
                 <div class="hud-stat-value" id="hud-respect">0</div>
+                <div style="font-size:0.6rem;color:#555;" id="hud-tier">Street Rookie</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">🎯 Matches</div>
+                <div class="hud-stat-value" id="hud-matches">0</div>
+            </div>
+            <div class="hud-stat">
+                <div class="hud-stat-label">⚽ Goals</div>
+                <div class="hud-stat-value" id="hud-goals">0</div>
             </div>
             <div class="hud-stat">
                 <div class="hud-stat-label">💨 Speed</div>
@@ -499,8 +508,11 @@ function renderHUD(player) {
     document.getElementById('hud-location').textContent  = player.home_state + ' • ' + player.home_lga;
     updateBalanceDisplay(player.naira_balance);
     updateStaminaDisplay(player.stamina);
-    document.getElementById('hud-respect').textContent   = player.respect_points || 0;
-    document.getElementById('hud-speed').textContent     = player.attr_speed || 10;
+        document.getElementById('hud-respect').textContent   = player.respect_points || 0;
+        document.getElementById('hud-tier').textContent      = player.respect_tier || 'Street Rookie';
+        document.getElementById('hud-matches').textContent   = player.matches_played || 0;
+        document.getElementById('hud-goals').textContent     = player.total_goals || 0;
+        document.getElementById('hud-speed').textContent     = player.attr_speed || 10;
     document.getElementById('hud-dribbling').textContent = player.attr_dribbling || 10;
     document.getElementById('hud-shooting').textContent  = player.attr_shooting || 10;
 }
@@ -665,7 +677,29 @@ socket.on('score_updated', (data) => {
         `🥅 ${data.isOwnGoal ? 'OWN GOAL' : 'GOAL'} by ${data.scorerName}${tag}! ${data.homeScore} - ${data.awayScore}`
     );
 });
+socket.on('respect_updated', (data) => {
+    document.getElementById('hud-respect').textContent = data.newRespect;
+    document.getElementById('hud-tier').textContent    = data.newTier;
 
+    const sign    = data.change > 0 ? '+' : '';
+    const tierMsg = data.tierUp
+        ? `\n🎖️ TIER UP: ${data.newTier}!` : '';
+
+    showRewardPopup(
+        `🏆 ${data.reason} ${sign}${data.change} Respect (${data.newRespect} total)${tierMsg}`,
+        data.change > 0 ? 'reward' : 'penalty'
+    );
+    addChatMsg(
+        data.change > 0 ? 'reward' : 'penalty',
+        `🏆 ${data.reason}: ${sign}${data.change} Respect → ${data.newRespect} (${data.newTier})`
+    );
+
+    if (data.tierUp) {
+        addChatMsg('system',
+            `🎖️ TIER UP! You are now: ${data.newTier}!`
+        );
+    }
+});
 socket.on('match_result', (data) => {
     const msg = data.isDraw
         ? `🤝 DRAW! Final: ${data.homeScore} - ${data.awayScore}`
