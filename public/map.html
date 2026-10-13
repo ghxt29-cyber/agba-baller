@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGBA BALLER — Nigeria Pitch Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #0a0a0a; color: #fff; font-family: Arial, sans-serif; }
+
+        #header {
+            width: 100%; background: #111;
+            border-bottom: 3px solid #00aa00;
+            padding: 10px 20px;
+            display: flex; align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; gap: 8px;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        #header h1 { font-size: 1.2rem; color: #00ff44; letter-spacing: 2px; }
+        #header-right { display: flex; align-items: center; gap: 10px; }
+        .back-btn {
+            background: #1a1a1a; border: 1px solid #333;
+            color: #888; padding: 5px 12px; border-radius: 4px;
+            cursor: pointer; font-size: 0.8rem; text-decoration: none;
+        }
+        .back-btn:hover { color: #fff; border-color: #555; }
+
+        /* MAP STATS BAR */
+        #stats-bar {
+            background: #0d1a0d;
+            border-bottom: 1px solid #1a3a1a;
+            padding: 8px 20px;
+            display: flex; gap: 24px;
+            align-items: center; flex-wrap: wrap;
+        }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-val { font-size: 1rem; font-weight: bold; color: #00ff44; }
+        .stat-lbl { font-size: 0.62rem; color: #555; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* MAP CONTAINER */
+        #map-wrap {
+            display: flex;
+            height: calc(100vh - 100px);
+        }
+
+        #map {
+            flex: 1;
+            z-index: 1;
+        }
+
+        /* PITCH INFO PANEL */
+        #pitch-panel {
+            width: 320px;
+            background: #111;
+            border-left: 1px solid #1a1a1a;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+        @media (max-width: 700px) {
+            #map-wrap { flex-direction: column; }
+            #pitch-panel { width: 100%; height: 280px; border-left: none; border-top: 1px solid #1a1a1a; }
+        }
+
+        #pitch-panel-header {
+            padding: 15px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #0d1a0d;
+        }
+        #pitch-panel-header h3 {
+            font-size: 0.82rem; color: #00ff44;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        #pitch-detail {
+            padding: 15px;
+            flex: 1;
+        }
+
+        .no-selection {
+            color: #333; font-size: 0.85rem;
+            text-align: center; padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .no-selection span { font-size: 2rem; display: block; margin-bottom: 10px; }
+
+        /* PITCH DETAIL CARD */
+        .pitch-card { display: none; }
+        .pitch-card.active { display: block; }
+
+        .pitch-name {
+            font-size: 1.1rem; font-weight: bold;
+            color: #00ff44; margin-bottom: 4px;
+        }
+        .pitch-location {
+            font-size: 0.78rem; color: #888;
+            margin-bottom: 15px;
+        }
+        .pitch-surface {
+            display: inline-block;
+            background: #1a3a1a; border: 1px solid #00aa00;
+            color: #00ff44; font-size: 0.68rem;
+            padding: 2px 8px; border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .pitch-stats {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 10px; margin-bottom: 18px;
+        }
+        .pitch-stat {
+            background: #0d0d0d; border: 1px solid #222;
+            border-radius: 6px; padding: 10px; text-align: center;
+        }
+        .pitch-stat-val { font-size: 1rem; font-weight: bold; color: #fff; }
+        .pitch-stat-lbl { font-size: 0.65rem; color: #555; text-transform: uppercase; margin-top: 2px; }
+
+        .pitch-desc {
+            font-size: 0.8rem; color: #888;
+            line-height: 1.6; margin-bottom: 18px;
+            border-left: 3px solid #1a3a1a;
+            padding-left: 10px;
+        }
+
+        .pitch-vibe {
+            background: #0d1a0d; border: 1px solid #1a3a1a;
+            border-radius: 6px; padding: 10px 12px;
+            font-size: 0.78rem; color: #aaa;
+            margin-bottom: 15px; line-height: 1.5;
+        }
+        .pitch-vibe strong { color: #00ff44; }
+
+        .active-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: #001a00; border: 1px solid #00aa00;
+            color: #00ff44; font-size: 0.72rem;
+            padding: 4px 10px; border-radius: 20px;
+            margin-bottom: 12px;
+        }
+        .active-dot {
+            width: 7px; height: 7px;
+            background: #00ff44; border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.3; }
+        }
+
+        .travel-btn {
+            width: 100%; background: #1a3a1a;
+            border: 1px solid #00aa00; color: #00ff44;
+            padding: 10px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; font-size: 0.85rem;
+            transition: all 0.2s; margin-bottom: 8px;
+        }
+        .travel-btn:hover { background: #003300; }
+        .travel-btn.disabled {
+            opacity: 0.4; cursor: not-allowed;
+            border-color: #333; color: #555;
+            background: #111;
+        }
+        .travel-note {
+            font-size: 0.7rem; color: #444;
+            text-align: center;
+        }
+
+        /* STATE FILTER */
+        #state-filter {
+            padding: 10px 15px;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        #state-select {
+            width: 100%; background: #0d0d0d;
+            border: 1px solid #333; color: #fff;
+            padding: 7px 10px; border-radius: 5px;
+            font-size: 0.82rem; outline: none;
+        }
+        #state-select:focus { border-color: #00aa00; }
+
+        /* PITCH LIST */
+        #pitch-list {
+            padding: 10px 15px;
+            border-bottom: 1px solid #1a1a1a;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .pitch-list-item {
+            background: #0d0d0d; border: 1px solid #1a1a1a;
+            border-radius: 5px; padding: 8px 10px;
+            margin-bottom: 6px; cursor: pointer;
+            transition: all 0.15s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .pitch-list-item:hover { border-color: #00aa00; background: #0d1a0d; }
+        .pitch-list-item.active { border-color: #00aa00; background: #001a00; }
+        .pli-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .pli-name { font-size: 0.8rem; color: #fff; }
+        .pli-state { font-size: 0.68rem; color: #555; }
+
+        /* LEAFLET CUSTOM STYLES */
+        .leaflet-container { background: #1a1a1a !important; }
+        .pitch-marker-icon {
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+    <h1>🗺️ NIGERIA PITCH MAP</h1>
+    <div id="header-right">
+        <a href="/" class="back-btn">⚽ Back to Pitch</a>
+        <a href="/market.html" class="back-btn">🏪 Market</a>
+    </div>
+</div>
+
+<!-- STATS BAR -->
+<div id="stats-bar">
+    <div class="stat-item">
+        <div class="stat-val" id="stat-pitches">0</div>
+        <div class="stat-lbl">Pitches</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val" id="stat-states">36</div>
+        <div class="stat-lbl">States + FCT</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val" id="stat-active">0</div>
+        <div class="stat-lbl">Active Matches</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-val" id="stat-players">0</div>
+        <div class="stat-lbl">Players Online</div>
+    </div>
+</div>
+
+<!-- MAP + PANEL -->
+<div id="map-wrap">
+    <div id="map"></div>
+
+    <div id="pitch-panel">
+        <div id="pitch-panel-header">
+            <h3>📍 Pitch Information</h3>
+        </div>
+
+        <!-- STATE FILTER -->
+        <div id="state-filter">
+            <select id="state-select" onchange="filterByState(this.value)">
+                <option value="">— All States —</option>
+            </select>
+        </div>
+
+        <!-- PITCH LIST -->
+        <div id="pitch-list"></div>
+
+        <!-- PITCH DETAIL -->
+        <div id="pitch-detail">
+            <div class="no-selection">
+                <span>📍</span>
+                Click any marker on the map<br>
+                or select a state to explore<br>
+                pitches across Nigeria
+            </div>
+            <div class="pitch-card" id="pitch-card"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// =====================================================
+// NIGERIA PITCH DATA — All 36 States + FCT
+// Real coordinates for street football locations
+// =====================================================
+const PITCHES = [
+    // LAGOS
+    { id:'lag1', name:'The Cage', area:'Surulere', state:'Lagos', lat:6.5009, lng:3.3507, surface:'Concrete', vibe:'The most competitive street pitch in Lagos. E no easy here o.', active:true  },
+    { id:'lag2', name:'Agege Motor Road Pitch', area:'Agege', state:'Lagos', lat:6.6176, lng:3.3232, surface:'Dirt', vibe:'Early morning matches before the go-slow starts. Pure hustle.', active:false },
+    { id:'lag3', name:'Mushin Junction Court', area:'Mushin', state:'Lagos', lat:6.5478, lng:3.3578, surface:'Concrete', vibe:'Rough and ready. The crowd picks sides before kickoff.', active:true  },
+    { id:'lag4', name:'Festac Back Field', area:'Festac Town', state:'Lagos', lat:6.4698, lng:3.2753, surface:'Grass', vibe:'One of the few grass pitches. They guard it like a shrine.', active:false },
+    { id:'lag5', name:'Lekki Sand Pitch', area:'Lekki Phase 1', state:'Lagos', lat:6.4499, lng:3.4784, surface:'Sand', vibe:'Rich kids play here but the street ballers always win.', active:false },
+
+    // ABUJA (FCT)
+    { id:'abj1', name:'Wuse Zone 4 Court', area:'Wuse', state:'FCT Abuja', lat:9.0643, lng:7.4892, surface:'Concrete', vibe:'Civil servants play here at lunch. Surprising quality.', active:true  },
+    { id:'abj2', name:'Garki Area 11 Pitch', area:'Garki', state:'FCT Abuja', lat:9.0388, lng:7.4841, surface:'Dirt', vibe:'The original Abuja street pitch. Since 1991.', active:false },
+    { id:'abj3', name:'Kubwa Back Street', area:'Kubwa', state:'FCT Abuja', lat:9.1571, lng:7.3532, surface:'Concrete', vibe:'Satellite town energy. They produce ballers here.', active:true  },
+    { id:'abj4', name:'Nyanya Junction', area:'Nyanya', state:'FCT Abuja', lat:8.9985, lng:7.5322, surface:'Dirt', vibe:'Morning to night. The pitch never sleeps.', active:false },
+
+    // RIVERS
+    { id:'riv1', name:'D-Line Pitch', area:'D-Line', state:'Rivers', lat:4.8156, lng:7.0498, surface:'Concrete', vibe:'Port Harcourt classic. Oil money but street spirit.', active:true  },
+    { id:'riv2', name:'Rumuola Road Court', area:'Rumuola', state:'Rivers', lat:4.8242, lng:7.0201, surface:'Dirt', vibe:'Under the overhead bridge. Shade all day.', active:false },
+    { id:'riv3', name:'Diobu Main Pitch', area:'Mile 2 Diobu', state:'Rivers', lat:4.7823, lng:6.9983, surface:'Concrete', vibe:'The loudest crowd in PH. They sing while you play.', active:false },
+
+    // KANO
+    { id:'kan1', name:'Sabon Gari Court', area:'Sabon Gari', state:'Kano', lat:12.0022, lng:8.5227, surface:'Dirt', vibe:'Multi-ethnic pitch. Everyone plays here. No wahala.', active:true  },
+    { id:'kan2', name:'Fagge Street Pitch', area:'Fagge', state:'Kano', lat:11.9980, lng:8.5100, surface:'Sand', vibe:'Early morning only. Too hot by 9am.', active:false },
+    { id:'kan3', name:'Nassarawa GRA Pitch', area:'Nassarawa', state:'Kano', lat:11.9736, lng:8.5305, surface:'Grass', vibe:'Government Reserved Area. They take football seriously here.', active:false },
+
+    // OGUN
+    { id:'ogu1', name:'Abeokuta Ita-Eko Pitch', area:'Ita-Eko', state:'Ogun', lat:7.1557, lng:3.3451, surface:'Dirt', vibe:'Under the rocks of Olumo. Historic pitch.', active:false },
+    { id:'ogu2', name:'Sagamu Junction Court', area:'Sagamu', state:'Ogun', lat:6.8388, lng:3.6480, surface:'Concrete', vibe:'Gateway pitch. Lagos vs Ibadan ballers clash here.', active:true  },
+    { id:'ogu3', name:'Ijebu-Ode Field', area:'Ijebu-Ode', state:'Ogun', lat:6.8182, lng:3.9317, surface:'Grass', vibe:'Weekend warriors only. But quality is surprising.', active:false },
+
+    // OYO
+    { id:'oyo1', name:'Dugbe Market Pitch', area:'Dugbe', state:'Oyo', lat:7.3775, lng:3.9170, surface:'Concrete', vibe:'Ibadan heat plus market noise. Concentration test.', active:true  },
+    { id:'oyo2', name:'Bodija Junction', area:'Bodija', state:'Oyo', lat:7.4167, lng:3.8999, surface:'Dirt', vibe:'Student dominated. UI boys bring tactics.', active:false },
+    { id:'oyo3', name:'Agodi Gate Pitch', area:'Agodi', state:'Oyo', lat:7.3956, lng:3.9024, surface:'Grass', vibe:'Near the gardens. Beautiful setting for street ball.', active:false },
+
+    // ANAMBRA
+    { id:'ana1', name:'Onitsha Main Market Pitch', area:'Onitsha', state:'Anambra', lat:6.1428, lng:6.7866, surface:'Concrete', vibe:'Biggest market in West Africa. Biggest banter too.', active:true  },
+    { id:'ana2', name:'Awka GRA Court', area:'Awka', state:'Anambra', lat:6.2084, lng:7.0671, surface:'Concrete', vibe:'State capital pitch. Civil servants vs artisans daily.', active:false },
+    { id:'ana3', name:'Nnewi Parts Pitch', area:'Nnewi', state:'Anambra', lat:6.0059, lng:6.9200, surface:'Dirt', vibe:'Spare parts dealers by day. Ballers by evening.', active:false },
+
+    // ENUGU
+    { id:'enu1', name:'Coal Camp Pitch', area:'Coal Camp', state:'Enugu', lat:6.4584, lng:7.5164, surface:'Dirt', vibe:'Coal City hustle. Mining town mentality on the pitch.', active:true  },
+    { id:'enu2', name:'Independence Layout Court', area:'Independence Layout', state:'Enugu', lat:6.4374, lng:7.5099, surface:'Concrete', vibe:'Middle class neighbourhood. Surprisingly rough play.', active:false },
+
+    // DELTA
+    { id:'del1', name:'Asaba Niger Bridge Pitch', area:'Asaba', state:'Delta', lat:6.1962, lng:6.7336, surface:'Sand', vibe:'By the great river. They say the Niger gives you strength.', active:false },
+    { id:'del2', name:'Warri Effurun Pitch', area:'Effurun', state:'Delta', lat:5.5500, lng:5.7833, surface:'Concrete', vibe:'Warri boys no dey carry last. Fastest feet in Nigeria.', active:true  },
+    { id:'del3', name:'Sapele Road Court', area:'Sapele', state:'Delta', lat:5.8990, lng:5.6800, surface:'Dirt', vibe:'Timber town energy. Strong and physical.', active:false },
+
+    // EDO
+    { id:'edo1', name:'Ring Road Pitch', area:'Ring Road', state:'Edo', lat:6.3350, lng:5.6278, surface:'Concrete', vibe:'Benin City classic. Ancient kingdom, modern skill.', active:true  },
+    { id:'edo2', name:'New Benin Market Court', area:'New Benin', state:'Edo', lat:6.3374, lng:5.6350, surface:'Dirt', vibe:'Market closes at 6. Pitch opens at 6.', active:false },
+
+    // KADUNA
+    { id:'kad1', name:'Barnawa Pitch', area:'Barnawa', state:'Kaduna', lat:10.4833, lng:7.4333, surface:'Dirt', vibe:'Southern Kaduna unity pitch. All tribes welcome.', active:false },
+    { id:'kad2', name:'Tudun Wada Court', area:'Tudun Wada', state:'Kaduna', lat:10.5264, lng:7.4367, surface:'Concrete', vibe:'Northern Kaduna. Quick and physical. No messing.', active:true  },
+    { id:'kad3', name:'Kakuri Junction Pitch', area:'Kakuri', state:'Kaduna', lat:10.4641, lng:7.4312, surface:'Grass', vibe:'Rare grass pitch in the North. They protect it well.', active:false },
+
+    // KATSINA
+    { id:'kat1', name:'Kofar Kaura Pitch', area:'Kofar Kaura', state:'Katsina', lat:12.9889, lng:7.6006, surface:'Sand', vibe:'Historic walled city. They play with pride here.', active:false },
+    { id:'kat2', name:'Katsina GRA Court', area:'GRA', state:'Katsina', lat:12.9975, lng:7.6144, surface:'Dirt', vibe:'Presidential hometown. High expectations on the pitch.', active:false },
+
+    // SOKOTO
+    { id:'sok1', name:'Sokoto Central Pitch', area:'Central', state:'Sokoto', lat:13.0622, lng:5.2339, surface:'Sand', vibe:'Caliphate city. Respectful game. Skill over aggression.', active:false },
+    { id:'sok2', name:'Gawon Nama Court', area:'Gawon Nama', state:'Sokoto', lat:13.0700, lng:5.2400, surface:'Dirt', vibe:'Butchers quarter. They are tough. Very tough.', active:false },
+
+    // BORNO
+    { id:'bor1', name:'Maiduguri Monday Market Pitch', area:'Monday Market', state:'Borno', lat:11.8333, lng:13.1500, surface:'Sand', vibe:'Resilient city. Football as hope. Beautiful to watch.', active:true  },
+    { id:'bor2', name:'Gwange Pitch', area:'Gwange', state:'Borno', lat:11.8500, lng:13.1600, surface:'Dirt', vibe:'Community pitch. Everyone looks after it together.', active:false },
+
+    // ADAMAWA
+    { id:'ada1', name:'Yola North Pitch', area:'Yola North', state:'Adamawa', lat:9.2035, lng:12.4954, surface:'Grass', vibe:'Riverside city. Relaxed pace. Beautiful football.', active:false },
+
+    // TARABA
+    { id:'tar1', name:'Jalingo Pitch', area:'Jalingo', state:'Taraba', lat:8.8938, lng:11.3696, surface:'Grass', vibe:'Nature state. Fresh air and fresh legs always.', active:false },
+
+    // GOMBE
+    { id:'gom1', name:'Gombe Pantami Pitch', area:'Pantami', state:'Gombe', lat:10.2791, lng:11.1673, surface:'Dirt', vibe:'Jewel of the Savannah. Competitive and proud.', active:false },
+
+    // YOBE
+    { id:'yob1', name:'Damaturu Central', area:'Central', state:'Yobe', lat:11.7480, lng:11.9601, surface:'Sand', vibe:'Desert state. They play at dawn before the heat.', active:false },
+
+    // BAUCHI
+    { id:'bau1', name:'Bauchi Wunti Pitch', area:'Wunti', state:'Bauchi', lat:10.3158, lng:9.8442, surface:'Dirt', vibe:'Plateau borderland. Mix of North and Middle Belt style.', active:false },
+
+    // PLATEAU
+    { id:'pla1', name:'Jos Terminus Pitch', area:'Terminus', state:'Plateau', lat:9.9167, lng:8.8961, surface:'Grass', vibe:'Cool climate. They play year round. Never too hot.', active:true  },
+    { id:'pla2', name:'Bukuru Pitch', area:'Bukuru', state:'Plateau', lat:9.7939, lng:8.8672, surface:'Concrete', vibe:'Mining town. Hard working people. Hard working players.', active:false },
+
+    // NASARAWA
+    { id:'nas1', name:'Lafia Central Pitch', area:'Central', state:'Nasarawa', lat:8.4860, lng:8.5237, surface:'Grass', vibe:'State capital. Growing football culture.', active:false },
+
+    // NIGER
+    { id:'nig1', name:'Minna Railway Pitch', area:'Railway', state:'Niger', lat:9.6139, lng:6.5569, surface:'Dirt', vibe:'Former railway hub. Old school Nigeria energy.', active:false },
+    { id:'nig2', name:'Suleja Road Court', area:'Suleja', state:'Niger', lat:9.1800, lng:7.1800, surface:'Concrete', vibe:'Gateway to Abuja. Transit city, transit energy.', active:false },
+
+    // KWARA
+    { id:'kwa1', name:'Ilorin Tanke Pitch', area:'Tanke', state:'Kwara', lat:8.5230, lng:4.5421, surface:'Dirt', vibe:'Harmony state. North meets South on this pitch.', active:true  },
+    { id:'kwa2', name:'Offa Junction Court', area:'Offa', state:'Kwara', lat:8.1504, lng:4.7220, surface:'Concrete', vibe:'Small city, big talent. They export ballers.', active:false },
+
+    // EKITI
+    { id:'eki1', name:'Ado-Ekiti Fajuyi Pitch', area:'Fajuyi', state:'Ekiti', lat:7.6333, lng:5.2167, surface:'Grass', vibe:'Fountain of Knowledge state. Educated footballers.', active:false },
+
+    // ONDO
+    { id:'ond1', name:'Akure Alagbaka Pitch', area:'Alagbaka', state:'Ondo', lat:7.2526, lng:5.1948, surface:'Concrete', vibe:'Oil and sunshine state. Warm weather, warm game.', active:false },
+    { id:'ond2', name:'Ondo Town Pitch', area:'Town Centre', state:'Ondo', lat:7.0833, lng:4.8333, surface:'Dirt', vibe:'Old Ondo Kingdom. They play with history on their side.', active:false },
+
+    // OSUN
+    { id:'osu1', name:'Osogbo Ataoja Pitch', area:'Ataoja', state:'Osun', lat:7.7827, lng:4.5418, surface:'Concrete', vibe:'State of Osun. Near the sacred grove. Spiritual energy.', active:false },
+
+    // OUN (Ogun/Osun border)
+    { id:'oyo4', name:'Ogbomosho Pitch', area:'Ogbomosho', state:'Oyo', lat:8.1330, lng:4.2500, surface:'Dirt', vibe:'Second city of Oyo. Underrated football talent here.', active:false },
+
+    // CROSS RIVER
+    { id:'cro1', name:'Calabar Marina Pitch', area:'Marina', state:'Cross River', lat:4.9757, lng:8.3417, surface:'Grass', vibe:'Carnival city. They bring the party to the pitch.', active:true  },
+    { id:'cro2', name:'Wapi Road Court', area:'Wapi', state:'Cross River', lat:4.9500, lng:8.3200, surface:'Concrete', vibe:'Near the river. Cool breeze. Beautiful game.', active:false },
+
+    // AKWA IBOM
+    { id:'akw1', name:'Uyo Itam Pitch', area:'Itam', state:'Akwa Ibom', lat:5.0377, lng:7.9128, surface:'Grass', vibe:'Promise land state. They play with joy here.', active:false },
+    { id:'akw2', name:'Eket Road Court', area:'Eket', state:'Akwa Ibom', lat:4.6500, lng:7.9300, surface:'Concrete', vibe:'Oil city. After work matches are legendary.', active:false },
+
+    // BAYELSA
+    { id:'bay1', name:'Yenagoa Central Pitch', area:'Central', state:'Bayelsa', lat:4.9267, lng:6.2676, surface:'Concrete', vibe:'Ijaw nation. Creekside ballers with serious feet.', active:false },
+
+    // IMO
+    { id:'imo1', name:'Owerri New Owerri Pitch', area:'New Owerri', state:'Imo', lat:5.4836, lng:7.0254, surface:'Grass', vibe:'Eastern heartland. Technical game. Very technical.', active:true  },
+    { id:'imo2', name:'Orlu Road Court', area:'Orlu', state:'Imo', lat:5.7939, lng:7.0350, surface:'Concrete', vibe:'Commercial city. Quick passes. No time to waste.', active:false },
+
+    // ABIA
+    { id:'abi1', name:'Ariaria Market Pitch', area:'Ariaria', state:'Abia', lat:5.1167, lng:7.3667, surface:'Concrete', vibe:'Biggest market in West Africa. Biggest energy too.', active:false },
+    { id:'abi2', name:'Umuahia Pitch', area:'Umuahia', state:'Abia', lat:5.5243, lng:7.4892, surface:'Grass', vibe:'State capital. They produce strikers here.', active:false },
+
+    // EBONYI
+    { id:'ebo1', name:'Abakaliki Salt Lake Pitch', area:'Salt Lake', state:'Ebonyi', lat:6.3249, lng:8.1137, surface:'Dirt', vibe:'Salt of the earth. Hardworking players.', active:false },
+
+    // ZAMFARA
+    { id:'zam1', name:'Gusau Central Pitch', area:'Central', state:'Zamfara', lat:12.1611, lng:6.6639, surface:'Sand', vibe:'Northwestern pride. Physical and fast.', active:false },
+
+    // KEBBI
+    { id:'keb1', name:'Birnin Kebbi Pitch', area:'Central', state:'Kebbi', lat:12.4539, lng:4.1975, surface:'Sand', vibe:'Riverside state. River Niger flows nearby.', active:false },
+
+    // JIGAWA
+    { id:'jig1', name:'Dutse Pitch', area:'Central', state:'Jigawa', lat:11.8578, lng:9.3489, surface:'Sand', vibe:'New state, old values. Respectful but competitive.', active:false },
+
+    // KOGI
+    { id:'kog1', name:'Lokoja Confluence Pitch', area:'Confluence', state:'Kogi', lat:7.7939, lng:6.7376, surface:'Grass', vibe:'Where Niger meets Benue. Two rivers, double energy.', active:true  },
+    { id:'kog2', name:'Anyigba Pitch', area:'Anyigba', state:'Kogi', lat:7.4900, lng:7.1900, surface:'Dirt', vibe:'University town. Students bring tactics from around Nigeria.', active:false },
+
+    // BENUE
+    { id:'ben1', name:'Makurdi North Bank Pitch', area:'North Bank', state:'Benue', lat:7.7333, lng:8.5333, surface:'Grass', vibe:'Food basket of the nation. Well fed, well played.', active:false },
+    { id:'ben2', name:'Otukpo Pitch', area:'Otukpo', state:'Benue', lat:7.1833, lng:8.1333, surface:'Dirt', vibe:'Idoma land. Warrior spirit on the pitch.', active:false },
+];
+
+// =====================================================
+// MAP INIT
+// =====================================================
+const map = L.map('map', {
+    center:  [9.0820, 8.6753],  // Nigeria centre
+    zoom:    6,
+    minZoom: 5,
+    maxZoom: 16
+});
+
+// Dark OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://openstreetmap.org">OpenStreetMap</a>',
+    subdomains:  ['a','b','c']
+}).addTo(map);
+
+// Nigeria bounds
+const nigeriaBounds = L.latLngBounds(
+    L.latLng(4.2, 2.7),
+    L.latLng(13.9, 14.7)
+);
+map.setMaxBounds(nigeriaBounds);
+
+// =====================================================
+// MARKERS
+// =====================================================
+const markers      = {};
+let   activePitch  = null;
+
+// Custom icons
+function makeIcon(active) {
+    return L.divIcon({
+        className: '',
+        html: `<div style="
+            width:${active?'22':'18'}px;
+            height:${active?'22':'18'}px;
+            background:${active?'#00ff44':'#555'};
+            border:2px solid ${active?'#fff':'#333'};
+            border-radius:50%;
+            box-shadow:${active?'0 0 8px rgba(0,255,68,0.7)':'none'};
+            display:flex;align-items:center;justify-content:center;
+            font-size:${active?'11':'9'}px;
+        ">⚽</div>`,
+        iconSize:   [active?22:18, active?22:18],
+        iconAnchor: [active?11:9, active?11:9]
+    });
+}
+
+// Add all markers
+PITCHES.forEach(p => {
+    const marker = L.marker([p.lat, p.lng], {
+        icon: makeIcon(p.active)
+    }).addTo(map);
+
+    marker.bindTooltip(p.name, {
+        permanent:  false,
+        className:  'leaflet-tooltip',
+        offset:     [0, -10],
+        direction:  'top'
+    });
+
+    marker.on('click', () => selectPitch(p));
+    markers[p.id] = marker;
+});
+
+// =====================================================
+// STATE FILTER
+// =====================================================
+const states = [...new Set(PITCHES.map(p => p.state))].sort();
+const sel    = document.getElementById('state-select');
+states.forEach(s => {
+    const opt   = document.createElement('option');
+    opt.value   = s;
+    opt.textContent = s;
+    sel.appendChild(opt);
+});
+
+function filterByState(state) {
+    const list = document.getElementById('pitch-list');
+    list.innerHTML = '';
+
+    const filtered = state
+        ? PITCHES.filter(p => p.state === state)
+        : [];
+
+    if (!filtered.length) return;
+
+    // Fly to state
+    const lats  = filtered.map(p => p.lat);
+    const lngs  = filtered.map(p => p.lng);
+    const bounds = L.latLngBounds(
+        [Math.min(...lats) - 0.3, Math.min(...lngs) - 0.3],
+        [Math.max(...lats) + 0.3, Math.max(...lngs) + 0.3]
+    );
+    map.flyToBounds(bounds, { duration: 1.2 });
+
+    filtered.forEach(p => {
+        const item       = document.createElement('div');
+        item.className   = 'pitch-list-item';
+        item.id          = `pli-${p.id}`;
+        item.innerHTML   = `
+            <div class="pli-dot"
+                style="background:${p.active?'#00ff44':'#444'}"></div>
+            <div>
+                <div class="pli-name">${p.name}</div>
+                <div class="pli-state">${p.area} · ${p.surface}</div>
+            </div>`;
+        item.onclick     = () => {
+            selectPitch(p);
+            map.flyTo([p.lat, p.lng], 14, { duration: 1 });
+        };
+        list.appendChild(item);
+    });
+}
+
+// =====================================================
+// SELECT PITCH
+// =====================================================
+function selectPitch(p) {
+    activePitch = p;
+
+    // Update list highlight
+    document.querySelectorAll('.pitch-list-item')
+        .forEach(el => el.classList.remove('active'));
+    const pli = document.getElementById(`pli-${p.id}`);
+    if (pli) pli.classList.add('active');
+
+    // Render detail card
+    const card = document.getElementById('pitch-card');
+    document.querySelector('.no-selection').style.display = 'none';
+    card.classList.add('active');
+
+    card.innerHTML = `
+        ${p.active ? `
+        <div class="active-badge">
+            <div class="active-dot"></div>
+            Live Match in Progress
+        </div>` : ''}
+
+        <div class="pitch-name">${p.name}</div>
+        <div class="pitch-location">📍 ${p.area}, ${p.state}</div>
+        <span class="pitch-surface">${p.surface} Surface</span>
+
+        <div class="pitch-stats">
+            <div class="pitch-stat">
+                <div class="pitch-stat-val">${p.state}</div>
+                <div class="pitch-stat-lbl">State</div>
+            </div>
+            <div class="pitch-stat">
+                <div class="pitch-stat-val">${p.surface}</div>
+                <div class="pitch-stat-lbl">Surface</div>
+            </div>
+            <div class="pitch-stat">
+                <div class="pitch-stat-val">${p.active ? '🔴 Live' : '⚫ Empty'}</div>
+                <div class="pitch-stat-lbl">Status</div>
+            </div>
+            <div class="pitch-stat">
+                <div class="pitch-stat-val">5v5</div>
+                <div class="pitch-stat-lbl">Format</div>
+            </div>
+        </div>
+
+        <div class="pitch-vibe">
+            <strong>Street Intel:</strong> ${p.vibe}
+        </div>
+
+        <button class="travel-btn disabled" disabled>
+            🚶 Travel to This Pitch
+        </button>
+        <div class="travel-note">
+            Travel system coming soon. You will be able to<br>
+            move between pitches across Nigeria.
+        </div>
+    `;
+}
+
+// =====================================================
+// STATS
+// =====================================================
+const activePitches  = PITCHES.filter(p => p.active).length;
+document.getElementById('stat-pitches').textContent = PITCHES.length;
+document.getElementById('stat-active').textContent  = activePitches;
+document.getElementById('stat-players').textContent =
+    (activePitches * 10).toString(); // placeholder
+
+// =====================================================
+// LEAFLET TOOLTIP DARK STYLE
+// =====================================================
+const style = document.createElement('style');
+style.textContent = `
+    .leaflet-tooltip {
+        background: #111 !important;
+        border: 1px solid #00aa00 !important;
+        color: #00ff44 !important;
+        font-size: 0.75rem !important;
+        font-family: Arial, sans-serif !important;
+        padding: 4px 10px !important;
+        border-radius: 4px !important;
+    }
+    .leaflet-tooltip-top:before {
+        border-top-color: #00aa00 !important;
+    }
+    .leaflet-control-attribution {
+        background: rgba(0,0,0,0.7) !important;
+        color: #444 !important;
+        font-size: 0.65rem !important;
+    }
+    .leaflet-control-attribution a { color: #666 !important; }
+    .leaflet-control-zoom a {
+        background: #111 !important;
+        color: #00ff44 !important;
+        border-color: #333 !important;
+    }
+    .leaflet-control-zoom a:hover {
+        background: #222 !important;
+    }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
