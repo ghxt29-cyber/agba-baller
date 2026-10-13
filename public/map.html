@@ -437,10 +437,11 @@ const PITCHES = [
 // MAP INIT
 // =====================================================
 const map = L.map('map', {
-    center:  [9.0820, 8.6753],  // Nigeria centre
+    center:  [9.0820, 8.6753],
     zoom:    6,
-    minZoom: 5,
-    maxZoom: 16
+    minZoom: 6,
+    maxZoom: 16,
+    maxBoundsViscosity: 1.0
 });
 
 // Dark OpenStreetMap tiles
