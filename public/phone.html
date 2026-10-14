@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGBA OS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0a0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ── PHONE SHELL ── */
+        #phone {
+            width: 360px;
+            height: 720px;
+            background: #0d0d0d;
+            border-radius: 40px;
+            border: 2px solid #1a1a1a;
+            box-shadow:
+                0 0 0 1px #333,
+                0 20px 60px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* ── STATUS BAR ── */
+        #status-bar {
+            background: #050505;
+            padding: 8px 20px 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            border-bottom: 1px solid #111;
+        }
+        .status-time {
+            font-size: 0.82rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .status-carrier {
+            font-size: 0.6rem;
+            color: #00ff44;
+            text-align: center;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .status-icons {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.68rem;
+            color: #888;
+        }
+        .battery-icon {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            color: #00ff44;
+            font-size: 0.65rem;
+        }
+
+        /* ── SCREEN ── */
+        #screen {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+
+        /* ── HOME SCREEN ── */
+        #home-screen {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(160deg, #050e05, #0a0a0a, #050505);
+        }
+
+        .home-wallpaper {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0,100,0,0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(0,60,0,0.1) 0%, transparent 60%);
+        }
+
+        /* HOME TOP */
+        .home-top {
+            padding: 20px 20px 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .home-greeting {
+            font-size: 0.7rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+        }
+        .home-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00ff44;
+            letter-spacing: 1px;
+        }
+        .home-balance {
+            margin-top: 15px;
+            background: rgba(0,170,0,0.08);
+            border: 1px solid rgba(0,170,0,0.2);
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .balance-label {
+            font-size: 0.65rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+        .balance-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .balance-tier {
+            font-size: 0.62rem;
+            color: #00aa00;
+            margin-top: 2px;
+        }
+        .balance-icon {
+            font-size: 2rem;
+            opacity: 0.6;
+        }
+
+        /* QUICK STATS */
+        .home-quick-stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .quick-stat {
+            flex: 1;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #1a1a1a;
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+        .qs-val { font-size: 0.9rem; font-weight: bold; color: #fff; }
+        .qs-lbl { font-size: 0.58rem; color: #444; text-transform: uppercase; margin-top: 1px; }
+
+        /* APP GRID */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding: 20px 15px;
+            position: relative;
+            z-index: 1;
+        }
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: transform 0.15s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .app-icon:active { transform: scale(0.9); }
+        .app-icon-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        .app-icon-label {
+            font-size: 0.6rem;
+            color: #aaa;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+        .app-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ff3300;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1.5px solid #0d0d0d;
+        }
+
+        /* APP COLOURS */
+        .app-agbachat  { background: linear-gradient(135deg, #005500, #00aa44); }
+        .app-agbabank  { background: linear-gradient(135deg, #003366, #0066cc); }
+        .app-betnaija  { background: linear-gradient(135deg, #440000, #cc2200); }
+        .app-shopnaija { background: linear-gradient(135deg, #553300, #cc8800); }
+        .app-streetgist{ background: linear-gradient(135deg, #220033, #6600aa); }
+        .app-map       { background: linear-gradient(135deg, #003322, #006644); }
+        .app-jobs      { background: linear-gradient(135deg, #1a1a00, #555500); }
+        .app-music     { background: linear-gradient(135deg, #330033, #aa0088); }
+        .app-camera    { background: linear-gradient(135deg, #111, #333); }
+        .app-settings  { background: linear-gradient(135deg, #1a1a1a, #444); }
+        .app-pitch     { background: linear-gradient(135deg, #004400, #00cc00); }
+        .app-phone-call{ background: linear-gradient(135deg, #003311, #00aa44); }
+
+        /* DOCK */
+        .home-dock {
+            margin: 0 15px 15px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid #1a1a1a;
+            border-radius: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── APP SCREENS ── */
+        .app-screen {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            background: #0a0a0a;
+            z-index: 10;
+        }
+        .app-screen.open { display: flex; }
+
+        /* APP HEADER */
+        .app-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #1a1a1a;
+            flex-shrink: 0;
+        }
+        .app-back {
+            background: none;
+            border: none;
+            color: #00ff44;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .app-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 1px;
+        }
+        .app-subtitle {
+            font-size: 0.62rem;
+            color: #555;
+            margin-left: auto;
+        }
+
+        /* ══════════════════════════════════════
+           AGBACHAT
+        ══════════════════════════════════════ */
+        #app-agbachat { background: #050505; }
+
+        .chat-tabs {
+            display: flex;
+            border-bottom: 1px solid #1a1a1a;
+            flex-shrink: 0;
+        }
+        .chat-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.72rem;
+            color: #555;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .chat-tab.active { color: #00ff44; border-bottom-color: #00aa00; }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+        .chat-list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .chat-list-item:hover { background: rgba(255,255,255,0.03); }
+        .chat-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #000;
+            flex-shrink: 0;
+        }
+        .chat-item-info { flex: 1; }
+        .chat-item-name { font-size: 0.82rem; font-weight: bold; color: #fff; }
+        .chat-item-preview { font-size: 0.68rem; color: #555; margin-top: 2px; }
+        .chat-item-time { font-size: 0.6rem; color: #444; }
+
+        /* CHAT CONVERSATION */
+        #chat-convo {
+            position: absolute;
+            inset: 0;
+            background: #050505;
+            display: none;
+            flex-direction: column;
+            z-index: 20;
+        }
+        #chat-convo.open { display: flex; }
+        .convo-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #1a1a1a;
+            background: #080808;
+            flex-shrink: 0;
+        }
+        .convo-back {
+            background: none; border: none;
+            color: #00ff44; font-size: 1.1rem;
+            cursor: pointer; padding: 0;
+        }
+        .convo-name { font-size: 0.88rem; font-weight: bold; color: #fff; }
+        .convo-status { font-size: 0.62rem; color: #00ff44; }
+        .convo-actions { margin-left: auto; display: flex; gap: 10px; }
+        .convo-action-btn {
+            background: none; border: none;
+            color: #555; font-size: 1rem; cursor: pointer;
+        }
+        .convo-action-btn:hover { color: #00ff44; }
+
+        .convo-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .msg-bubble {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            position: relative;
+        }
+        .msg-bubble.sent {
+            background: #005500;
+            border-bottom-right-radius: 3px;
+            align-self: flex-end;
+            color: #dfd;
+        }
+        .msg-bubble.received {
+            background: #1a1a1a;
+            border-bottom-left-radius: 3px;
+            align-self: flex-start;
+            color: #ddd;
+        }
+        .msg-time {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.3);
+            margin-top: 3px;
+            text-align: right;
+        }
+        .msg-system {
+            text-align: center;
+            font-size: 0.62rem;
+            color: #333;
+            padding: 4px 0;
+        }
+
+        .convo-input-bar {
+            padding: 8px 10px;
+            border-top: 1px solid #1a1a1a;
+            background: #080808;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .convo-input {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #222;
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            outline: none;
+        }
+        .convo-input:focus { border-color: #00aa00; }
+        .convo-send {
+            background: #00aa00;
+            border: none;
+            color: #000;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* SLANG QUICK BAR */
+        .slang-bar {
+            padding: 6px 10px;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            border-top: 1px solid #111;
+            background: #060606;
+            flex-shrink: 0;
+        }
+        .slang-chip {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .slang-chip:hover { background: #222; color: #fff; }
+
+        /* ══════════════════════════════════════
+           AGBABANK
+        ══════════════════════════════════════ */
+        #app-agbabank { background: #020a14; }
+
+        .bank-card {
+            margin: 15px;
+            background: linear-gradient(135deg, #003366, #0055aa, #003366);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,60,120,0.4);
+        }
+        .bank-card::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 120px; height: 120px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+        .bank-card::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: -20px;
+            width: 150px; height: 150px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 50%;
+        }
+        .bank-card-label {
+            font-size: 0.62rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .bank-card-balance {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 3px;
+        }
+        .bank-card-name {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 15px;
+        }
+        .bank-card-logo {
+            position: absolute;
+            top: 15px; right: 15px;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            text-align: right;
+            line-height: 1.3;
+        }
+
+        .bank-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 0 15px 15px;
+        }
+        .bank-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+        .bank-action-icon {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: rgba(0,100,200,0.15);
+            border: 1px solid rgba(0,100,200,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.15s;
+        }
+        .bank-action-icon:hover { background: rgba(0,100,200,0.3); }
+        .bank-action-label {
+            font-size: 0.6rem;
+            color: #888;
+            text-align: center;
+        }
+
+        .bank-section-title {
+            padding: 10px 15px 6px;
+            font-size: 0.68rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .bank-tx-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 15px;
+        }
+        .bank-tx {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #111;
+        }
+        .bank-tx-icon {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .bank-tx-info { flex: 1; }
+        .bank-tx-desc { font-size: 0.78rem; color: #ccc; }
+        .bank-tx-date { font-size: 0.62rem; color: #444; margin-top: 2px; }
+        .bank-tx-amount { font-size: 0.85rem; font-weight: bold; }
+        .bank-tx-amount.credit { color: #00ff44; }
+        .bank-tx-amount.debit  { color: #ff4444; }
+
+        /* TRANSFER MODAL */
+        .bank-modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: flex-end;
+            z-index: 30;
+        }
+        .bank-modal.open { display: flex; }
+        .bank-modal-sheet {
+            background: #111;
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            width: 100%;
+            border-top: 1px solid #222;
+        }
+        .bank-modal-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .bank-input {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .bank-input:focus { border-color: #0066cc; }
+        .bank-confirm-btn {
+            width: 100%;
+            background: #0055aa;
+            border: none;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .bank-cancel-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        /* ══════════════════════════════════════
+           BETNAIJA
+        ══════════════════════════════════════ */
+        #app-betnaija { background: #0a0000; }
+
+        .bet-header-card {
+            margin: 15px;
+            background: linear-gradient(135deg, #440000, #880000);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .bet-balance-label { font-size: 0.62rem; color: rgba(255,255,255,0.5); margin-bottom: 3px; }
+        .bet-balance-val   { font-size: 1.2rem; font-weight: bold; color: #ffd700; }
+        .bet-fund-btn {
+            background: rgba(255,200,0,0.2);
+            border: 1px solid #cc9900;
+            color: #ffd700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .bet-section { padding: 0 15px; margin-bottom: 15px; }
+        .bet-section-title {
+            font-size: 0.68rem;
+            color: #cc2200;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .live-dot {
+            width: 6px; height: 6px;
+            background: #ff3300;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        .bet-match-card {
+            background: #111;
+            border: 1px solid #1a1a1a;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .bet-match-card:hover { border-color: #cc2200; }
+        .bet-match-teams {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .bet-team { font-size: 0.78rem; color: #fff; font-weight: bold; text-align: center; flex: 1; }
+        .bet-score {
+            background: #1a0000;
+            border: 1px solid #330000;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #ff4444;
+            margin: 0 8px;
+        }
+        .bet-odds {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+        .bet-odd-btn {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            padding: 7px 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .bet-odd-btn:hover { border-color: #cc2200; background: #1f0000; }
+        .bet-odd-btn.selected { border-color: #cc2200; background: #2a0000; }
+        .bet-odd-label { font-size: 0.58rem; color: #555; }
+        .bet-odd-val   { font-size: 0.82rem; font-weight: bold; color: #ff6644; }
+
+        /* BET SLIP */
+        .bet-slip {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            background: #111;
+            border-top: 2px solid #cc2200;
+            padding: 12px 15px;
+            display: none;
+            z-index: 20;
+        }
+        .bet-slip.open { display: block; }
+        .bet-slip-title { font-size: 0.72rem; color: #cc2200; font-weight: bold; margin-bottom: 8px; }
+        .bet-slip-desc  { font-size: 0.75rem; color: #ccc; margin-bottom: 8px; }
+        .bet-stake-row  { display: flex; gap: 8px; align-items: center; }
+        .bet-stake-input {
+            flex: 1;
+            background: #0d0d0d;
+            border: 1px solid #333;
+            color: #ffd700;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+        .bet-place-btn {
+            background: #cc2200;
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.78rem;
+            cursor: pointer;
+        }
+        .bet-potential {
+            font-size: 0.68rem;
+            color: #00ff44;
+            margin-top: 6px;
+        }
+        .bet-close {
+            position: absolute;
+            top: 10px; right: 12px;
+            background: none; border: none;
+            color: #555; font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* ── HOME BUTTON ── */
+        #home-btn {
+            height: 50px;
+            background: #080808;
+            border-top: 1px solid #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .home-indicator {
+            width: 100px;
+            height: 4px;
+            background: #222;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .home-indicator:hover { background: #444; }
+
+        /* NOTIFICATION */
+        #phone-notif {
+            position: absolute;
+            top: 50px;
+            left: 10px; right: 10px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid #00aa00;
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: none;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        #phone-notif.show { display: flex; gap: 10px; align-items: center; }
+        .notif-icon { font-size: 1.2rem; }
+        .notif-text { flex: 1; }
+        .notif-app  { font-size: 0.6rem; color: #00ff44; text-transform: uppercase; letter-spacing: 1px; }
+        .notif-msg  { font-size: 0.75rem; color: #fff; margin-top: 2px; }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<div id="phone">
+
+    <!-- STATUS BAR -->
+    <div id="status-bar">
+        <div class="status-time" id="phone-time">10:12</div>
+        <div class="status-carrier" id="carrier-name">AGBA NETWORK · Lagos</div>
+        <div class="status-icons">
+            <span>▲▲▲</span>
+            <div class="battery-icon">
+                <span id="battery-val">₦85</span>
+                <span>▮</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN -->
+    <div id="screen">
+
+        <!-- NOTIFICATION TOAST -->
+        <div id="phone-notif">
+            <div class="notif-icon" id="notif-icon">💬</div>
+            <div class="notif-text">
+                <div class="notif-app" id="notif-app">AgbaChat</div>
+                <div class="notif-msg" id="notif-msg">New message</div>
+            </div>
+        </div>
+
+        <!-- ════ HOME SCREEN ════ -->
+        <div id="home-screen">
+            <div class="home-wallpaper"></div>
+
+            <div class="home-top">
+                <div class="home-greeting">Welcome back</div>
+                <div class="home-name" id="home-username">Baller</div>
+
+                <div class="home-balance">
+                    <div>
+                        <div class="balance-label">AgbaBank Balance</div>
+                        <div class="balance-amount" id="home-balance">₦0</div>
+                        <div class="balance-tier" id="home-tier">Street Rookie</div>
+                    </div>
+                    <div class="balance-icon">💰</div>
+                </div>
+
+                <div class="home-quick-stats">
+                    <div class="quick-stat">
+                        <div class="qs-val" id="qs-respect">0</div>
+                        <div class="qs-lbl">Respect</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="qs-val" id="qs-matches">0</div>
+                        <div class="qs-lbl">Matches</div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="qs-val" id="qs-goals">0</div>
+                        <div class="qs-lbl">Goals</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APP GRID -->
+            <div class="app-grid">
+                <div class="app-icon" onclick="openApp('agbachat')">
+                    <div class="app-icon-img app-agbachat">
+                        💬
+                        <div class="app-badge" id="chat-badge">3</div>
+                    </div>
+                    <div class="app-icon-label">AgbaChat</div>
+                </div>
+                <div class="app-icon" onclick="openApp('agbabank')">
+                    <div class="app-icon-img app-agbabank">🏦</div>
+                    <div class="app-icon-label">AgbaBank</div>
+                </div>
+                <div class="app-icon" onclick="openApp('betnaija')">
+                    <div class="app-icon-img app-betnaija">🎯</div>
+                    <div class="app-icon-label">BetNaija</div>
+                </div>
+                <div class="app-icon" onclick="openApp('shopnaija')">
+                    <div class="app-icon-img app-shopnaija">🛒</div>
+                    <div class="app-icon-label">ShopNaija</div>
+                </div>
+                <div class="app-icon" onclick="openApp('streetgist')">
+                    <div class="app-icon-img app-streetgist">📰
+                        <div class="app-badge">5</div>
+                    </div>
+                    <div class="app-icon-label">StreetGist</div>
+                </div>
+                <div class="app-icon" onclick="window.open('/map.html','_blank')">
+                    <div class="app-icon-img app-map">🗺️</div>
+                    <div class="app-icon-label">Map</div>
+                </div>
+                <div class="app-icon" onclick="openApp('jobs')">
+                    <div class="app-icon-img app-jobs">💼</div>
+                    <div class="app-icon-label">Jobs</div>
+                </div>
+                <div class="app-icon" onclick="openApp('music')">
+                    <div class="app-icon-img app-music">🎵</div>
+                    <div class="app-icon-label">AfroBeats</div>
+                </div>
+            </div>
+
+            <!-- DOCK -->
+            <div class="home-dock">
+                <div class="app-icon" onclick="window.open('/','_blank')">
+                    <div class="app-icon-img app-pitch" style="width:44px;height:44px;">⚽</div>
+                    <div class="app-icon-label">Pitch</div>
+                </div>
+                <div class="app-icon" onclick="openApp('agbachat')">
+                    <div class="app-icon-img app-agbachat" style="width:44px;height:44px;">💬</div>
+                    <div class="app-icon-label">Chat</div>
+                </div>
+                <div class="app-icon" onclick="openApp('agbabank')">
+                    <div class="app-icon-img app-agbabank" style="width:44px;height:44px;">🏦</div>
+                    <div class="app-icon-label">Bank</div>
+                </div>
+                <div class="app-icon" onclick="window.open('/market.html','_blank')">
+                    <div class="app-icon-img app-shopnaija" style="width:44px;height:44px;">🏪</div>
+                    <div class="app-icon-label">Market</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ AGBACHAT ════ -->
+        <div class="app-screen" id="app-agbachat">
+            <div class="app-header" style="background:#080808;">
+                <button class="app-back" onclick="closeApp('agbachat')">←</button>
+                <span class="app-title">💬 AgbaChat</span>
+                <span class="app-subtitle">E2EE · End-to-End Encrypted</span>
+            </div>
+
+            <div class="chat-tabs">
+                <div class="chat-tab active" onclick="switchChatTab('chats')">Chats</div>
+                <div class="chat-tab" onclick="switchChatTab('crews')">Crews</div>
+                <div class="chat-tab" onclick="switchChatTab('broadcast')">Broadcast</div>
+            </div>
+
+            <div class="chat-list" id="chat-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- CONVERSATION VIEW -->
+            <div id="chat-convo">
+                <div class="convo-header">
+                    <button class="convo-back" onclick="closeConvo()">←</button>
+                    <div>
+                        <div class="convo-name" id="convo-name">Name</div>
+                        <div class="convo-status" id="convo-status">online</div>
+                    </div>
+                    <div class="convo-actions">
+                        <button class="convo-action-btn" onclick="simulateCall()">📞</button>
+                        <button class="convo-action-btn">⋮</button>
+                    </div>
+                </div>
+                <div class="msg-system">🔒 Messages are end-to-end encrypted</div>
+                <div class="convo-messages" id="convo-messages"></div>
+                <div class="slang-bar">
+                    <div class="slang-chip" onclick="sendSlang('Open legs! 🦵')">Open legs!</div>
+                    <div class="slang-chip" onclick="sendSlang('Overs! ⬆️')">Overs!</div>
+                    <div class="slang-chip" onclick="sendSlang('Find me! 👋')">Find me!</div>
+                    <div class="slang-chip" onclick="sendSlang('E don do! 🎉')">E don do!</div>
+                    <div class="slang-chip" onclick="sendSlang('Shoot am! 🥅')">Shoot am!</div>
+                    <div class="slang-chip" onclick="sendSlang('My guy! 🤝')">My guy!</div>
+                    <div class="slang-chip" onclick="sendSlang('Na wa o 😤')">Na wa o!</div>
+                    <div class="slang-chip" onclick="sendSlang('Oya let\'s go! 🔥')">Oya go!</div>
+                </div>
+                <div class="convo-input-bar">
+                    <input class="convo-input" id="convo-input"
+                        placeholder="Type a message..."
+                        onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="convo-send" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ AGBABANK ════ -->
+        <div class="app-screen" id="app-agbabank">
+            <div class="app-header" style="background:#020a14;">
+                <button class="app-back" onclick="closeApp('agbabank')">←</button>
+                <span class="app-title">🏦 AgbaBank</span>
+                <span class="app-subtitle" style="color:#4af;">VIRTUAL BANKING</span>
+            </div>
+
+            <div class="bank-card">
+                <div class="bank-card-label">Available Balance</div>
+                <div class="bank-card-balance" id="bank-balance">₦0</div>
+                <div class="bank-card-name" id="bank-username">AGBA BALLER</div>
+                <div class="bank-card-logo">
+                    🏦 AgbaBank<br>
+                    <span style="font-size:0.55rem;">Virtual Banking</span>
+                </div>
+            </div>
+
+            <div class="bank-actions">
+                <div class="bank-action" onclick="openBankModal('transfer')">
+                    <div class="bank-action-icon">📤</div>
+                    <div class="bank-action-label">Transfer</div>
+                </div>
+                <div class="bank-action" onclick="openBankModal('airtime')">
+                    <div class="bank-action-icon">📱</div>
+                    <div class="bank-action-label">Airtime</div>
+                </div>
+                <div class="bank-action" onclick="openBankModal('savings')">
+                    <div class="bank-action-icon">🏦</div>
+                    <div class="bank-action-label">Savings</div>
+                </div>
+                <div class="bank-action" onclick="openBankModal('history')">
+                    <div class="bank-action-icon">📋</div>
+                    <div class="bank-action-label">History</div>
+                </div>
+            </div>
+
+            <div class="bank-section-title">Recent Transactions</div>
+            <div class="bank-tx-list" id="bank-tx-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- BANK MODAL -->
+            <div class="bank-modal" id="bank-modal">
+                <div class="bank-modal-sheet">
+                    <div class="bank-modal-title" id="bank-modal-title">Transfer Naira</div>
+                    <input class="bank-input" id="bank-modal-recipient"
+                        placeholder="Recipient username">
+                    <input class="bank-input" id="bank-modal-amount"
+                        type="number" placeholder="Amount (₦)">
+                    <input class="bank-input" id="bank-modal-note"
+                        placeholder="Note (optional)">
+                    <button class="bank-confirm-btn" onclick="confirmTransfer()">
+                        Confirm Transfer
+                    </button>
+                    <button class="bank-cancel-btn" onclick="closeBankModal()">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ BETNAIJA ════ -->
+        <div class="app-screen" id="app-betnaija">
+            <div class="app-header" style="background:#0a0000;">
+                <button class="app-back" onclick="closeApp('betnaija')">←</button>
+                <span class="app-title">🎯 BetNaija</span>
+                <span class="app-subtitle" style="color:#ff4444;">LIVE ODDS</span>
+            </div>
+
+            <div class="bet-header-card">
+                <div>
+                    <div class="bet-balance-label">Bet Wallet</div>
+                    <div class="bet-balance-val" id="bet-balance">₦0</div>
+                </div>
+                <button class="bet-fund-btn" onclick="fundBetWallet()">+ Fund</button>
+            </div>
+
+            <div style="flex:1;overflow-y:auto;padding-bottom:80px;">
+                <div class="bet-section">
+                    <div class="bet-section-title">
+                        <div class="live-dot"></div>
+                        Live Matches
+                    </div>
+
+                    <div class="bet-match-card">
+                        <div class="bet-match-teams">
+                            <div class="bet-team">Surulere FC</div>
+                            <div class="bet-score" id="live-score-1">2 - 1</div>
+                            <div class="bet-team">Mushin United</div>
+                        </div>
+                        <div class="bet-odds">
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Surulere FC Win','2.10')">
+                                <div class="bet-odd-label">Home Win</div>
+                                <div class="bet-odd-val">2.10</div>
+                            </div>
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Draw','3.40')">
+                                <div class="bet-odd-label">Draw</div>
+                                <div class="bet-odd-val">3.40</div>
+                            </div>
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Mushin United Win','2.90')">
+                                <div class="bet-odd-label">Away Win</div>
+                                <div class="bet-odd-val">2.90</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bet-match-card">
+                        <div class="bet-match-teams">
+                            <div class="bet-team">Aba Rovers</div>
+                            <div class="bet-score">0 - 0</div>
+                            <div class="bet-team">Kano Warriors</div>
+                        </div>
+                        <div class="bet-odds">
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Aba Rovers Win','1.85')">
+                                <div class="bet-odd-label">Home Win</div>
+                                <div class="bet-odd-val">1.85</div>
+                            </div>
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Draw','3.20')">
+                                <div class="bet-odd-label">Draw</div>
+                                <div class="bet-odd-val">3.20</div>
+                            </div>
+                            <div class="bet-odd-btn" onclick="selectOdd(this,'Kano Warriors Win','3.75')">
+                                <div class="bet-odd-label">Away Win</div>
+                                <div class="bet-odd-val">3.75</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bet-section">
+                    <div class="bet-section-title">Upcoming</div>
+                    <div class="bet-match-card">
+                        <div class="bet-match-teams">
+                            <div class="bet-team">Lagos Boys</div>
+                            <div style="font-size:0.7rem;color:#555;margin:0 8px;">vs</div>
+                            <div class="bet-team">Abuja Kings</div>
+                        </div>
+                        <div style="font-size:0.65rem;color:#444;text-align:center;margin-top:6px;">
+                            Starts in 15 minutes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BET SLIP -->
+            <div class="bet-slip" id="bet-slip">
+                <button class="bet-close" onclick="closeBetSlip()">✕</button>
+                <div class="bet-slip-title">🎯 BET SLIP</div>
+                <div class="bet-slip-desc" id="bet-slip-desc">Selected: —</div>
+                <div class="bet-stake-row">
+                    <input class="bet-stake-input" id="bet-stake"
+                        type="number" placeholder="Stake (₦)"
+                        oninput="calcPotential()">
+                    <button class="bet-place-btn" onclick="placeBet()">Place Bet</button>
+                </div>
+                <div class="bet-potential" id="bet-potential">
+                    Potential win: ₦0.00
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ COMING SOON SCREENS ════ -->
+        <div class="app-screen" id="app-shopnaija">
+            <div class="app-header">
+                <button class="app-back" onclick="closeApp('shopnaija')">←</button>
+                <span class="app-title">🛒 ShopNaija</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;">
+                <div style="font-size:3rem;">🛒</div>
+                <div style="font-size:0.9rem;color:#fff;font-weight:bold;">ShopNaija</div>
+                <div style="font-size:0.75rem;color:#555;line-height:1.6;">
+                    Buy from market vendors online.<br>
+                    Browse all stalls across virtual Nigeria.<br>
+                    Coming in the next update.
+                </div>
+                <button onclick="window.open('/market.html','_blank')"
+                    style="background:#cc8800;border:none;color:#000;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:bold;font-size:0.82rem;">
+                    Visit Market Now →
+                </button>
+            </div>
+        </div>
+
+        <div class="app-screen" id="app-streetgist">
+            <div class="app-header">
+                <button class="app-back" onclick="closeApp('streetgist')">←</button>
+                <span class="app-title">📰 StreetGist</span>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:15px;">
+                <div style="font-size:0.68rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Latest Gist</div>
+                <div id="gist-feed"></div>
+            </div>
+        </div>
+
+        <div class="app-screen" id="app-jobs">
+            <div class="app-header">
+                <button class="app-back" onclick="closeApp('jobs')">←</button>
+                <span class="app-title">💼 Jobs</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;">
+                <div style="font-size:3rem;">💼</div>
+                <div style="font-size:0.9rem;color:#fff;font-weight:bold;">Job Board</div>
+                <div style="font-size:0.75rem;color:#555;line-height:1.6;">
+                    Find work as a security guard, taxi driver,<br>
+                    market trader, coach, photographer and more.<br>
+                    Civilian income coming soon.
+                </div>
+            </div>
+        </div>
+
+        <div class="app-screen" id="app-music">
+            <div class="app-header">
+                <button class="app-back" onclick="closeApp('music')">←</button>
+                <span class="app-title">🎵 AfroBeats FM</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;">
+                <div style="width:120px;height:120px;background:linear-gradient(135deg,#330033,#aa0088);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 8px 24px rgba(170,0,136,0.4);">🎵</div>
+                <div style="text-align:center;">
+                    <div style="font-size:0.9rem;color:#fff;font-weight:bold;">Afrobeats Mix Vol. 3</div>
+                    <div style="font-size:0.72rem;color:#555;margin-top:3px;">AGBA BALLER Radio</div>
+                </div>
+                <div style="display:flex;gap:20px;align-items:center;">
+                    <button onclick="this.textContent='⏮'" style="background:none;border:none;color:#888;font-size:1.3rem;cursor:pointer;">⏮</button>
+                    <button id="play-btn" onclick="togglePlay()"
+                        style="background:#aa0088;border:none;color:white;width:52px;height:52px;border-radius:50%;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">▶</button>
+                    <button onclick="this.textContent='⏭'" style="background:none;border:none;color:#888;font-size:1.3rem;cursor:pointer;">⏭</button>
+                </div>
+                <div style="font-size:0.7rem;color:#444;text-align:center;line-height:1.6;">
+                    🎵 Now Playing: Street Vibes Mix<br>
+                    🔊 Full music integration coming soon
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- HOME BUTTON -->
+    <div id="home-btn">
+        <div class="home-indicator" onclick="goHome()"></div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+// =====================================================
+// AGBA OS
+// =====================================================
+let sb = null, session = null;
+let playerData     = null;
+let currentApp     = null;
+let currentConvo   = null;
+let selectedOdd    = null;
+let selectedOddVal = 0;
+let betWallet      = 5000; // starting bet wallet
+let isPlaying      = false;
+
+// Transactions log
+const transactions = [];
+
+// Sample chats
+const CHATS = [
+    { id:'crew', name:'Jiggy Boiz Crew', avatar:'👥', color:'#00aa44', preview:'Tunde: E don do! We won again!', time:'now', unread:2 },
+    { id:'tunde', name:'Tunde', avatar:'T', color:'#cc8800', preview:'Guy where you dey? Come pitch!', time:'5m', unread:1 },
+    { id:'chidi', name:'Chidi Emeka', avatar:'C', color:'#0055cc', preview:'I go transfer the money now', time:'12m', unread:0 },
+    { id:'mama', name:'Mama Chidinma 🌿', avatar:'M', color:'#005522', preview:'My pikin! Your agbo is ready', time:'1h', unread:0 },
+    { id:'system', name:'AGBA BALLER', avatar:'⚽', color:'#003300', preview:'You earned ₦10,000 for your win!', time:'2h', unread:0 }
+];
+
+const CHAT_MESSAGES = {
+    crew: [
+        { from:'Tunde', text:'Guys we won 5-2 today!', time:'10:01', sent:false },
+        { from:'Chidi', text:'E don do!! 🎉', time:'10:02', sent:false },
+        { from:'me', text:'Shoot am was the move 🥅', time:'10:03', sent:true },
+        { from:'Tunde', text:'Next match tomorrow, Surulere pitch 6am', time:'10:05', sent:false }
+    ],
+    tunde: [
+        { from:'Tunde', text:'Guy where you dey? Come pitch!', time:'09:45', sent:false },
+        { from:'me', text:'On my way! 10 minutes', time:'09:47', sent:true },
+        { from:'Tunde', text:'Oya hurry! Match about to start', time:'09:48', sent:false }
+    ],
+    chidi: [
+        { from:'me', text:'Chidi send me the ₦2000 you owe', time:'yesterday', sent:true },
+        { from:'Chidi', text:'I go transfer the money now', time:'yesterday', sent:false },
+        { from:'me', text:'No vex, just make sure', time:'yesterday', sent:true }
+    ],
+    mama: [
+        { from:'Mama Chidinma', text:'My pikin! Your agbo is ready come and collect', time:'08:30', sent:false },
+        { from:'me', text:'Thank you Mama! Coming after training', time:'08:45', sent:true }
+    ],
+    system: [
+        { from:'AGBA BALLER', text:'Welcome to AGBA BALLER! Your journey begins now. ⚽🇳🇬', time:'yesterday', sent:false },
+        { from:'AGBA BALLER', text:'You earned ₦10,000 for your match win! Keep hustling.', time:'2h ago', sent:false }
+    ]
+};
+
+// =====================================================
+// INIT
+// =====================================================
+fetch('/api/config').then(r=>r.json()).then(cfg=>{
+    sb = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+    initPhone();
+});
+
+async function initPhone() {
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const { data:{ session: s } } = await sb.auth.getSession();
+    if (s) {
+        session = s;
+        const res  = await fetch('/api/player', {
+            headers:{ 'Authorization':'Bearer '+s.access_token }
+        });
+        const data = await res.json();
+        if (data.success && data.player) {
+            playerData = data.player;
+            updateHomeScreen(data.player);
+        }
+    } else {
+        document.getElementById('home-username').textContent = 'Guest';
+        document.getElementById('home-balance').textContent  = '₦0';
+    }
+
+    buildChatList();
+    buildBankTransactions();
+    buildStreetGist();
+}
+
+function updateClock() {
+    const now = new Date();
+    document.getElementById('phone-time').textContent =
+        now.toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit',hour12:false});
+    const bat = Math.max(10, 100 - now.getMinutes());
+    document.getElementById('battery-val').textContent = '₦'+bat;
+}
+
+function updateHomeScreen(p) {
+    document.getElementById('home-username').textContent = p.username;
+    document.getElementById('home-balance').textContent  = '₦'+Number(p.naira_balance).toLocaleString('en-NG');
+    document.getElementById('home-tier').textContent     = p.respect_tier||'Street Rookie';
+    document.getElementById('qs-respect').textContent    = p.respect_points||0;
+    document.getElementById('qs-matches').textContent    = p.matches_played||0;
+    document.getElementById('qs-goals').textContent      = p.total_goals||0;
+    document.getElementById('bank-balance').textContent  = '₦'+Number(p.naira_balance).toLocaleString('en-NG');
+    document.getElementById('bank-username').textContent = p.username.toUpperCase();
+    document.getElementById('bet-balance').textContent   = '₦'+betWallet.toLocaleString();
+    // Update carrier to player's state
+    if (p.home_state) {
+        document.getElementById('carrier-name').textContent =
+            'AGBA NETWORK · '+p.home_state;
+    }
+}
+
+// =====================================================
+// APP NAVIGATION
+// =====================================================
+function openApp(appId) {
+    const screen = document.getElementById('app-'+appId);
+    if (!screen) return;
+    screen.classList.add('open');
+    currentApp = appId;
+    document.getElementById('chat-badge').style.display = 'none';
+}
+
+function closeApp(appId) {
+    const screen = document.getElementById('app-'+appId);
+    if (screen) screen.classList.remove('open');
+    currentApp = null;
+    closeConvo();
+}
+
+function goHome() {
+    if (currentApp) closeApp(currentApp);
+    else {
+        document.querySelectorAll('.app-screen').forEach(s=>s.classList.remove('open'));
+    }
+}
+
+// =====================================================
+// AGBACHAT
+// =====================================================
+function buildChatList() {
+    const list = document.getElementById('chat-list');
+    list.innerHTML = '';
+    for (const chat of CHATS) {
+        const item       = document.createElement('div');
+        item.className   = 'chat-list-item';
+        item.onclick     = () => openConvo(chat);
+        item.innerHTML   = `
+            <div class="chat-avatar" style="background:${chat.color};">${chat.avatar}</div>
+            <div class="chat-item-info">
+                <div class="chat-item-name">${chat.name}
+                    ${chat.unread?`<span style="background:#00aa00;color:#000;font-size:0.6rem;padding:1px 5px;border-radius:10px;margin-left:5px;">${chat.unread}</span>`:''}
+                </div>
+                <div class="chat-item-preview">${chat.preview}</div>
+            </div>
+            <div class="chat-item-time">${chat.time}</div>`;
+        list.appendChild(item);
+    }
+}
+
+function openConvo(chat) {
+    currentConvo = chat;
+    document.getElementById('convo-name').textContent   = chat.name;
+    document.getElementById('convo-status').textContent = 'online · E2EE';
+
+    // Build messages
+    const msgs     = CHAT_MESSAGES[chat.id] || [];
+    const container = document.getElementById('convo-messages');
+    container.innerHTML = '';
+    for (const m of msgs) {
+        appendMessage(m.text, m.sent, m.time, false);
+    }
+    container.scrollTop = container.scrollHeight;
+
+    document.getElementById('chat-convo').classList.add('open');
+}
+
+function appendMessage(text, sent, time, scroll=true) {
+    const container = document.getElementById('convo-messages');
+    const div       = document.createElement('div');
+    div.className   = `msg-bubble ${sent?'sent':'received'}`;
+    div.innerHTML   = `${text}<div class="msg-time">${time||now()}</div>`;
+    container.appendChild(div);
+    if (scroll) container.scrollTop = container.scrollHeight;
+}
+
+function now() {
+    return new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit',hour12:false});
+}
+
+function sendMessage() {
+    const input = document.getElementById('convo-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    appendMessage(text, true, now());
+    input.value = '';
+    // Simulate reply after 1.5s
+    setTimeout(() => {
+        const replies = ['👍','E don do!','My guy!','Oya!','Good one','💪','Na true!'];
+        appendMessage(replies[Math.floor(Math.random()*replies.length)], false, now());
+    }, 1500);
+}
+
+function sendSlang(phrase) {
+    const input = document.getElementById('convo-input');
+    input.value = phrase;
+    sendMessage();
+}
+
+function closeConvo() {
+    document.getElementById('chat-convo').classList.remove('open');
+    currentConvo = null;
+}
+
+function switchChatTab(tab) {
+    document.querySelectorAll('.chat-tab').forEach((t,i)=>{
+        t.classList.toggle('active', ['chats','crews','broadcast'][i]===tab);
+    });
+}
+
+function simulateCall() {
+    showNotif('📞','AgbaChat',`Calling ${currentConvo?.name||'contact'}...`);
+}
+
+// =====================================================
+// AGBABANK
+// =====================================================
+function buildBankTransactions() {
+    if (!playerData) {
+        addTx('⚽','Match Win','Today',10000,'credit');
+        addTx('🥅','Goal Scored','Today',2500,'credit');
+        addTx('🌿','Agbo Purchase','Yesterday',-600,'debit');
+        addTx('🏪','Stall Rent','3 days ago',-15000,'debit');
+        addTx('⚽','Match Draw','4 days ago',1500,'credit');
+        return;
+    }
+    addTx('⚽','Match Win','Today',10000,'credit');
+    addTx('🥅','Goal Scored','Today',2500,'credit');
+    addTx('🌿','Agbo Purchase','Yesterday',-600,'debit');
+}
+
+function addTx(icon, desc, date, amount, type) {
+    transactions.push({ icon, desc, date, amount, type });
+    renderTransactions();
+}
+
+function renderTransactions() {
+    const list = document.getElementById('bank-tx-list');
+    list.innerHTML = '';
+    for (const tx of [...transactions].reverse()) {
+        const div    = document.createElement('div');
+        div.className = 'bank-tx';
+        div.innerHTML = `
+            <div class="bank-tx-icon" style="background:${tx.type==='credit'?'rgba(0,170,0,0.15)':'rgba(170,0,0,0.15)'};">
+                ${tx.icon}
+            </div>
+            <div class="bank-tx-info">
+                <div class="bank-tx-desc">${tx.desc}</div>
+                <div class="bank-tx-date">${tx.date}</div>
+            </div>
+            <div class="bank-tx-amount ${tx.type}">
+                ${tx.type==='credit'?'+':'-'}₦${Math.abs(tx.amount).toLocaleString()}
+            </div>`;
+        list.appendChild(div);
+    }
+}
+
+function openBankModal(type) {
+    document.getElementById('bank-modal-title').textContent =
+        type==='transfer'?'Transfer Naira':
+        type==='airtime'?'Buy Airtime':
+        type==='savings'?'Move to Savings':'Transaction History';
+    document.getElementById('bank-modal').classList.add('open');
+}
+
+function closeBankModal() {
+    document.getElementById('bank-modal').classList.remove('open');
+}
+
+function confirmTransfer() {
+    const recipient = document.getElementById('bank-modal-recipient').value.trim();
+    const amount    = parseInt(document.getElementById('bank-modal-amount').value)||0;
+    if (!recipient||!amount) { showNotif('⚠️','AgbaBank','Fill in recipient and amount'); return; }
+    if (!playerData||amount>playerData.naira_balance) {
+        showNotif('⚠️','AgbaBank','Insufficient balance'); return;
+    }
+    addTx('📤',`Transfer to ${recipient}`,'Just now',-amount,'debit');
+    playerData.naira_balance -= amount;
+    document.getElementById('bank-balance').textContent = '₦'+playerData.naira_balance.toLocaleString();
+    document.getElementById('home-balance').textContent = '₦'+playerData.naira_balance.toLocaleString();
+    closeBankModal();
+    showNotif('🏦','AgbaBank',`₦${amount.toLocaleString()} sent to ${recipient}`);
+}
+
+// =====================================================
+// BETNAIJA
+// =====================================================
+function selectOdd(el, label, odds) {
+    document.querySelectorAll('.bet-odd-btn').forEach(b=>b.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedOdd    = label;
+    selectedOddVal = parseFloat(odds);
+    document.getElementById('bet-slip-desc').textContent = `Selected: ${label} @ ${odds}`;
+    document.getElementById('bet-potential').textContent = 'Potential win: ₦0.00';
+    document.getElementById('bet-slip').classList.add('open');
+    document.getElementById('bet-stake').value = '';
+}
+
+function closeBetSlip() {
+    document.getElementById('bet-slip').classList.remove('open');
+    document.querySelectorAll('.bet-odd-btn').forEach(b=>b.classList.remove('selected'));
+    selectedOdd = null;
+}
+
+function calcPotential() {
+    const stake = parseFloat(document.getElementById('bet-stake').value)||0;
+    const win   = stake * selectedOddVal;
+    document.getElementById('bet-potential').textContent =
+        `Potential win: ₦${win.toLocaleString('en-NG',{minimumFractionDigits:2})}`;
+}
+
+function placeBet() {
+    const stake = parseFloat(document.getElementById('bet-stake').value)||0;
+    if (!stake||stake<100) { showNotif('⚠️','BetNaija','Minimum stake is ₦100'); return; }
+    if (stake>betWallet)   { showNotif('⚠️','BetNaija','Insufficient bet wallet balance'); return; }
+    betWallet -= stake;
+    document.getElementById('bet-balance').textContent = '₦'+betWallet.toLocaleString();
+    showNotif('🎯','BetNaija',`Bet placed! ₦${stake.toLocaleString()} on ${selectedOdd}`);
+    closeBetSlip();
+}
+
+function fundBetWallet() {
+    const amount = 5000;
+    if (!playerData||playerData.naira_balance<amount) {
+        showNotif('⚠️','BetNaija','Insufficient AgbaBank balance'); return;
+    }
+    betWallet += amount;
+    playerData.naira_balance -= amount;
+    document.getElementById('bet-balance').textContent = '₦'+betWallet.toLocaleString();
+    document.getElementById('bank-balance').textContent = '₦'+playerData.naira_balance.toLocaleString();
+    document.getElementById('home-balance').textContent = '₦'+playerData.naira_balance.toLocaleString();
+    addTx('🎯','BetNaija Wallet Fund','Just now',-amount,'debit');
+    showNotif('🎯','BetNaija',`₦${amount.toLocaleString()} added to bet wallet`);
+}
+
+// =====================================================
+// STREET GIST
+// =====================================================
+function buildStreetGist() {
+    const feed    = document.getElementById('gist-feed');
+    const stories = [
+        { icon:'⚽', headline:'Surulere FC dominates local derby 5-2', time:'2 mins ago', tag:'MATCH RESULT' },
+        { icon:'🏪', headline:'New market stalls open in Kano — 12 vendors already registered', time:'15 mins ago', tag:'MARKET NEWS' },
+        { icon:'🏆', headline:'Jigga from Edo State tops the Respect leaderboard this week', time:'1 hour ago', tag:'LEADERBOARD' },
+        { icon:'💰', headline:'AgbaBank introduces savings interest — earn Naira on deposits', time:'2 hours ago', tag:'FINANCE' },
+        { icon:'🗺️', headline:'3 new pitches unlocked in Bayelsa State', time:'3 hours ago', tag:'MAP UPDATE' },
+        { icon:'📱', headline:'AGBA OS update — BetNaija now supports accumulator bets', time:'yesterday', tag:'APP UPDATE' }
+    ];
+    feed.innerHTML = '';
+    for (const s of stories) {
+        const div    = document.createElement('div');
+        div.style.cssText = 'background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;';
+        div.innerHTML = `
+            <div style="font-size:0.6rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
+                ${s.tag} · ${s.time}
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+                <div style="font-size:1.3rem;">${s.icon}</div>
+                <div style="font-size:0.78rem;color:#ddd;line-height:1.4;">${s.headline}</div>
+            </div>`;
+        feed.appendChild(div);
+    }
+}
+
+// =====================================================
+// MUSIC
+// =====================================================
+function togglePlay() {
+    isPlaying = !isPlaying;
+    document.getElementById('play-btn').textContent = isPlaying ? '⏸' : '▶';
+    if (isPlaying) showNotif('🎵','AfroBeats FM','Now playing: Street Vibes Mix');
+}
+
+// =====================================================
+// NOTIFICATION TOAST
+// =====================================================
+let notifTimeout = null;
+function showNotif(icon, app, msg) {
+    document.getElementById('notif-icon').textContent = icon;
+    document.getElementById('notif-app').textContent  = app;
+    document.getElementById('notif-msg').textContent  = msg;
+    const el = document.getElementById('phone-notif');
+    el.classList.add('show');
+    if (notifTimeout) clearTimeout(notifTimeout);
+    notifTimeout = setTimeout(()=>el.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
