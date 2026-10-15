@@ -1281,14 +1281,9 @@
                     </div>
                 </div>
 
-                <!-- CATEGORIES -->
-                <div style="padding:10px 12px 6px;display:flex;gap:8px;overflow-x:auto;flex-shrink:0;">
-                    <div class="shop-cat selected" onclick="filterShop('all',this)">All</div>
-                    <div class="shop-cat" onclick="filterShop('health',this)">🌿 Health</div>
-                    <div class="shop-cat" onclick="filterShop('food',this)">🍲 Food</div>
-                    <div class="shop-cat" onclick="filterShop('boots',this)">👟 Boots</div>
-                    <div class="shop-cat" onclick="filterShop('jersey',this)">👕 Jerseys</div>
-                    <div class="shop-cat" onclick="filterShop('medical',this)">💊 Medical</div>
+                           <!-- CATEGORIES -->
+                <div id="shop-cat-bar" style="padding:8px 12px 6px;display:flex;gap:8px;overflow-x:auto;flex-shrink:0;">
+                    <!-- Built by JS -->
                 </div>
 
                 <!-- BANNER -->
@@ -1758,50 +1753,172 @@ function fundBetWallet() {
     showNotif('🎯','BetNaija',`₦${amount.toLocaleString()} added to bet wallet`);
 }
 // =====================================================
-// SHOPNAIJA
+// SHOPNAIJA — Full Nigerian E-Commerce
 // =====================================================
-const SHOP_PRODUCTS = [
-    // HEALTH
-    { id:'agbo',         name:'Agbo (Herbal Remedy)',   vendor:"Mama Chidinma's Store", vendorId:'gov_001', price:600,  originalPrice:750,  stock:99,  cat:'health',  icon:'🌿', effect:'stamina+30', desc:'Powerful local herbs. Restore 30% stamina. Fast delivery from Mama Chidinma.',  onSale:true  },
-    { id:'agbo_strong',  name:'Strong Agbo',            vendor:"Mama Chidinma's Store", vendorId:'gov_001', price:1100, originalPrice:1100, stock:99,  cat:'health',  icon:'🌿', effect:'stamina+55', desc:'Extra strength batch. Restore 55% stamina. Mama\'s secret formula.',              onSale:false },
-    { id:'cold_water',   name:'Pure Water x5 Pack',     vendor:"Mama Chidinma's Store", vendorId:'gov_001', price:400,  originalPrice:400,  stock:99,  cat:'health',  icon:'💧', effect:'stamina+10', desc:'Hydration pack. Stay refreshed on and off the pitch.',                           onSale:false },
-    { id:'lucozade',     name:'Lucozade Sport',         vendor:"Chukwudi's Kiosk",       vendorId:'gov_002', price:800,  originalPrice:800,  stock:99,  cat:'health',  icon:'⚡', effect:'stamina+25', desc:'International sport drink. Rapid energy restoration. +25% stamina.',           onSale:false },
-    { id:'energy_drink', name:'Power Horse Energy',     vendor:"Chukwudi's Kiosk",       vendorId:'gov_002', price:1300, originalPrice:1300, stock:99,  cat:'health',  icon:'🔋', effect:'stamina+50', desc:'Maximum power. Restore 50% stamina instantly. For serious ballers only.',       onSale:false },
-    { id:'malt_drink',   name:'Maltina (Bottle)',       vendor:"Chukwudi's Kiosk",       vendorId:'gov_002', price:400,  originalPrice:400,  stock:99,  cat:'health',  icon:'🍺', effect:'stamina+15', desc:'Classic Nigerian malt drink. Sweet, filling. +15% stamina.',                    onSale:false },
-    // FOOD
-    { id:'jollof_rice',  name:'Jollof Rice + Chicken',  vendor:"Mama Tunde's Buka",      vendorId:'gov_003', price:1800, originalPrice:1800, stock:50,  cat:'food',    icon:'🍛', effect:'stamina+40,health', desc:'Full party jollof with chicken. Best food on the pitch circuit.',     onSale:false },
-    { id:'eba_egusi',    name:'Eba + Egusi Soup',       vendor:"Mama Tunde's Buka",      vendorId:'gov_003', price:1500, originalPrice:1500, stock:50,  cat:'food',    icon:'🍲', effect:'stamina+35', desc:'Heavy local Nigerian food. +35% stamina. Will keep you going all day.',         onSale:false },
-    { id:'suya',         name:'Suya (5 Sticks)',        vendor:"Mama Tunde's Buka",      vendorId:'gov_003', price:1000, originalPrice:1000, stock:80,  cat:'food',    icon:'🥩', effect:'stamina+20', desc:'Northern Nigeria spiced grilled meat. Street favourite. +20% stamina.',         onSale:false },
-    // BOOTS
-    { id:'canvas_boots', name:'Canvas Boots (Aba Made)',vendor:"Emeka's Footwear",       vendorId:'gov_004', price:8000, originalPrice:8000, stock:20,  cat:'boots',   icon:'👟', effect:'speed+5',  desc:'Aba quality canvas boots. +5 Speed attribute. Built to last on any surface.',   onSale:false },
-    { id:'leather_boots',name:'Leather Football Boots', vendor:"Emeka's Footwear",       vendorId:'gov_004', price:18000,originalPrice:18000,stock:10,  cat:'boots',   icon:'👞', effect:'speed+12', desc:'Premium leather boots. +12 Speed. The boots every street baller dreams of.',    onSale:false },
-    { id:'slides',       name:'Slides (Street Special)',vendor:"Emeka's Footwear",       vendorId:'gov_004', price:3000, originalPrice:3000, stock:30,  cat:'boots',   icon:'🩴', effect:'speed+2',  desc:'Classic Nigerian street slides. +2 Speed. Comfortable and affordable.',        onSale:false },
-    // JERSEYS
-    { id:'basic_jersey', name:'Basic Custom Jersey',    vendor:"Biodun's Jersey Stall",  vendorId:'gov_005', price:5000, originalPrice:5000, stock:30,  cat:'jersey',  icon:'👕', effect:'kit:CustomJersey',      desc:'Upgrade your bib to a custom jersey. Choose your colour. Street respect incoming.', onSale:false },
-    { id:'premium_jersey',name:'Premium Jersey + Name', vendor:"Biodun's Jersey Stall",  vendorId:'gov_005', price:12000,originalPrice:12000,stock:15,  cat:'jersey',  icon:'👕', effect:'kit:CustomJersey+name', desc:'Premium jersey with your baller name on the back. Top tier status.',            onSale:false },
-    { id:'full_kit',     name:'Full Kit (Jersey+Shorts)',vendor:"Biodun's Jersey Stall", vendorId:'gov_005', price:20000,originalPrice:20000,stock:10,  cat:'jersey',  icon:'🎽', effect:'kit:FullKit',           desc:'Complete matching kit. Jersey, shorts, socks. Highest respect on the pitch.',      onSale:false },
-    // MEDICAL
-    { id:'pain_relief',  name:'Pain Relief Tablet',    vendor:"Ngozi's Chemist",         vendorId:'gov_006', price:500,  originalPrice:500,  stock:100, cat:'medical', icon:'💊', effect:'health:Healthy', desc:'Quick pain relief. Clears minor injuries. Back to Healthy status fast.',         onSale:false },
-    { id:'muscle_rub',   name:'Deep Heat Muscle Rub',  vendor:"Ngozi's Chemist",         vendorId:'gov_006', price:1200, originalPrice:1200, stock:50,  cat:'medical', icon:'🧴', effect:'stamina+10,health', desc:'Deep muscle recovery. Eases soreness after heavy matches. +10% stamina.',    onSale:false },
-    { id:'glucose',      name:'Glucose Energy Drink',  vendor:"Ngozi's Chemist",         vendorId:'gov_006', price:800,  originalPrice:800,  stock:80,  cat:'medical', icon:'🥤', effect:'stamina+20', desc:'Medical grade glucose. Rapid energy. Pharmacist recommended.',                    onSale:false }
+const SHOP_CATEGORIES = [
+    { id:'all',         label:'All',          icon:'🛒' },
+    { id:'health',      label:'Health',        icon:'🌿' },
+    { id:'food',        label:'Food',          icon:'🍲' },
+    { id:'fashion',     label:'Fashion',       icon:'👕' },
+    { id:'footwear',    label:'Footwear',      icon:'👟' },
+    { id:'electronics', label:'Electronics',   icon:'📱' },
+    { id:'furniture',   label:'Furniture',     icon:'🛋️' },
+    { id:'kitchen',     label:'Kitchen',       icon:'🍳' },
+    { id:'beauty',      label:'Beauty',        icon:'💄' },
+    { id:'sports',      label:'Sports',        icon:'⚽' },
+    { id:'home',        label:'Home',          icon:'🏠' },
+    { id:'auto',        label:'Auto',          icon:'🚗' },
+    { id:'pharmacy',    label:'Pharmacy',      icon:'💊' },
+    { id:'tools',       label:'Tools',         icon:'🔧' }
 ];
+
+const SHOP_PRODUCTS = [
+    // ── HEALTH & STAMINA ──
+    { id:'agbo',          name:'Agbo (Herbal Remedy)',    vendor:"Mama Chidinma",  price:600,      cat:'health',      icon:'🌿', effect:'stamina+30', tier:0, onSale:true,  saleFrom:750,   desc:'Classic Nigerian herbal remedy. Restores 30% stamina. Trusted by generations.' },
+    { id:'agbo_strong',   name:'Strong Agbo (Extra)',     vendor:"Mama Chidinma",  price:1100,     cat:'health',      icon:'🌿', effect:'stamina+55', tier:0, onSale:false, saleFrom:0,    desc:'Double strength agbo. Restores 55% stamina. Mama\'s secret recipe.' },
+    { id:'pure_water',    name:'Pure Water Pack (x10)',   vendor:"Chukwudi Kiosk", price:300,      cat:'health',      icon:'💧', effect:'stamina+8',  tier:0, onSale:false, saleFrom:0,    desc:'Stay hydrated. 10 sachets. Essential for training days.' },
+    { id:'lucozade',      name:'Lucozade Sport',          vendor:"Chukwudi Kiosk", price:800,      cat:'health',      icon:'⚡', effect:'stamina+25', tier:0, onSale:false, saleFrom:0,    desc:'International sport drink. Rapid energy restoration.' },
+    { id:'energy_drink',  name:'Power Horse Energy',      vendor:"Chukwudi Kiosk", price:1300,     cat:'health',      icon:'🔋', effect:'stamina+50', tier:0, onSale:false, saleFrom:0,    desc:'Maximum power. 50% stamina instantly. For serious ballers only.' },
+    { id:'malt',          name:'Maltina (Bottle)',        vendor:"Chukwudi Kiosk", price:400,      cat:'health',      icon:'🍺', effect:'stamina+15', tier:0, onSale:false, saleFrom:0,    desc:'Sweet Nigerian malt drink. +15% stamina.' },
+    { id:'vitamin_c',     name:'Vitamin C (30 tablets)',  vendor:"Ngozi Chemist",  price:800,      cat:'health',      icon:'🟠', effect:'stamina+5',  tier:0, onSale:false, saleFrom:0,    desc:'Daily immune boost. Keeps your sim healthy long term.' },
+
+    // ── FOOD & GROCERIES ──
+    { id:'jollof_rice',   name:'Jollof Rice + Chicken',  vendor:"Mama Tunde Buka",price:1800,     cat:'food',        icon:'🍛', effect:'stamina+40,health', tier:0, onSale:false, saleFrom:0, desc:'Party jollof with chicken. +40% stamina. Nigeria\'s finest.' },
+    { id:'eba_egusi',     name:'Eba + Egusi Soup',       vendor:"Mama Tunde Buka",price:1500,     cat:'food',        icon:'🍲', effect:'stamina+35', tier:0, onSale:false, saleFrom:0,    desc:'Heavy Nigerian meal. +35% stamina. Will keep you going all day.' },
+    { id:'suya',          name:'Suya (5 Sticks)',        vendor:"Mama Tunde Buka",price:1000,     cat:'food',        icon:'🥩', effect:'stamina+20', tier:0, onSale:false, saleFrom:0,    desc:'Northern spiced grilled meat. Street favourite.' },
+    { id:'indomie',       name:'Indomie (Pack of 10)',   vendor:"Mama Tunde Buka",price:2500,     cat:'food',        icon:'🍜', effect:'stamina+12', tier:0, onSale:false, saleFrom:0,    desc:'Nigeria\'s favourite instant noodles. Quick meal, quick energy.' },
+    { id:'rice_bag',      name:'Rice (50kg bag)',        vendor:"Mama Tunde Buka",price:45000,    cat:'food',        icon:'🌾', effect:'none',       tier:0, onSale:false, saleFrom:0,    desc:'Premium parboiled rice. Lasts the whole month. Real household economics.' },
+    { id:'palm_oil',      name:'Palm Oil (5 litres)',    vendor:"Mama Tunde Buka",price:8000,     cat:'food',        icon:'🟠', effect:'none',       tier:0, onSale:false, saleFrom:0,    desc:'Fresh red palm oil. Essential for Nigerian cooking.' },
+    { id:'garri',         name:'Garri (10kg bag)',       vendor:"Mama Tunde Buka",price:6000,     cat:'food',        icon:'🟡', effect:'stamina+8',  tier:0, onSale:false, saleFrom:0,    desc:'The people\'s food. Can\'t go hungry with garri in the house.' },
+    { id:'purewater_box', name:'Pure Water (Box of 30)', vendor:"Mama Tunde Buka",price:1500,     cat:'food',        icon:'💧', effect:'none',       tier:0, onSale:false, saleFrom:0,    desc:'Full box of pure water sachets. Household staple.' },
+
+    // ── FASHION & CLOTHING ──
+    { id:'basic_jersey',  name:'Custom Jersey (Basic)',  vendor:"Biodun Tailor",  price:5000,     cat:'fashion',     icon:'👕', effect:'kit:CustomJersey', tier:0, onSale:false, saleFrom:0, desc:'Upgrade your bib to a custom jersey. Street respect incoming.' },
+    { id:'premium_jersey',name:'Premium Jersey + Name',  vendor:"Biodun Tailor",  price:12000,    cat:'fashion',     icon:'👕', effect:'kit:CustomJersey+name', tier:1, onSale:false, saleFrom:0, desc:'Premium jersey with your name on the back. Tier 2 unlock.' },
+    { id:'full_kit',      name:'Full Kit (Jersey+Shorts)',vendor:"Biodun Tailor", price:20000,    cat:'fashion',     icon:'🎽', effect:'kit:FullKit',  tier:2, onSale:false, saleFrom:0,    desc:'Complete matching kit. Highest pitch respect.' },
+    { id:'ankara_shirt',  name:'Ankara Shirt (Male)',    vendor:"Biodun Tailor",  price:8500,     cat:'fashion',     icon:'🎨', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Colourful Ankara fabric shirt. Nigerian pride on full display.' },
+    { id:'ankara_dress',  name:'Ankara Dress (Female)',  vendor:"Biodun Tailor",  price:9500,     cat:'fashion',     icon:'👗', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Beautiful Ankara dress. Head-turning Nigerian fashion.' },
+    { id:'agbada',        name:'Full Agbada Set',        vendor:"Biodun Tailor",  price:35000,    cat:'fashion',     icon:'👘', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Full 3-piece agbada. For when you want maximum respect off the pitch.' },
+    { id:'suit',          name:'Business Suit (Male)',   vendor:"Biodun Tailor",  price:45000,    cat:'fashion',     icon:'👔', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Sharp Nigerian business suit. Aso-ebi quality.' },
+    { id:'gele_set',      name:'Gele & Iro Set',        vendor:"Biodun Tailor",  price:28000,    cat:'fashion',     icon:'👑', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Traditional gele headwrap and iro wrapper. Owambe ready.' },
+    { id:'hoodie',        name:'Street Hoodie',          vendor:"Biodun Tailor",  price:7500,     cat:'fashion',     icon:'🧥', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Urban Nigerian street style hoodie. Casual but fresh.' },
+    { id:'tracksuit',     name:'Training Tracksuit',     vendor:"Biodun Tailor",  price:12000,    cat:'fashion',     icon:'🏃', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Full training tracksuit. Look professional on and off the pitch.' },
+
+    // ── FOOTWEAR ──
+    { id:'canvas_boots',  name:'Canvas Boots (Aba)',     vendor:"Emeka Footwear", price:8000,     cat:'footwear',    icon:'👟', effect:'speed+5',    tier:0, onSale:false, saleFrom:0,    desc:'+5 Speed. Aba-made canvas football boots. Built to last.' },
+    { id:'leather_boots', name:'Leather Football Boots', vendor:"Emeka Footwear", price:18000,    cat:'footwear',    icon:'👞', effect:'speed+12',   tier:1, onSale:false, saleFrom:0,    desc:'+12 Speed. Premium leather. Every street baller\'s dream.' },
+    { id:'slides',        name:'Slides (Street)',        vendor:"Emeka Footwear", price:3000,     cat:'footwear',    icon:'🩴', effect:'speed+2',    tier:0, onSale:false, saleFrom:0,    desc:'+2 Speed. Classic Nigerian street slides.' },
+    { id:'sneakers',      name:'Sneakers (All-White)',   vendor:"Emeka Footwear", price:22000,    cat:'footwear',    icon:'👟', effect:'speed+3',    tier:1, onSale:false, saleFrom:0,    desc:'Fresh white sneakers. For off-pitch style.' },
+    { id:'heels',         name:'Block Heels (Female)',   vendor:"Emeka Footwear", price:15000,    cat:'footwear',    icon:'👠', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Elegant block heels. Party ready.' },
+    { id:'work_boots',    name:'Safety Work Boots',      vendor:"Emeka Footwear", price:12000,    cat:'footwear',    icon:'🥾', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Steel-toe safety boots. For working sims on construction jobs.' },
+
+    // ── ELECTRONICS ──
+    { id:'charger',       name:'Phone Charger (Fast)',   vendor:"Ikeja Electronics",price:3500,   cat:'electronics', icon:'🔌', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Fast charging cable and adapter. Nigerian power situation approved.' },
+    { id:'earphones',     name:'Earphones (Wired)',      vendor:"Ikeja Electronics",price:2500,   cat:'electronics', icon:'🎧', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Decent sound quality. Handles Lagos commute music needs.' },
+    { id:'power_bank',    name:'Power Bank 20000mAh',    vendor:"Ikeja Electronics",price:18000,  cat:'electronics', icon:'🔋', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Essential for NEPA blackout periods. Keeps your phone alive.' },
+    { id:'ceiling_fan',   name:'Standing Fan',           vendor:"Ikeja Electronics",price:25000,  cat:'electronics', icon:'🌀', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'12-speed standing fan. Nigerian summer survival tool.' },
+    { id:'television',    name:'32-inch Smart TV',       vendor:"Ikeja Electronics",price:120000, cat:'electronics', icon:'📺', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Full HD smart TV. Watch AGBA BALLER matches at home.' },
+    { id:'generator',     name:'Generator (2.5KVA)',     vendor:"Ikeja Electronics",price:180000, cat:'electronics', icon:'⚡', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'For when NEPA disappoints. Standard Nigerian household backup.' },
+    { id:'smartphone',    name:'Android Smartphone',     vendor:"Ikeja Electronics",price:85000,  cat:'electronics', icon:'📱', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Mid-range Android. Access all AGBA OS features on your sim\'s phone.' },
+    { id:'laptop',        name:'Student Laptop',         vendor:"Ikeja Electronics",price:350000, cat:'electronics', icon:'💻', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'14-inch laptop. For sims running online businesses or studying.' },
+
+    // ── FURNITURE ──
+    { id:'plastic_chair', name:'Plastic Chair (Set of 4)',vendor:"Lagos Furniture", price:12000,  cat:'furniture',   icon:'🪑', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Classic white plastic chairs. Every Nigerian home staple.' },
+    { id:'center_table',  name:'Centre Table',           vendor:"Lagos Furniture", price:35000,   cat:'furniture',   icon:'🪵', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Glass-top centre table. Sitting room upgrade.' },
+    { id:'sofa_set',      name:'Sofa Set (3+1+1)',       vendor:"Lagos Furniture", price:185000,  cat:'furniture',   icon:'🛋️', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Full sofa set. Your sim\'s sitting room goes from nothing to everything.' },
+    { id:'bed_frame',     name:'Bed Frame (6x6)',        vendor:"Lagos Furniture", price:95000,   cat:'furniture',   icon:'🛏️', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'King-size bed frame. Upgrade from floor to luxury.' },
+    { id:'wardrobe',      name:'Wardrobe (4-door)',      vendor:"Lagos Furniture", price:145000,  cat:'furniture',   icon:'🚪', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'4-door wardrobe. Somewhere to keep all those Ankara outfits.' },
+    { id:'dining_set',    name:'Dining Table (6-seater)',vendor:"Lagos Furniture", price:120000,  cat:'furniture',   icon:'🍽️', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'6-seater dining table set. Sunday jollof rice just levelled up.' },
+
+    // ── KITCHEN ──
+    { id:'pot_set',       name:'Aluminium Pot Set',      vendor:"Alaba Market",   price:15000,    cat:'kitchen',     icon:'🍳', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Set of 5 aluminium cooking pots. Nigerian kitchen essential.' },
+    { id:'gas_cooker',    name:'Gas Cooker (2 burner)',  vendor:"Alaba Market",   price:35000,    cat:'kitchen',     icon:'🔥', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'2-burner gas cooker. Upgrade from kerosene stove.' },
+    { id:'kerosene_stove',name:'Kerosene Stove',         vendor:"Alaba Market",   price:8000,     cat:'kitchen',     icon:'🪔', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Starter cooker. Budget-friendly. Where every sim starts.' },
+    { id:'blender',       name:'Blender (Binatone)',     vendor:"Alaba Market",   price:18000,    cat:'kitchen',     icon:'🥤', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Blend your tomatoes, pepper and fresh juice.' },
+    { id:'freezer',       name:'Chest Freezer (200L)',   vendor:"Alaba Market",   price:120000,   cat:'kitchen',     icon:'🧊', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Store your food and drinks. Also great for a mini cold drink business.' },
+    { id:'plates_set',    name:'Dinner Set (12 pieces)', vendor:"Alaba Market",   price:12000,    cat:'kitchen',     icon:'🍽️', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Ceramic dinner plates, bowls and cups. For a proper Nigerian table setting.' },
+
+    // ── BEAUTY ──
+    { id:'body_cream',    name:'Shea Butter Body Cream', vendor:"Beauty Corner",  price:3500,     cat:'beauty',      icon:'🧴', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'100% natural shea butter. Nigerian skin care classic.' },
+    { id:'hair_product',  name:'Hair Relaxer Kit',       vendor:"Beauty Corner",  price:4500,     cat:'beauty',      icon:'💆', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Complete hair care kit. Keep your look sharp.' },
+    { id:'perfume',       name:'Perfume (50ml)',         vendor:"Beauty Corner",  price:12000,    cat:'beauty',      icon:'🌸', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Quality fragrance. Smell good whether you\'re on or off the pitch.' },
+    { id:'makeup_kit',    name:'Full Makeup Kit',        vendor:"Beauty Corner",  price:25000,    cat:'beauty',      icon:'💄', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Foundation, lipstick, mascara and more. Party season ready.' },
+    { id:'clippers',      name:'Hair Clipper (Electric)',vendor:"Beauty Corner",  price:8500,     cat:'beauty',      icon:'✂️', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Cordless electric clipper. Keep your fade fresh.' },
+
+    // ── SPORTS ──
+    { id:'football',      name:'Football (Size 5)',      vendor:"Sports World",   price:8000,     cat:'sports',      icon:'⚽', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Official size 5 football. For training and street matches.' },
+    { id:'shin_guards',   name:'Shin Guards (Pair)',     vendor:"Sports World",   price:4500,     cat:'sports',      icon:'🦵', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Protect your legs on the concrete pitch. Street baller essential.' },
+    { id:'cones',         name:'Training Cones (10)',    vendor:"Sports World",   price:3500,     cat:'sports',      icon:'🔺', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Set up drills and training sessions. Become a coach too.' },
+    { id:'gym_bag',       name:'Sports Gym Bag',         vendor:"Sports World",   price:12000,    cat:'sports',      icon:'🎒', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Carry your kit like a pro. Proper baller energy.' },
+    { id:'jump_rope',     name:'Skipping Rope',          vendor:"Sports World",   price:2500,     cat:'sports',      icon:'🪃', effect:'stamina+5',   tier:0, onSale:false, saleFrom:0,    desc:'Improve stamina with daily training. +5% permanent boost after 10 uses.' },
+
+    // ── HOME & LIVING ──
+    { id:'big_bucket',    name:'Big Plastic Bucket',     vendor:"Alaba Market",   price:1500,     cat:'home',        icon:'🪣', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'The essential Nigerian water storage bucket. NEPA outage approved.' },
+    { id:'broom',         name:'Ijele Broom (2 pack)',   vendor:"Alaba Market",   price:800,      cat:'home',        icon:'🧹', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Traditional Nigerian ijele broom. Sweep your compound properly.' },
+    { id:'curtains',      name:'Window Curtains (Set)',  vendor:"Alaba Market",   price:18000,    cat:'home',        icon:'🪟', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'Block sunlight and give your room a proper home feel.' },
+    { id:'mattress',      name:'Foam Mattress (6x6)',    vendor:"Alaba Market",   price:85000,    cat:'home',        icon:'🛏️', effect:'none',        tier:1, onSale:false, saleFrom:0,    desc:'High-density foam mattress. Sleep well, play better.' },
+    { id:'wall_clock',    name:'Wall Clock',             vendor:"Alaba Market",   price:4500,     cat:'home',        icon:'🕐', effect:'none',        tier:0, onSale:false, saleFrom:0,    desc:'Classic wall clock. Know what time to get to the pitch.' },
+
+    // ── PHARMACY ──
+    { id:'pain_relief',   name:'Pain Relief Tablet',     vendor:"Ngozi Chemist",  price:500,      cat:'pharmacy',    icon:'💊', effect:'health:Healthy', tier:0, onSale:false, saleFrom:0, desc:'Clears minor injuries immediately. Back to Healthy status.' },
+    { id:'muscle_rub',    name:'Deep Heat Muscle Rub',   vendor:"Ngozi Chemist",  price:1200,     cat:'pharmacy',    icon:'🧴', effect:'stamina+10,health', tier:0, onSale:false, saleFrom:0, desc:'Eases muscle pain after heavy matches.' },
+    { id:'glucose',       name:'Glucose Drink',          vendor:"Ngozi Chemist",  price:800,      cat:'pharmacy',    icon:'🥤', effect:'stamina+20',  tier:0, onSale:false, saleFrom:0,    desc:'Medical grade glucose. Rapid energy boost.' },
+    { id:'malaria_drug',  name:'Malaria Treatment',      vendor:"Ngozi Chemist",  price:2500,     cat:'pharmacy',    icon:'💊', effect:'health:Healthy', tier:0, onSale:false, saleFrom:0, desc:'Complete malaria treatment course. Get back on your feet.' },
+    { id:'first_aid_kit', name:'First Aid Kit',          vendor:"Ngozi Chemist",  price:8500,     cat:'pharmacy',    icon:'🩺', effect:'health:Healthy', tier:1, onSale:false, saleFrom:0, desc:'Complete kit for injuries. Essential for serious ballers.' },
+
+    // ── TOOLS & TRADE ──
+    { id:'sewing_machine',name:'Sewing Machine (Manual)',vendor:"Trade Tools NG", price:75000,    cat:'tools',       icon:'🪡', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Start a tailoring business. Civilians can earn from sewing.' },
+    { id:'generator_small',name:'Generator (1KVA)',      vendor:"Trade Tools NG", price:85000,    cat:'tools',       icon:'⚡', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Small generator for powering tools and appliances.' },
+    { id:'welder',        name:'Welding Machine',        vendor:"Trade Tools NG", price:145000,   cat:'tools',       icon:'🔧', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'Start a welding and metal fabrication business.' },
+    { id:'barbing_kit',   name:'Barbing Salon Kit',      vendor:"Trade Tools NG", price:55000,    cat:'tools',       icon:'✂️', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Full barber kit. Set up a roadside barbing salon.' },
+    { id:'pos_machine',   name:'POS Machine',            vendor:"Trade Tools NG", price:35000,    cat:'tools',       icon:'💳', effect:'none',        tier:2, onSale:false, saleFrom:0,    desc:'Accept card payments. POS agents earn daily in virtual Nigeria.' },
+
+    // ── AUTO ──
+    { id:'okada',         name:'Commercial Okada (Bike)',vendor:"Lagos Motor Park",price:380000,  cat:'auto',        icon:'🏍️', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'Commercial motorcycle. Earn daily transport income as an okada rider.' },
+    { id:'keke',          name:'Keke Napep (Tricycle)',  vendor:"Lagos Motor Park",price:850000,  cat:'auto',        icon:'🛺', effect:'none',        tier:3, onSale:false, saleFrom:0,    desc:'3-wheel commercial tricycle. Run a Keke transport business.' },
+    { id:'tokunbo_car',   name:'Tokunbo Corolla (2015)', vendor:"Lagos Motor Park",price:3200000, cat:'auto',        icon:'🚗', effect:'none',        tier:4, onSale:false, saleFrom:0,    desc:'Used Toyota Corolla. First car for an up-and-coming Nigerian sim.' },
+    { id:'new_car',       name:'Brand New Camry (2024)', vendor:"Lagos Motor Park",price:18000000,cat:'auto',        icon:'🚙', effect:'none',        tier:5, onSale:false, saleFrom:0,    desc:'The goal. Brand new V6 Camry. Only for Agba Ballers who made it.' }
+];
+
+// Respect tier required for each product tier level
+const TIER_LABELS  = ['Street Rookie','Area Boy','Neighbourhood Legend','LGA Rep','State Champion','Agba Baller'];
+const TIER_RESPECT = [0, 50, 150, 350, 750, 1500];
 
 let cart            = [];
 let currentFilter   = 'all';
 let currentSearch   = '';
-let shopView        = 'home'; // home | detail | cart | success
 let selectedProduct = null;
+let playerRespect   = 0;
+let orders          = []; // order history
 
+// =====================================================
+// INIT SHOP
+// =====================================================
 function initShop() {
+    playerRespect = playerData ? (playerData.respect_points || 0) : 0;
+    buildCategoryBar();
     renderShopProducts();
+}
+
+function buildCategoryBar() {
+    const bar = document.getElementById('shop-cat-bar');
+    if (!bar) return;
+    bar.innerHTML = '';
+    for (const cat of SHOP_CATEGORIES) {
+        const div       = document.createElement('div');
+        div.className   = `shop-cat${cat.id === 'all' ? ' selected' : ''}`;
+        div.textContent = `${cat.icon} ${cat.label}`;
+        div.onclick     = () => filterShop(cat.id, div);
+        bar.appendChild(div);
+    }
 }
 
 function getFilteredProducts() {
     return SHOP_PRODUCTS.filter(p => {
         const matchesCat    = currentFilter === 'all' || p.cat === currentFilter;
-        const matchesSearch = !currentSearch ||
-            p.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
-            p.vendor.toLowerCase().includes(currentSearch.toLowerCase());
+        const matchesSearch = !currentSearch
+            || p.name.toLowerCase().includes(currentSearch.toLowerCase())
+            || p.vendor.toLowerCase().includes(currentSearch.toLowerCase());
         return matchesCat && matchesSearch;
     });
 }
@@ -1812,47 +1929,55 @@ function renderShopProducts() {
     grid.innerHTML = '';
 
     if (products.length === 0) {
-        grid.style.display = 'block';
-        grid.innerHTML = `<div style="color:#555;text-align:center;padding:30px;font-size:0.82rem;grid-column:1/-1;">
-            No products found. Try a different search or category.
-        </div>`;
+        grid.style.cssText = 'display:block;grid-column:1/-1;';
+        grid.innerHTML     = `<div style="color:#555;text-align:center;padding:30px;font-size:0.82rem;">
+            No products found. Try a different category.</div>`;
         return;
     }
 
-    grid.style.display = 'grid';
+    grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:10px;';
+
     for (const p of products) {
-        const card       = document.createElement('div');
-        card.className   = 'product-card';
+        const locked    = p.tier > 0 && playerRespect < TIER_RESPECT[p.tier];
+        const card      = document.createElement('div');
+        card.className  = 'product-card';
+        card.style.cssText = locked ? 'opacity:0.5;' : '';
 
         const saleTag = p.onSale
-            ? `<span style="background:#cc2200;color:#fff;font-size:0.55rem;padding:1px 5px;border-radius:3px;margin-left:4px;">SALE</span>`
+            ? `<span style="background:#cc2200;color:#fff;font-size:0.5rem;padding:1px 4px;border-radius:3px;">SALE</span>`
             : '';
 
-        const originalPriceHtml = p.onSale && p.originalPrice > p.price
-            ? `<span style="text-decoration:line-through;color:#555;font-size:0.65rem;margin-left:3px;">₦${p.originalPrice.toLocaleString()}</span>`
+        const lockedTag = locked
+            ? `<div style="font-size:0.55rem;color:#cc8800;margin-top:2px;">🔒 ${TIER_LABELS[p.tier]}</div>`
             : '';
 
         card.innerHTML = `
-            <div class="product-img" onclick="openProductDetail('${p.id}')">${p.icon}</div>
-            <div class="product-info" onclick="openProductDetail('${p.id}')">
-                <div class="product-name">${p.name}${saleTag}</div>
-                <div class="product-vendor">${p.vendor}</div>
-                <div class="product-price">
-                    ₦${p.price.toLocaleString()}${originalPriceHtml}
-                </div>
-                <div class="product-stock">Stock: ${p.stock > 50 ? '∞' : p.stock}</div>
+            <div class="product-img" onclick="${locked?'showLockedMsg('+p.tier+')':'openProductDetail(\''+p.id+'\')'}"
+                style="background:linear-gradient(135deg,#1a1000,#2a1500);">${p.icon}
+                ${locked?'<div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🔒</div>':''}
             </div>
-            <button class="add-to-cart-btn" onclick="addToCart('${p.id}')">
-                + Add to Cart
-            </button>`;
+            <div class="product-info" onclick="${locked?'showLockedMsg('+p.tier+')':'openProductDetail(\''+p.id+'\')'}" style="position:relative;">
+                <div class="product-name">${p.name} ${saleTag}</div>
+                <div class="product-vendor">${p.vendor}</div>
+                <div class="product-price">₦${p.price.toLocaleString()}</div>
+                ${lockedTag}
+            </div>
+            ${locked
+                ? `<button class="add-to-cart-btn" style="opacity:0.4;" onclick="showLockedMsg(${p.tier})">🔒 Locked</button>`
+                : `<button class="add-to-cart-btn" onclick="addToCart('${p.id}')">+ Add to Cart</button>`
+            }`;
         grid.appendChild(card);
     }
+}
+
+function showLockedMsg(tier) {
+    showNotif('🔒','ShopNaija',`Unlock at ${TIER_LABELS[tier]} (${TIER_RESPECT[tier].toLocaleString()} Respect)`);
 }
 
 function filterShop(cat, el) {
     currentFilter = cat;
     document.querySelectorAll('.shop-cat').forEach(c => c.classList.remove('selected'));
-    el.classList.add('selected');
+    if (el) el.classList.add('selected');
     renderShopProducts();
 }
 
@@ -1861,60 +1986,82 @@ function searchShop(val) {
     renderShopProducts();
 }
 
+// =====================================================
+// PRODUCT DETAIL
+// =====================================================
 function openProductDetail(productId) {
     const p = SHOP_PRODUCTS.find(x => x.id === productId);
     if (!p) return;
     selectedProduct = p;
 
+    const locked = p.tier > 0 && playerRespect < TIER_RESPECT[p.tier];
     document.getElementById('detail-breadcrumb').textContent = p.name;
+
     document.getElementById('product-detail-content').innerHTML = `
-        <div style="text-align:center;background:linear-gradient(135deg,#1a1000,#2a1500);border-radius:12px;padding:25px;margin-bottom:15px;">
-            <div style="font-size:4rem;">${p.icon}</div>
-            ${p.onSale ? '<div style="background:#cc2200;color:#fff;font-size:0.65rem;padding:3px 10px;border-radius:10px;display:inline-block;margin-top:8px;">🔥 ON SALE</div>' : ''}
+        <div style="text-align:center;background:linear-gradient(135deg,#1a1000,#2a1500);border-radius:12px;padding:25px 20px;margin-bottom:15px;">
+            <div style="font-size:4.5rem;">${p.icon}</div>
+            ${p.onSale?'<div style="background:#cc2200;color:#fff;font-size:0.65rem;padding:3px 10px;border-radius:10px;display:inline-block;margin-top:8px;">🔥 FLASH SALE</div>':''}
         </div>
 
-        <div style="margin-bottom:15px;">
-            <div style="font-size:1rem;font-weight:bold;color:#fff;margin-bottom:4px;">${p.name}</div>
+        <div style="margin-bottom:12px;">
+            <div style="font-size:1rem;font-weight:bold;color:#fff;margin-bottom:3px;">${p.name}</div>
             <div style="font-size:0.72rem;color:#cc8800;">Sold by: ${p.vendor}</div>
+            <div style="font-size:0.65rem;color:#555;margin-top:2px;">Category: ${p.cat.charAt(0).toUpperCase()+p.cat.slice(1)}</div>
         </div>
 
         <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:15px;">
-            <div style="font-size:1.5rem;font-weight:bold;color:#ffd700;">₦${p.price.toLocaleString()}</div>
-            ${p.onSale && p.originalPrice > p.price
-                ? `<div style="text-decoration:line-through;color:#555;font-size:0.82rem;">₦${p.originalPrice.toLocaleString()}</div>
-                   <div style="color:#cc2200;font-size:0.72rem;">Save ₦${(p.originalPrice-p.price).toLocaleString()}</div>`
-                : ''}
+            <div style="font-size:1.6rem;font-weight:bold;color:#ffd700;">₦${p.price.toLocaleString()}</div>
+            ${p.onSale&&p.saleFrom>p.price?`
+            <div style="text-decoration:line-through;color:#555;font-size:0.82rem;">₦${p.saleFrom.toLocaleString()}</div>
+            <div style="color:#cc2200;font-size:0.72rem;font-weight:bold;">Save ₦${(p.saleFrom-p.price).toLocaleString()}</div>`:''}
         </div>
 
-        <div style="background:#111;border:1px solid #1a1000;border-radius:8px;padding:12px;margin-bottom:15px;">
-            <div style="font-size:0.68rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Product Effect</div>
-            <div style="font-size:0.82rem;color:#00ff44;">${formatShopEffect(p.effect)}</div>
-        </div>
+        ${p.effect && p.effect !== 'none' ? `
+        <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:10px;margin-bottom:12px;">
+            <div style="font-size:0.62rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Game Effect</div>
+            <div style="font-size:0.78rem;color:#00ff44;">${formatShopEffect(p.effect)}</div>
+        </div>` : ''}
 
-        <div style="margin-bottom:20px;">
-            <div style="font-size:0.68rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Description</div>
+        <div style="margin-bottom:15px;">
+            <div style="font-size:0.62rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">About This Product</div>
             <div style="font-size:0.78rem;color:#aaa;line-height:1.6;">${p.desc}</div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px;">
-            <div style="background:#111;border:1px solid #1a1000;border-radius:6px;padding:10px;text-align:center;">
-                <div style="font-size:0.75rem;font-weight:bold;color:#fff;">${p.stock > 50 ? 'In Stock' : p.stock + ' left'}</div>
-                <div style="font-size:0.6rem;color:#555;margin-top:2px;">Availability</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;">
+            <div style="background:#111;border:1px solid #1a1000;border-radius:6px;padding:8px;text-align:center;">
+                <div style="font-size:0.72rem;font-weight:bold;color:#fff;">In Stock</div>
+                <div style="font-size:0.58rem;color:#555;margin-top:2px;">Availability</div>
             </div>
-            <div style="background:#111;border:1px solid #1a1000;border-radius:6px;padding:10px;text-align:center;">
-                <div style="font-size:0.75rem;font-weight:bold;color:#fff;">1 Match Day</div>
-                <div style="font-size:0.6rem;color:#555;margin-top:2px;">Delivery Time</div>
+            <div style="background:#111;border:1px solid #1a1000;border-radius:6px;padding:8px;text-align:center;">
+                <div style="font-size:0.72rem;font-weight:bold;color:#fff;">1 Match Day</div>
+                <div style="font-size:0.58rem;color:#555;margin-top:2px;">Delivery</div>
+            </div>
+            <div style="background:#111;border:1px solid #1a1000;border-radius:6px;padding:8px;text-align:center;">
+                <div style="font-size:0.72rem;font-weight:bold;color:#00ff44;">Free</div>
+                <div style="font-size:0.58rem;color:#555;margin-top:2px;">Shipping</div>
             </div>
         </div>
 
-        <button onclick="addToCart('${p.id}');closeProductDetail();"
-            style="width:100%;background:#cc8800;border:none;color:#000;padding:12px;font-weight:bold;border-radius:8px;cursor:pointer;font-size:0.88rem;margin-bottom:8px;">
-            🛒 Add to Cart
-        </button>
-        <button onclick="buyNow('${p.id}')"
-            style="width:100%;background:#1a1000;border:1px solid #cc8800;color:#ffaa00;padding:10px;font-weight:bold;border-radius:8px;cursor:pointer;font-size:0.82rem;">
-            ⚡ Buy Now
-        </button>`;
+        ${p.tier > 0 ? `
+        <div style="background:#1a1000;border:1px solid #cc8800;border-radius:8px;padding:10px;margin-bottom:15px;font-size:0.72rem;color:#cc8800;">
+            🔒 Requires <strong>${TIER_LABELS[p.tier]}</strong> tier
+            (${TIER_RESPECT[p.tier].toLocaleString()} Respect Points)
+        </div>` : ''}
+
+        ${locked
+            ? `<button onclick="showLockedMsg(${p.tier})"
+                style="width:100%;background:#1a1000;border:1px solid #555;color:#555;padding:12px;font-weight:bold;border-radius:8px;cursor:not-allowed;font-size:0.88rem;margin-bottom:8px;">
+                🔒 Unlock at ${TIER_LABELS[p.tier]}
+               </button>`
+            : `<button onclick="addToCart('${p.id}');closeProductDetail();"
+                style="width:100%;background:#cc8800;border:none;color:#000;padding:12px;font-weight:bold;border-radius:8px;cursor:pointer;font-size:0.88rem;margin-bottom:8px;">
+                🛒 Add to Cart
+               </button>
+               <button onclick="buyNow('${p.id}')"
+                style="width:100%;background:#0a1000;border:1px solid #cc8800;color:#ffaa00;padding:10px;font-weight:bold;border-radius:8px;cursor:pointer;font-size:0.82rem;">
+                ⚡ Buy Now (Instant)
+               </button>`
+        }`;
 
     document.getElementById('shop-home').style.display            = 'none';
     document.getElementById('shop-product-detail').style.display  = 'flex';
@@ -1923,10 +2070,13 @@ function openProductDetail(productId) {
 }
 
 function closeProductDetail() {
-    document.getElementById('shop-home').style.display            = 'flex';
-    document.getElementById('shop-product-detail').style.display  = 'none';
+    document.getElementById('shop-home').style.display           = 'flex';
+    document.getElementById('shop-product-detail').style.display = 'none';
 }
 
+// =====================================================
+// CART
+// =====================================================
 function openCart() {
     renderCart();
     document.getElementById('shop-home').style.display            = 'none';
@@ -1936,21 +2086,20 @@ function openCart() {
 }
 
 function closeCart() {
-    document.getElementById('shop-home').style.display            = 'flex';
-    document.getElementById('shop-cart-view').style.display       = 'none';
+    document.getElementById('shop-home').style.display  = 'flex';
+    document.getElementById('shop-cart-view').style.display = 'none';
 }
 
 function addToCart(productId) {
     const p = SHOP_PRODUCTS.find(x => x.id === productId);
     if (!p) return;
+    const locked = p.tier > 0 && playerRespect < TIER_RESPECT[p.tier];
+    if (locked) { showLockedMsg(p.tier); return; }
     const existing = cart.find(c => c.id === productId);
-    if (existing) {
-        existing.qty++;
-    } else {
-        cart.push({ ...p, qty: 1 });
-    }
+    if (existing) existing.qty++;
+    else cart.push({ ...p, qty:1 });
     updateCartBadge();
-    showNotif('🛒','ShopNaija', `${p.name} added to cart!`);
+    showNotif('🛒','ShopNaija',`${p.name} added to cart!`);
 }
 
 function removeFromCart(productId) {
@@ -1959,8 +2108,16 @@ function removeFromCart(productId) {
     renderCart();
 }
 
+function changeQty(productId, delta) {
+    const item = cart.find(c => c.id === productId);
+    if (!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    updateCartBadge();
+    renderCart();
+}
+
 function updateCartBadge() {
-    const total = cart.reduce((n,c) => n + c.qty, 0);
+    const total = cart.reduce((n,c) => n+c.qty, 0);
     document.getElementById('cart-count').textContent = total;
 }
 
@@ -1975,26 +2132,25 @@ function renderCart() {
         document.getElementById('cart-total').textContent = '₦0';
         return;
     }
-
     container.innerHTML = '';
     let total = 0;
     for (const item of cart) {
         total += item.price * item.qty;
-        const div       = document.createElement('div');
-        div.className   = 'cart-item';
-        div.innerHTML   = `
+        const div     = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
             <div class="cart-item-icon">${item.icon}</div>
             <div class="cart-item-info">
                 <div class="cart-item-name">${item.name}</div>
                 <div class="cart-item-vendor">${item.vendor}</div>
-                <div style="display:flex;align-items:center;gap:10px;margin-top:5px;">
+                <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
                     <div class="cart-item-price">₦${item.price.toLocaleString()}</div>
-                    <div style="display:flex;align-items:center;gap:6px;">
+                    <div style="display:flex;align-items:center;gap:5px;">
                         <button onclick="changeQty('${item.id}',-1)"
-                            style="background:#1a1000;border:1px solid #2a1800;color:#fff;width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:0.8rem;">-</button>
-                        <span style="color:#fff;font-size:0.78rem;">${item.qty}</span>
+                            style="background:#1a1000;border:1px solid #2a1800;color:#fff;width:20px;height:20px;border-radius:4px;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;">−</button>
+                        <span style="color:#fff;font-size:0.75rem;min-width:16px;text-align:center;">${item.qty}</span>
                         <button onclick="changeQty('${item.id}',1)"
-                            style="background:#1a1000;border:1px solid #2a1800;color:#fff;width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:0.8rem;">+</button>
+                            style="background:#1a1000;border:1px solid #2a1800;color:#fff;width:20px;height:20px;border-radius:4px;cursor:pointer;font-size:0.75rem;display:flex;align-items:center;justify-content:center;">+</button>
                     </div>
                 </div>
             </div>
@@ -2004,155 +2160,189 @@ function renderCart() {
     document.getElementById('cart-total').textContent = '₦' + total.toLocaleString();
 }
 
-function changeQty(productId, delta) {
-    const item = cart.find(c => c.id === productId);
-    if (!item) return;
-    item.qty = Math.max(1, item.qty + delta);
-    updateCartBadge();
-    renderCart();
-}
-
-function buyNow(productId) {
+// =====================================================
+// CHECKOUT & ORDERS
+// =====================================================
+async function buyNow(productId) {
     cart = [];
     addToCart(productId);
-    checkout();
+    await checkout();
 }
 
 async function checkout() {
-    if (cart.length === 0) {
-        showNotif('⚠️','ShopNaija','Your cart is empty!'); return;
-    }
-    const total = cart.reduce((n,c) => n + c.price * c.qty, 0);
-
-    if (!session) {
-        showNotif('⚠️','ShopNaija','Sign in to complete purchase'); return;
-    }
+    if (cart.length === 0) { showNotif('⚠️','ShopNaija','Your cart is empty!'); return; }
+    const total = cart.reduce((n,c) => n + c.price*c.qty, 0);
+    if (!session)      { showNotif('⚠️','ShopNaija','Sign in to purchase'); return; }
     if (!playerData || playerData.naira_balance < total) {
-        showNotif('⚠️','ShopNaija',`Insufficient balance. Need ₦${total.toLocaleString()}`); return;
+        showNotif('⚠️','ShopNaija',`Need ₦${total.toLocaleString()}. Balance: ₦${(playerData?.naira_balance||0).toLocaleString()}`);
+        return;
     }
 
-    // Process each cart item
-    let success = true;
+    // Process each item through market API
+    let lastBalance = playerData.naira_balance;
+    const purchasedItems = [];
+
     for (const item of cart) {
-        try {
-            const res  = await fetch('/api/market/buy', {
-                method: 'POST',
-                headers: {
-                    'Content-Type':  'application/json',
-                    'Authorization': 'Bearer ' + session.access_token
-                },
-                body: JSON.stringify({ stallId: item.vendorId, itemId: item.id })
-            });
-            const data = await res.json();
-            if (data.success && data.newBalance !== undefined) {
-                playerData.naira_balance = data.newBalance;
-            }
-        } catch(e) {
-            success = false;
+        // Only process items that have a game effect through API
+        if (item.effect && item.effect !== 'none') {
+            try {
+                const res  = await fetch('/api/market/buy', {
+                    method:'POST',
+                    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+session.access_token },
+                    body: JSON.stringify({ stallId: getVendorId(item.vendor), itemId: item.id })
+                });
+                const data = await res.json();
+                if (data.success && data.newBalance !== undefined) {
+                    lastBalance = data.newBalance;
+                }
+            } catch(e) {}
+        } else {
+            // No effect items — just deduct balance
+            lastBalance -= item.price * item.qty;
         }
+        purchasedItems.push({ ...item });
     }
 
-    if (success) {
-        // Update displays
-        const itemNames = cart.map(c => c.name).join(', ');
-        addTx('🛒', 'ShopNaija Purchase', 'Just now', -total, 'debit');
+    // Update balance
+    playerData.naira_balance = Math.max(0, lastBalance);
+    document.getElementById('home-balance').textContent  = '₦'+playerData.naira_balance.toLocaleString('en-NG');
+    document.getElementById('bank-balance').textContent  = '₦'+playerData.naira_balance.toLocaleString('en-NG');
 
-        document.getElementById('order-success-msg').innerHTML = `
-            <strong style="color:#fff;">Order Total: ₦${total.toLocaleString()}</strong><br><br>
-            Items purchased:<br>
-            ${cart.map(c=>`• ${c.name} x${c.qty}`).join('<br>')}<br><br>
-            Items with stamina/health effects have been applied immediately.
-            Delivery of physical items: 1 match day.`;
+    // Create order record
+    const orderId = 'SN' + Date.now().toString().slice(-6);
+    const order   = {
+        id:        orderId,
+        items:     [...cart],
+        total,
+        date:      new Date().toLocaleString('en-NG'),
+        status:    'confirmed'
+    };
+    orders.push(order);
 
-        cart = [];
-        updateCartBadge();
+    // Add to bank transactions
+    addTx('🛒','ShopNaija Purchase','Just now',-total,'debit');
 
-        // Update balance display
-        document.getElementById('home-balance').textContent  =
-            '₦' + playerData.naira_balance.toLocaleString('en-NG');
-        document.getElementById('bank-balance').textContent  =
-            '₦' + playerData.naira_balance.toLocaleString('en-NG');
+    // SMS NOTIFICATION — Order Confirmed
+    sendSMS('ShopNaija 🛒',
+        `Order #${orderId} Confirmed!\nTotal: ₦${total.toLocaleString()}\nItems: ${cart.map(c=>c.name).join(', ')}\nEstimated delivery: 1 match day.`
+    );
 
-        document.getElementById('shop-home').style.display            = 'none';
-        document.getElementById('shop-cart-view').style.display       = 'none';
-        document.getElementById('shop-product-detail').style.display  = 'none';
-        document.getElementById('shop-order-success').style.display   = 'flex';
+    // Schedule shipping SMS after 8 seconds (simulates 1 match day)
+    setTimeout(() => {
+        sendSMS('ShopNaija 🚚',
+            `Order #${orderId} has been SHIPPED! Your items are on the way. Delivery expected soon.`
+        );
+        order.status = 'shipped';
+    }, 8000);
 
-        showNotif('✅','ShopNaija',`Order confirmed! ₦${total.toLocaleString()} paid.`);
-    } else {
-        showNotif('⚠️','ShopNaija','Some items failed. Try again.');
-    }
+    // Schedule delivered SMS after 16 seconds
+    setTimeout(() => {
+        sendSMS('ShopNaija ✅',
+            `Order #${orderId} DELIVERED! Your items have arrived. Enjoy your purchase from ShopNaija.`
+        );
+        order.status = 'delivered';
+    }, 16000);
+
+    // Show success screen
+    document.getElementById('order-success-msg').innerHTML = `
+        <div style="background:#0a1a0a;border:1px solid #1a3a1a;border-radius:8px;padding:12px;margin-bottom:12px;text-align:left;">
+            <div style="font-size:0.65rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Order #${orderId}</div>
+            ${cart.map(c=>`
+            <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #111;">
+                <span style="font-size:1rem;">${c.icon}</span>
+                <span style="font-size:0.75rem;color:#ddd;flex:1;">${c.name} x${c.qty}</span>
+                <span style="font-size:0.75rem;color:#ffd700;">₦${(c.price*c.qty).toLocaleString()}</span>
+            </div>`).join('')}
+            <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                <span style="font-size:0.78rem;color:#888;">Total Paid:</span>
+                <span style="font-size:0.88rem;font-weight:bold;color:#ffd700;">₦${total.toLocaleString()}</span>
+            </div>
+        </div>
+        <div style="font-size:0.75rem;color:#555;line-height:1.6;text-align:left;">
+            📱 SMS confirmation sent to AgbaChat<br>
+            🚚 Shipping update in 1 match day<br>
+            ✅ Delivery confirmation follows
+        </div>`;
+
+    cart = [];
+    updateCartBadge();
+
+    document.getElementById('shop-home').style.display            = 'none';
+    document.getElementById('shop-cart-view').style.display       = 'none';
+    document.getElementById('shop-product-detail').style.display  = 'none';
+    document.getElementById('shop-order-success').style.display   = 'flex';
+
+    showNotif('✅','ShopNaija',`Order #${orderId} confirmed! ₦${total.toLocaleString()} paid.`);
+}
+
+function getVendorId(vendorName) {
+    const map = {
+        'Mama Chidinma': 'gov_001',
+        'Chukwudi Kiosk':'gov_002',
+        'Mama Tunde Buka':'gov_003',
+        'Emeka Footwear':'gov_004',
+        'Biodun Tailor':'gov_005',
+        'Ngozi Chemist':'gov_006'
+    };
+    return map[vendorName] || 'gov_001';
 }
 
 function backToShop() {
-    document.getElementById('shop-home').style.display            = 'flex';
-    document.getElementById('shop-order-success').style.display   = 'none';
-    document.getElementById('shop-product-detail').style.display  = 'none';
-    document.getElementById('shop-cart-view').style.display       = 'none';
+    document.getElementById('shop-home').style.display           = 'flex';
+    document.getElementById('shop-order-success').style.display  = 'none';
+    document.getElementById('shop-product-detail').style.display = 'none';
+    document.getElementById('shop-cart-view').style.display      = 'none';
+}
+
+// =====================================================
+// SMS SYSTEM — delivered via AgbaChat
+// =====================================================
+function sendSMS(sender, message) {
+    // Add to AgbaChat as a system message
+    const time = new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit',hour12:false});
+
+    // Add to CHATS list
+    const existingIdx = CHATS.findIndex(c => c.id === 'shopnaija_sms');
+    if (existingIdx >= 0) {
+        CHATS[existingIdx].preview = message.split('\n')[0];
+        CHATS[existingIdx].time    = 'now';
+        CHATS[existingIdx].unread++;
+    } else {
+        CHATS.unshift({
+            id:'shopnaija_sms', name:'ShopNaija SMS',
+            avatar:'🛒', color:'#cc8800',
+            preview: message.split('\n')[0],
+            time:'now', unread:1
+        });
+        CHAT_MESSAGES['shopnaija_sms'] = [];
+    }
+
+    // Add message to conversation
+    if (!CHAT_MESSAGES['shopnaija_sms']) CHAT_MESSAGES['shopnaija_sms'] = [];
+    CHAT_MESSAGES['shopnaija_sms'].push({
+        from:sender, text:message.replace(/\n/g,'<br>'), time, sent:false
+    });
+
+    // Rebuild chat list
+    buildChatList();
+
+    // Show notification
+    showNotif('📱', sender, message.split('\n')[0]);
+
+    // Update badge
+    document.getElementById('chat-badge').style.display = 'block';
+    document.getElementById('chat-badge').textContent   =
+        CHATS.reduce((n,c)=>n+(c.unread||0),0);
 }
 
 function formatShopEffect(effect) {
-    if (!effect || effect === 'none') return 'No special effect';
+    if (!effect || effect === 'none') return '';
     const parts = [];
-    const sm = effect.match(/stamina\+(\d+)/);
+    const sm    = effect.match(/stamina\+(\d+)/);
     if (sm) parts.push(`⚡ +${sm[1]}% Stamina`);
-    if (effect.includes('health')) parts.push('💊 Restores Health');
-    const sp = effect.match(/speed\+(\d+)/);
-    if (sp) parts.push(`💨 +${sp[1]} Speed Attribute`);
-    if (effect.includes('kit')) parts.push('👕 Upgrades your kit');
-    return parts.join(' · ') || 'Special item';
+    if (effect.includes('health'))  parts.push('💊 Restores Health');
+    const sp    = effect.match(/speed\+(\d+)/);
+    if (sp) parts.push(`💨 +${sp[1]} Speed`);
+    if (effect.includes('kit'))     parts.push('👕 Upgrades Kit');
+    return parts.join(' · ') || '';
 }
-// =====================================================
-// STREET GIST
-// =====================================================
-function buildStreetGist() {
-    const feed    = document.getElementById('gist-feed');
-    const stories = [
-        { icon:'⚽', headline:'Surulere FC dominates local derby 5-2', time:'2 mins ago', tag:'MATCH RESULT' },
-        { icon:'🏪', headline:'New market stalls open in Kano — 12 vendors already registered', time:'15 mins ago', tag:'MARKET NEWS' },
-        { icon:'🏆', headline:'Jigga from Edo State tops the Respect leaderboard this week', time:'1 hour ago', tag:'LEADERBOARD' },
-        { icon:'💰', headline:'AgbaBank introduces savings interest — earn Naira on deposits', time:'2 hours ago', tag:'FINANCE' },
-        { icon:'🗺️', headline:'3 new pitches unlocked in Bayelsa State', time:'3 hours ago', tag:'MAP UPDATE' },
-        { icon:'📱', headline:'AGBA OS update — BetNaija now supports accumulator bets', time:'yesterday', tag:'APP UPDATE' }
-    ];
-    feed.innerHTML = '';
-    for (const s of stories) {
-        const div    = document.createElement('div');
-        div.style.cssText = 'background:#111;border:1px solid #1a1a1a;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;';
-        div.innerHTML = `
-            <div style="font-size:0.6rem;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">
-                ${s.tag} · ${s.time}
-            </div>
-            <div style="display:flex;gap:8px;align-items:flex-start;">
-                <div style="font-size:1.3rem;">${s.icon}</div>
-                <div style="font-size:0.78rem;color:#ddd;line-height:1.4;">${s.headline}</div>
-            </div>`;
-        feed.appendChild(div);
-    }
-}
-
-// =====================================================
-// MUSIC
-// =====================================================
-function togglePlay() {
-    isPlaying = !isPlaying;
-    document.getElementById('play-btn').textContent = isPlaying ? '⏸' : '▶';
-    if (isPlaying) showNotif('🎵','AfroBeats FM','Now playing: Street Vibes Mix');
-}
-
-// =====================================================
-// NOTIFICATION TOAST
-// =====================================================
-let notifTimeout = null;
-function showNotif(icon, app, msg) {
-    document.getElementById('notif-icon').textContent = icon;
-    document.getElementById('notif-app').textContent  = app;
-    document.getElementById('notif-msg').textContent  = msg;
-    const el = document.getElementById('phone-notif');
-    el.classList.add('show');
-    if (notifTimeout) clearTimeout(notifTimeout);
-    notifTimeout = setTimeout(()=>el.classList.remove('show'), 3500);
-}
-</script>
-</body>
-</html>
